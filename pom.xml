@@ -1,0 +1,165 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jenkins-ci.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.609.3</version>
+	</parent>
+
+	<artifactId>sonargraph-integration</artifactId>
+	<version>0.9.0</version>
+	<name>Sonargraph Integration Jenkins Plugin</name>
+	<packaging>hpi</packaging>
+
+	<!-- get every artifact through repo.jenkins-ci.org, which proxies all the 
+		artifacts that we need -->
+	<repositories>
+		<repository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>repo.jenkins-ci.org</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.hello2morrow</groupId>
+			<artifactId>sonargraph-integration-access</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jcommon</artifactId>
+			<version>1.0.23</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.19</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jenkins-ci.main</groupId>
+			<artifactId>maven-plugin</artifactId>
+			<version>2.12</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+		    <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jenkins-ci.tools</groupId>
+                <artifactId>maven-hpi-plugin</artifactId>
+                <version>1.114</version><!--$NO-MVN-MAN-VER$-->
+            </plugin>
+        </plugins>
+        <pluginManagement>
+        <!-- Needed to avoid error markers in Eclipse -->
+          <plugins>
+            <plugin>
+             <groupId>org.eclipse.m2e</groupId>
+             <artifactId>lifecycle-mapping</artifactId>
+             <version>1.0.0</version>
+             <configuration>
+               <lifecycleMappingMetadata>
+                 <pluginExecutions>
+                   <pluginExecution>
+                     <pluginExecutionFilter>
+                       <groupId>org.apache.maven.plugins</groupId>
+                       <artifactId>maven-enforcer-plugin</artifactId>
+                       <versionRange>[1.0.0,)</versionRange>
+                       <goals>
+                         <goal>display-info</goal>
+                       </goals>
+                     </pluginExecutionFilter>
+                     <action>
+                       <ignore/>
+                     </action>
+                   </pluginExecution>
+                   <pluginExecution>
+                     <pluginExecutionFilter>
+                       <groupId>org.codehaus.gmaven</groupId>
+                       <artifactId>gmaven-plugin</artifactId>
+                       <versionRange>[1.5,)</versionRange>
+                       <goals>
+                         <goal>generateTestStubs</goal>
+                         <goal>testCompile</goal>
+                       </goals>
+                     </pluginExecutionFilter>
+                     <action>
+                       <ignore/>
+                     </action>
+                   </pluginExecution>
+                 </pluginExecutions>
+               </lifecycleMappingMetadata>
+             </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+	</build>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<url>https://wiki.jenkins-ci.org/display/JENKINS/Sonargraph+Integration+Plugin</url>
+	<organization>
+		<name>hello2morrow GmbH, hello2morrow Inc., hello2morrow S.A.S</name>
+		<url>https://www.hello2morrow.com</url>
+	</organization>
+	<scm>
+		<connection>scm:git:https://github.com/jenkinsci/sonargraph-integration.git</connection>
+		<developerConnection>scm:git:https://git@github.com/jenkinsci/sonargraph-integration.git</developerConnection>
+		<url>https://github.com/jenkinsci/sonargraph-integration</url>
+	  <tag>HEAD</tag>
+  </scm>
+
+	<licenses>
+		<license>
+			<name>Apache License 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>ingmarkellner</id>
+			<name>Ingmar Kellner</name>
+		</developer>
+		<developer>
+			<id>esteban-h2m</id>
+			<name>Esteban Angee</name>
+		</developer>
+		<developer>
+			<id>andreashoyerh2m</id>
+			<name>Andreas Hoyer</name>
+		</developer>
+	</developers>
+</project>

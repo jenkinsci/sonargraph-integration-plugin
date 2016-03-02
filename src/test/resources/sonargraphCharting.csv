@@ -1,0 +1,6 @@
+buildNumber;timestamp;StructuralDebtIndex;NumberOfViolations;NumberOfInstructions;NumberOfMetricWarnings;NumberOfCyclicNamespaces;NumberOfCyclicElements;NumberOfNotAssignedTypes;NumberOfConsistencyProblems;NumberOfWorkspaceWarnings;NumberOfTasks;BiggestCycleGroup;HighestAverageComponentDependency;NumberOfInternalTypes
+83;33000;111;8;24,533;2;5;23;4;5;0;1;5;15.83;190
+84;34000;111;8;-;2;5;23;4;5;0;1;5;15.83;190
+85;35000;111;8;24,533;2;5;23;4;5;0;1;5;15.83;190
+86;36000;111;8;24,533;2;5;23;4;5;0;1;5;15.83;190
+87;37000;111;8;24,533;2;5;23;4;5;0;1;5;16.83;190
