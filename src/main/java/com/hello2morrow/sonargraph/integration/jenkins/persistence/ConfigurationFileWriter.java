@@ -49,6 +49,7 @@ public class ConfigurationFileWriter
         REPORT_FILENAME("reportFileName"),
         REPORT_TYPE("reportType"),
         REPORT_FORMAT("reportFormat"),
+        QUALITY_MODEL("qualityModel"),
         VIRTUAL_MODEL("virtualModel"),
         LICENSE_FILE("licenseFile"),
         WORKSPACE_PROFILE("workspaceProfile"),

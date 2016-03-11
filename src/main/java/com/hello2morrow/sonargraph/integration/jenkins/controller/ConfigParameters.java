@@ -29,7 +29,8 @@ public enum ConfigParameters
     CHARTS_FOR_METRICS_CSV_FILE_PATH("sonargraph-integration-charts-for-metrics.csv"),
     SONARGRAPH_HTML_REPORT_FILE_NAME("sonargraph-integration-report"),
     REPORT_HISTORY_FOLDER("sonargraphIntegrationReportHistory"),
-    SONARGRAPH_REPORT_FILE_NAME("sonargraph-integration-report");
+    SONARGRAPH_REPORT_TARGET_DIRECTORY("target/report/"),
+	SONARGRAPH_REPORT_FILE_NAME("sonargraph-integration-report");
 
     private String m_value;
 

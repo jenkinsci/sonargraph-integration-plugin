@@ -77,6 +77,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     private static final String SONARGRAPH_BUILD_MAIN_CLASS = "com.hello2morrow.sonargraph.build.client.SonargraphBuildRunner";
 
     private final String systemFile;
+    private final String qualityModel;
     private final String virtualModel;
     private final String reportPath;
     private final String reportGeneration;
@@ -101,7 +102,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
      * constructor.
      */
     @DataBoundConstructor
-    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemFile, final String virtualModel,
+    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemFile, final String qualityModel, final String virtualModel,
             final String reportPath, final String reportGeneration, final String chartConfiguration, final String architectureViolationsAction,
             final String unassignedTypesAction, final String cyclicElementsAction, final String thresholdViolationsAction,
             final String architectureWarningsAction, final String workspaceWarningsAction, final String workItemsAction,
@@ -113,6 +114,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
 
         this.systemFile = systemFile;
+        this.qualityModel = qualityModel;
         this.virtualModel = virtualModel;
         this.reportPath = reportPath;
         this.reportGeneration = reportGeneration;
@@ -208,13 +210,25 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         final FilePath absoluteReportDir = new FilePath(build.getWorkspace(), getReportDirectory());
 
-        String jdkName = getSonargraphBuildJDK();
+        JDK jdk;
+        final String jdkName = getSonargraphBuildJDK();
         if (jdkName == null || jdkName.isEmpty())
         {
-            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Please configure a JDK for Sonargraph Build.", null);
-            return false;
+        	final List<JDK> allJDKs = jenkins.getJDKs();
+        	if (allJDKs.size() != 1)
+        	{
+        		SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Please configure a JDK for Sonargraph Build.", null);
+        		return false;
+        	}
+        	else
+        	{
+        		jdk = allJDKs.get(0);
+        	}
         }
-		JDK jdk = jenkins.getJDK(jdkName);
+        else
+        {
+        	jdk = jenkins.getJDK(jdkName);
+        }
         if (jdk == null)
         {
             SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown JDK configured for Sonargraph Build.", null);
@@ -224,7 +238,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final File javaBinDir = jdk.getBinDir();
         final File javaExe = new File(javaBinDir, (File.separatorChar == '\\') ? "java.exe" : "java");
 
-        String version = getSonargraphBuildVersion();
+        final String version = getSonargraphBuildVersion();
+        if (version ==  null || version.isEmpty())
+        {
+            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Sonargraph Build not configured.", null);
+            return false;
+        }
+        
         SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
         SonargraphBuild sonargraphBuild = descriptor.getSonargraphBuild(version);
         if (sonargraphBuild == null)
@@ -245,6 +265,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.REPORT_FILENAME, getReportFileName());
         parameters.put(MandatoryParameter.REPORT_TYPE, getReportType());
         parameters.put(MandatoryParameter.REPORT_FORMAT, getReportFormat());
+        parameters.put(MandatoryParameter.QUALITY_MODEL, getQualityModel());
         parameters.put(MandatoryParameter.VIRTUAL_MODEL, getVirtualModel());
         parameters.put(MandatoryParameter.LICENSE_FILE, getLicenseFile());
         parameters.put(MandatoryParameter.WORKSPACE_PROFILE, getWorkspaceProfile());
@@ -313,7 +334,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         if (isGeneratedBySonargraphBuild())
         {
-            return "target/report/" + ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue();
+            return ConfigParameters.SONARGRAPH_REPORT_TARGET_DIRECTORY.getValue() + ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml";
         }
         return reportPath;
     }
@@ -412,7 +433,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue();
         }
         return new File(getReportPath()).getName();
-
     }
 
     @Override
@@ -420,7 +440,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         if (isGeneratedBySonargraphBuild())
         {
-            return "target/report";
+            return ConfigParameters.SONARGRAPH_REPORT_TARGET_DIRECTORY.getValue();
         }
         return new File(getReportPath()).getParent();
     }
@@ -445,6 +465,11 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return chartConfiguration;
     }
 
+    public String getQualityModel()
+    {
+    	return qualityModel;
+    }
+    
     public String getVirtualModel()
     {
         return virtualModel;
@@ -582,17 +607,27 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return items;
         }
 
+        public FormValidation doCheckQualityModel(@AncestorInPath
+        		final AbstractProject<?, ?> project, @QueryParameter
+        		final String value) throws IOException, InterruptedException
+        {
+        	return checkFileInWorkspace(project, value, "sgqm");
+        }
+        
         public FormValidation doCheckMetaDataFile(@AncestorInPath
                 final AbstractProject<?, ?> project, @QueryParameter
                 final String value) throws IOException, InterruptedException
         {
-            if (value != null && !value.isEmpty())
+            return checkFileInWorkspace(project, value, "xml");
+        }
+
+		private FormValidation checkFileInWorkspace(final AbstractProject<?, ?> project, final String file, final String extension)
+				throws IOException, InterruptedException {
+			if (file != null && !file.isEmpty())
             {
-                final boolean hasMetaDataFileCorrectExtension = StringUtility.validateNotNullAndRegexp(value,
-                        "([a-zA-Z]:\\\\)?([\\/\\\\a-zA-Z0-9_.-]+)+.xml$");
-                if (!hasMetaDataFileCorrectExtension)
+                if (extension != null && !extension.isEmpty() && !file.endsWith(extension))
                 {
-                    return FormValidation.error("Please enter a valid filename for the meta data file");
+                    return FormValidation.error("Please enter a valid filename. Extension must be '" + extension + "'.");
                 }
 
                 final FilePath ws = project.getSomeWorkspace();
@@ -600,35 +635,20 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 {
                     return FormValidation.error("Please run build at least once to get a workspace.");
                 }
-                final FilePath relativeToWorkspace = new FilePath(ws, value);
-                if (!relativeToWorkspace.exists() || relativeToWorkspace.isDirectory())
+                FormValidation validateRelativePath = ws.validateRelativePath(file, true, true);
+                if(validateRelativePath.kind != FormValidation.Kind.OK)
                 {
-                    return FormValidation.error("Please enter a valid path for the meta data file");
+                	return validateRelativePath;
                 }
-                final OperationResultWithOutcome<IExportMetaData> result = getMetaData(ws, value);
+                
+                final OperationResultWithOutcome<IExportMetaData> result = getMetaData(ws, file);
                 if (!result.isSuccess())
                 {
                     return FormValidation.error(result.toString());
                 }
             }
             return FormValidation.ok();
-        }
-
-        public FormValidation doCheckInstallationDirectory(@QueryParameter
-                final String value)
-        {
-            final File sonargraphBuildDirectory = new File(value);
-            if (!sonargraphBuildDirectory.exists())
-            {
-                return FormValidation.error("Please specify a path of an existing directory");
-            }
-            if (!sonargraphBuildDirectory.isDirectory())
-            {
-                return FormValidation.error("Please specify a directory");
-            }
-
-            return FormValidation.ok();
-        }
+		}
 
         public FormValidation doCheckSystemFile(@AncestorInPath
                 final AbstractProject<?, ?> project, @QueryParameter

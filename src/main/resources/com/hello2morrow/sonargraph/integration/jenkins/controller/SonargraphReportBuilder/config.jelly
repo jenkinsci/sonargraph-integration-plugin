@@ -22,11 +22,14 @@
 
         <f:block title="Advanced Sonargraph Build Options">
           <f:advanced>
-            <f:entry title="Virtual Model" field="virtualModel">
-              <f:textbox default="Modifiable.vm" />
-            </f:entry>
             <f:entry title="Workspace Profile" field="workspaceProfile">
               <f:textbox />
+            </f:entry>
+            <f:entry title="Quality Model" field="qualityModel">
+              <f:textbox />
+            </f:entry>
+            <f:entry title="Virtual Model" field="virtualModel">
+              <f:textbox default="Modifiable.vm" />
             </f:entry>
             
             <f:entry title="Snapshot Directory" field="snapshotDirectory">
@@ -58,7 +61,7 @@
           </f:advanced>
         </f:block>
       </f:radioBlock>
-      <f:radioBlock name="reportGeneration" value="generatedBySonargraphAntTask" title="Pre-Generated with Sonargraph Ant Task"
+      <f:radioBlock name="reportGeneration" value="generatedBySonargraphAntTask" title="Pre-Generated"
         checked="${instance.isGeneratedBySonargraphAntTask()}" inline="true" help="/plugin/sonargraph-integration/html/help-generatedBySonargraphAntTask.html">
         <f:entry title="Sonargraph XML Report" field="reportPath">
           <f:textbox default="./target/sonargraph-report/sonargraph-report" />
