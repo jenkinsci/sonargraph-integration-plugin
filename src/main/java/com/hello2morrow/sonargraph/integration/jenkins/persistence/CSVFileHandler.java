@@ -143,8 +143,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
         }
         catch (final IOException ex)
         {
-            SonargraphLogger.INSTANCE.log(Level.SEVERE,
-                    "Failed to get header line from CSV file '" + m_file.getAbsolutePath(), ex);
+            SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to get header line from CSV file '" + m_file.getAbsolutePath(), ex);
             return new String[0];
         }
     }
@@ -190,8 +189,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
         }
         catch (final IOException ioe)
         {
-            SonargraphLogger.INSTANCE.log(Level.WARNING,
-                    "Exception occurred while reading from file '" + m_file.getAbsolutePath(), ioe);
+            SonargraphLogger.INSTANCE.log(Level.WARNING, "Exception occurred while reading from file '" + m_file.getAbsolutePath(), ioe);
 
         }
         return sonargraphDataset;
@@ -247,22 +245,24 @@ public class CSVFileHandler implements IMetricHistoryProvider
         }
         catch (final NumberFormatException ex)
         {
-            SonargraphLogger.INSTANCE.log(Level.WARNING, "The value of metric '" + metric.getName() + "' for build number '" + buildNumberString
-                    + "' is not a valid number. Found '" + valueString + "' but expected a Number. File '" + m_file.getAbsolutePath()
-                    + "' might be corrupt:" + "\n" + ex.getMessage());
+            SonargraphLogger.INSTANCE.log(Level.WARNING,
+                    "The value of metric '" + metric.getName() + "' for build number '" + buildNumberString + "' is not a valid number. Found '"
+                            + valueString + "' but expected a Number. File '" + m_file.getAbsolutePath() + "' might be corrupt:" + "\n"
+                            + ex.getMessage());
             sonargraphDataset.add(new InvalidDataPoint(buildNumber));
         }
         catch (final ParseException ex)
         {
-            SonargraphLogger.INSTANCE.log(Level.WARNING, "The value of metric '" + metric.getName() + "' for build number '" + nextLine[0]
-                    + "' is not a valid number. Found '" + valueString + "' but expected a Number. File '" + m_file.getAbsolutePath()
-                    + "' might be corrupt:" + "\n" + ex.getMessage());
+            SonargraphLogger.INSTANCE.log(Level.WARNING,
+                    "The value of metric '" + metric.getName() + "' for build number '" + nextLine[0] + "' is not a valid number. Found '"
+                            + valueString + "' but expected a Number. File '" + m_file.getAbsolutePath() + "' might be corrupt:" + "\n"
+                            + ex.getMessage());
             sonargraphDataset.add(new InvalidDataPoint(buildNumber));
         }
         catch (final ArrayIndexOutOfBoundsException ex)
         {
             SonargraphLogger.INSTANCE.log(Level.WARNING, "The value of metric '" + metric.getName() + "' for build number '" + nextLine[0]
-                    + "' was not found. File '" + m_file.getAbsolutePath() + "' might be corrupt" , ex);
+                    + "' was not found. File '" + m_file.getAbsolutePath() + "' might be corrupt", ex);
             sonargraphDataset.add(new NotExistingDataPoint(buildNumber));
         }
     }

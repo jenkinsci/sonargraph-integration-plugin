@@ -41,7 +41,7 @@ public final class CSVColumnMapper
     {
         m_columnNames.add("buildnumber");
         m_columnNames.add("timestamp");
-        
+
         for (final String columnName : existingColumnNames)
         {
             m_columnNames.add(columnName);

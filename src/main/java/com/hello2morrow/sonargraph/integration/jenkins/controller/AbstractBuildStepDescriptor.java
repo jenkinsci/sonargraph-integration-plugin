@@ -95,7 +95,7 @@ public abstract class AbstractBuildStepDescriptor extends BuildStepDescriptor<Pu
     public FormValidation doCheckReportDirectory(@QueryParameter
     final String value)
     {
-        return StringUtility.validateNotNullAndRegexp(value, "[\\/\\\\a-zA-Z0-9_.-]+") ? FormValidation.ok() : FormValidation
-                .error("Please enter a valid path for the report directory");
+        return StringUtility.validateNotNullAndRegexp(value, "[\\/\\\\a-zA-Z0-9_.-]+") ? FormValidation.ok()
+                : FormValidation.error("Please enter a valid path for the report directory");
     }
 }

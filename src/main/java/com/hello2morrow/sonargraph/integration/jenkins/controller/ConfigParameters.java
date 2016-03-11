@@ -30,7 +30,7 @@ public enum ConfigParameters
     SONARGRAPH_HTML_REPORT_FILE_NAME("sonargraph-integration-report"),
     REPORT_HISTORY_FOLDER("sonargraphIntegrationReportHistory"),
     SONARGRAPH_REPORT_TARGET_DIRECTORY("target/report/"),
-	SONARGRAPH_REPORT_FILE_NAME("sonargraph-integration-report");
+    SONARGRAPH_REPORT_FILE_NAME("sonargraph-integration-report");
 
     private String m_value;
 

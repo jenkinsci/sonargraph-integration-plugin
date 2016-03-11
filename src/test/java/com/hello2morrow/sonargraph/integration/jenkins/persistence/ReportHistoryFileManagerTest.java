@@ -101,8 +101,8 @@ public class ReportHistoryFileManagerTest
         final ReportHistoryFileManager rhfm = new ReportHistoryFileManager(new FilePath((VirtualChannel) null, archReportHistoryPath),
                 "sonargraphReportHistory", m_logger);
         final Integer buildNumber = 1;
-        sonargraphReporFile = new FilePath(rhfm.getReportHistoryDirectory(), ReportHistoryFileManager.SONARGRAPH_JENKINS_REPORT_FILE_NAME_PREFIX
-                + buildNumber + ".xml");
+        sonargraphReporFile = new FilePath(rhfm.getReportHistoryDirectory(),
+                ReportHistoryFileManager.SONARGRAPH_JENKINS_REPORT_FILE_NAME_PREFIX + buildNumber + ".xml");
         assertFalse(sonargraphReporFile.exists());
 
         rhfm.storeGeneratedReport(new FilePath((VirtualChannel) null, reporFileName), buildNumber, m_logger);

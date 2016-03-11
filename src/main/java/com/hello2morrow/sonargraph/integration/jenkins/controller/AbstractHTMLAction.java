@@ -35,8 +35,8 @@ import com.hello2morrow.sonargraph.integration.jenkins.persistence.TextFileReade
 public abstract class AbstractHTMLAction implements Action
 {
 
-    protected void enableDirectoryBrowserSupport(StaplerRequest req, StaplerResponse rsp, FilePath directoryToServe) throws IOException,
-            ServletException
+    protected void enableDirectoryBrowserSupport(StaplerRequest req, StaplerResponse rsp, FilePath directoryToServe)
+            throws IOException, ServletException
     {
         DirectoryBrowserSupport directoryBrowser = new DirectoryBrowserSupport(this, directoryToServe, this.getDisplayName() + "html2", "graph.gif",
                 false);

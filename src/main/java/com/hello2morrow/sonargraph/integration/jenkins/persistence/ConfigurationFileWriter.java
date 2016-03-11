@@ -124,7 +124,7 @@ public class ConfigurationFileWriter
         }
         catch (TransformerException tfe)
         {
-        	SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to create configuration file '", tfe);
+            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to create configuration file '", tfe);
         }
     }
 

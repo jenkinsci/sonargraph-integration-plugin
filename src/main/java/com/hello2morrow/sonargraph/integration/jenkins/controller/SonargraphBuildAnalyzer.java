@@ -149,7 +149,8 @@ class SonargraphBuildAnalyzer
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
                     + " because value for '" + issueCategory.getPresentationName() + "' is " + numberOfIssues, null);
         }
-        else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode()) && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
+        else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
+                && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
@@ -184,7 +185,8 @@ class SonargraphBuildAnalyzer
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
                     + " because value for '" + metricValue.get().getId().getPresentationName() + "' is " + value, null);
         }
-        else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode()) && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
+        else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
+                && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
@@ -213,15 +215,16 @@ class SonargraphBuildAnalyzer
             if (userDefinedAction.equals(BuildActionsEnum.FAILED.getActionCode()))
             {
                 m_overallBuildResult = m_buildResults.get(BuildActionsEnum.FAILED.getActionCode());
-                SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to "
-                        + m_overallBuildResult.toString() + " because value for " + metricValue.get().getId().getName() + " is " + value, null);
+                SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
+                        + " because value for " + metricValue.get().getId().getName() + " is " + value, null);
 
             }
-            else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode()) && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
+            else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
+                    && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
             {
-                    m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
-                    SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to "
-                            + m_overallBuildResult.toString() + " because value for " + metricValue.get().getId().getName() + " is " + value, null);
+                m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
+                SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
+                        + " because value for " + metricValue.get().getId().getName() + " is " + value, null);
             }
         }
         else

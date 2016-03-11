@@ -102,13 +102,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
      * constructor.
      */
     @DataBoundConstructor
-    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemFile, final String qualityModel, final String virtualModel,
-            final String reportPath, final String reportGeneration, final String chartConfiguration, final String architectureViolationsAction,
-            final String unassignedTypesAction, final String cyclicElementsAction, final String thresholdViolationsAction,
-            final String architectureWarningsAction, final String workspaceWarningsAction, final String workItemsAction,
-            final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp, final boolean languageCPlusPlus,
-            final String sonargraphBuildJDK, final String sonargraphBuildVersion, final String activationCode, final String licenseFile,
-            final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName)
+    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemFile, final String qualityModel,
+            final String virtualModel, final String reportPath, final String reportGeneration, final String chartConfiguration,
+            final String architectureViolationsAction, final String unassignedTypesAction, final String cyclicElementsAction,
+            final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
+            final String workItemsAction, final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp,
+            final boolean languageCPlusPlus, final String sonargraphBuildJDK, final String sonargraphBuildVersion, final String activationCode,
+            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName)
     {
         super(architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction, architectureWarningsAction,
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
@@ -203,9 +203,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         super.logExecutionStart(build, listener, SonargraphReportBuilder.class);
         final Jenkins jenkins = Jenkins.getInstance();
-        if(jenkins == null)
+        if (jenkins == null)
         {
-        	return false;
+            return false;
         }
 
         final FilePath absoluteReportDir = new FilePath(build.getWorkspace(), getReportDirectory());
@@ -214,20 +214,20 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final String jdkName = getSonargraphBuildJDK();
         if (jdkName == null || jdkName.isEmpty())
         {
-        	final List<JDK> allJDKs = jenkins.getJDKs();
-        	if (allJDKs.size() != 1)
-        	{
-        		SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Please configure a JDK for Sonargraph Build.", null);
-        		return false;
-        	}
-        	else
-        	{
-        		jdk = allJDKs.get(0);
-        	}
+            final List<JDK> allJDKs = jenkins.getJDKs();
+            if (allJDKs.size() != 1)
+            {
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Please configure a JDK for Sonargraph Build.", null);
+                return false;
+            }
+            else
+            {
+                jdk = allJDKs.get(0);
+            }
         }
         else
         {
-        	jdk = jenkins.getJDK(jdkName);
+            jdk = jenkins.getJDK(jdkName);
         }
         if (jdk == null)
         {
@@ -239,12 +239,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final File javaExe = new File(javaBinDir, (File.separatorChar == '\\') ? "java.exe" : "java");
 
         final String version = getSonargraphBuildVersion();
-        if (version ==  null || version.isEmpty())
+        if (version == null || version.isEmpty())
         {
             SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Sonargraph Build not configured.", null);
             return false;
         }
-        
+
         SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
         SonargraphBuild sonargraphBuild = descriptor.getSonargraphBuild(version);
         if (sonargraphBuild == null)
@@ -289,7 +289,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         final String sonargraphBuildCommand = javaExe.getAbsolutePath() + " -cp " + clientJar.getAbsolutePath() + ":" + osgiJar.getAbsolutePath()
-        + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFile.getAbsolutePath();
+                + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFile.getAbsolutePath();
 
         ProcStarter procStarter = launcher.new ProcStarter();
         procStarter.cmdAsSingleString(sonargraphBuildCommand);
@@ -302,15 +302,14 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         {
             SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE,
                     "There was an error when executing Sonargraph Build. Check the global configuration"
-                            + " parameters and the relative paths to make sure that everything is in place.", null);
+                            + " parameters and the relative paths to make sure that everything is in place.",
+                    null);
             return false;
         }
 
         final FilePath sonargraphReportDirectory = absoluteReportDir;
-        final OperationResultWithOutcome<IExportMetaData> metaData = getMetaData(
-                build.getProject().getSomeWorkspace(), getMetaDataFile());
-        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(),
-                metaData.getOutcome(), listener.getLogger()))
+        final OperationResultWithOutcome<IExportMetaData> metaData = getMetaData(build.getProject().getSomeWorkspace(), getMetaDataFile());
+        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), metaData.getOutcome(), listener.getLogger()))
         {
             //only add the actions after the processing has been successful
             addActions(build);
@@ -467,9 +466,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     public String getQualityModel()
     {
-    	return qualityModel;
+        return qualityModel;
     }
-    
+
     public String getVirtualModel()
     {
         return virtualModel;
@@ -523,11 +522,11 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         public ListBoxModel doFillSonargraphBuildJDKItems()
         {
-        	final ListBoxModel items = new ListBoxModel();
+            final ListBoxModel items = new ListBoxModel();
             final Jenkins jenkins = Jenkins.getInstance();
-            if(jenkins == null)
+            if (jenkins == null)
             {
-            	return items;
+                return items;
             }
             for (JDK jdk : jenkins.getJDKs())
             {
@@ -542,9 +541,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
             final ListBoxModel items = new ListBoxModel();
             final Jenkins jenkins = Jenkins.getInstance();
-            if(jenkins == null)
+            if (jenkins == null)
             {
-            	return items;
+                return items;
             }
             SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
             for (SonargraphBuild sonargraphBuild : descriptor.getInstallations())
@@ -555,7 +554,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         public ListBoxModel doFillMetricCategoryItems(@AncestorInPath
-                final AbstractProject<?, ?> project, @QueryParameter("metaDataFile")
+        final AbstractProject<?, ?> project, @QueryParameter("metaDataFile")
         @RelativePath("..")
         final String metaDataFile) throws IOException, InterruptedException
         {
@@ -574,15 +573,15 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 }
 
                 categories.stream().sorted(new IMetricCategory.MetricCategoryComparator())
-                .forEachOrdered(category -> items.add(category.getPresentationName(), category.getName()));
+                        .forEachOrdered(category -> items.add(category.getPresentationName(), category.getName()));
             }
 
             return items;
         }
 
         public ListBoxModel doFillMetricNameItems(@AncestorInPath
-                final AbstractProject<?, ?> project, @QueryParameter
-                final String metricCategory, @QueryParameter("metaDataFile")
+        final AbstractProject<?, ?> project, @QueryParameter
+        final String metricCategory, @QueryParameter("metaDataFile")
         @RelativePath("..")
         final String metaDataFile) throws IOException, InterruptedException
         {
@@ -608,22 +607,23 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         public FormValidation doCheckQualityModel(@AncestorInPath
-        		final AbstractProject<?, ?> project, @QueryParameter
-        		final String value) throws IOException, InterruptedException
+        final AbstractProject<?, ?> project, @QueryParameter
+        final String value) throws IOException, InterruptedException
         {
-        	return checkFileInWorkspace(project, value, "sgqm");
+            return checkFileInWorkspace(project, value, "sgqm");
         }
-        
+
         public FormValidation doCheckMetaDataFile(@AncestorInPath
-                final AbstractProject<?, ?> project, @QueryParameter
-                final String value) throws IOException, InterruptedException
+        final AbstractProject<?, ?> project, @QueryParameter
+        final String value) throws IOException, InterruptedException
         {
             return checkFileInWorkspace(project, value, "xml");
         }
 
-		private FormValidation checkFileInWorkspace(final AbstractProject<?, ?> project, final String file, final String extension)
-				throws IOException, InterruptedException {
-			if (file != null && !file.isEmpty())
+        private FormValidation checkFileInWorkspace(final AbstractProject<?, ?> project, final String file, final String extension)
+                throws IOException, InterruptedException
+        {
+            if (file != null && !file.isEmpty())
             {
                 if (extension != null && !extension.isEmpty() && !file.endsWith(extension))
                 {
@@ -636,11 +636,11 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                     return FormValidation.error("Please run build at least once to get a workspace.");
                 }
                 FormValidation validateRelativePath = ws.validateRelativePath(file, true, true);
-                if(validateRelativePath.kind != FormValidation.Kind.OK)
+                if (validateRelativePath.kind != FormValidation.Kind.OK)
                 {
-                	return validateRelativePath;
+                    return validateRelativePath;
                 }
-                
+
                 final OperationResultWithOutcome<IExportMetaData> result = getMetaData(ws, file);
                 if (!result.isSuccess())
                 {
@@ -648,11 +648,11 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 }
             }
             return FormValidation.ok();
-		}
+        }
 
         public FormValidation doCheckSystemFile(@AncestorInPath
-                final AbstractProject<?, ?> project, @QueryParameter
-                final String value) throws IOException
+        final AbstractProject<?, ?> project, @QueryParameter
+        final String value) throws IOException
         {
             if ((value == null) || (value.length() == 0))
             {

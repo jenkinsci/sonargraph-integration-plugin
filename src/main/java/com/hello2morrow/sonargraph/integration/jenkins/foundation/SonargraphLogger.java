@@ -29,16 +29,16 @@ public class SonargraphLogger
     {
         assert logger != null : "Parameter 'logger' of method 'logToConsoleOutput' must not be null";
         logger.print("[" + level.toString() + "] <SONARGRAPH> " + message);
-        if(ex != null)
+        if (ex != null)
         {
-        	logger.print(" " + ex.getMessage());
+            logger.print(" " + ex.getMessage());
         }
         logger.println();
         INSTANCE.log(level, message);
     }
-    
+
     private SonargraphLogger()
     {
-    	
+
     }
 }

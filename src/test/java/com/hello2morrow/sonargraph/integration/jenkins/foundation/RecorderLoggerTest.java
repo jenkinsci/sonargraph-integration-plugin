@@ -30,7 +30,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class RecorderLoggerTest
 {
     private static final String dummyLogFileName = "src/test/resources/dummy.log";

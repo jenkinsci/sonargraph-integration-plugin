@@ -22,19 +22,19 @@ import hudson.model.BuildBadgeAction;
 public class SonargraphBadgeAction implements BuildBadgeAction
 {
     @Override
-	public String getIconFileName()
+    public String getIconFileName()
     {
         return null;
     }
 
     @Override
-	public String getDisplayName()
+    public String getDisplayName()
     {
         return null;
     }
 
     @Override
-	public String getUrlName()
+    public String getUrlName()
     {
         return null;
     }

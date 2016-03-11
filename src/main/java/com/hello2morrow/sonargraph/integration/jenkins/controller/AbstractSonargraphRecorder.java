@@ -92,7 +92,8 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         final FilePath reportFile = new FilePath(sonargraphReportDirectory, reportFileNameWithExtension);
         if (!reportFile.exists())
         {
-            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Sonargraph analysis cannot be executed as Sonargraph report does not exist.", null);
+            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Sonargraph analysis cannot be executed as Sonargraph report does not exist.",
+                    null);
             build.setResult(Result.ABORTED);
             return false;
         }
@@ -132,12 +133,11 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     protected void logExecutionStart(final AbstractBuild<?, ?> build, final BuildListener listener,
             final Class<? extends AbstractSonargraphRecorder> recorderClazz)
     {
-        SonargraphLogger.logToConsoleOutput(
-                listener.getLogger(),
-                Level.INFO,
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
                 "Sonargraph Jenkins Plugin, Version '" + PluginVersionReader.INSTANCE.getVersion() + "', post-build step '" + recorderClazz.getName()
-                + "'\n" + "Start structural analysis on project '" + build.getProject().getDisplayName() + "', build number '"
-                + build.getNumber() + "'", null);
+                        + "'\n" + "Start structural analysis on project '" + build.getProject().getDisplayName() + "', build number '"
+                        + build.getNumber() + "'",
+                null);
     }
 
     protected void addActions(final AbstractBuild<?, ?> build)

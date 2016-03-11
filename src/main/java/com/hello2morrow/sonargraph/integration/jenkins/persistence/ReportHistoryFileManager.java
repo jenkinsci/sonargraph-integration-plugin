@@ -40,8 +40,7 @@ public class ReportHistoryFileManager
     /** Path to the folder containing sonargraph report files generated for every build */
     private FilePath m_sonargraphReportHistoryDir;
 
-    public ReportHistoryFileManager(FilePath projectRootDir, String reportHistoryDirName, PrintStream logger) throws IOException,
-            InterruptedException
+    public ReportHistoryFileManager(FilePath projectRootDir, String reportHistoryDirName, PrintStream logger) throws IOException, InterruptedException
     {
         assert projectRootDir != null : "The path to the folder where architect reports are stored must not be null";
         assert logger != null : "Parameter 'logger' of method 'ReportHistoryFileManager' must not be null";
@@ -55,8 +54,8 @@ public class ReportHistoryFileManager
             }
             catch (IOException ex)
             {
-                SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to create directory '" + m_sonargraphReportHistoryDir.getRemote()
-                        + "'", ex);
+                SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE,
+                        "Failed to create directory '" + m_sonargraphReportHistoryDir.getRemote() + "'", ex);
             }
         }
     }
@@ -96,8 +95,8 @@ public class ReportHistoryFileManager
         architectReport.copyTo(to);
     }
 
-    public void storeGeneratedReportDirectory(FilePath reportDirectory, Integer buildNumber, PrintStream logger) throws IOException,
-            InterruptedException
+    public void storeGeneratedReportDirectory(FilePath reportDirectory, Integer buildNumber, PrintStream logger)
+            throws IOException, InterruptedException
     {
         assert reportDirectory != null : "Parameter 'reportDirectory' of method 'soterdGeneratedReportDirectory' must not be null";
         assert reportDirectory.exists() : "Parameter 'reportDirectory' must be an existing folder. '" + reportDirectory.getRemote()

@@ -73,8 +73,7 @@ public class SonargraphChartAction implements Action, ProminentProjectAction
     private final IExportMetaData metaData;
     private final List<String> selectedMetrics;
 
-    public SonargraphChartAction(final AbstractProject<?, ?> project, final List<String> selectedMetrics,
-            final IExportMetaData metricMetaData)
+    public SonargraphChartAction(final AbstractProject<?, ?> project, final List<String> selectedMetrics, final IExportMetaData metricMetaData)
     {
         this.project = project;
         this.metaData = metricMetaData != null ? metricMetaData : ISingleExportMetaData.EMPTY;

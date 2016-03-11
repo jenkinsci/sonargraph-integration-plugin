@@ -43,8 +43,7 @@ public class CSVColumnMapperTest
     {
         final IMetaDataController metaDataController = new ControllerFactory().createMetaDataController();
         File metaDataFile = new File(META_DATA_XML);
-        OperationResultWithOutcome<IExportMetaData> result = metaDataController
-                .loadExportMetaData(metaDataFile);
+        OperationResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(metaDataFile);
         if (result.isSuccess())
         {
             s_metaData = result.getOutcome();

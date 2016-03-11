@@ -27,13 +27,13 @@ public class InvalidDataPoint implements IDataPoint
     }
 
     @Override
-	public int getX()
+    public int getX()
     {
         return m_x;
     }
 
     @Override
-	public double getY()
+    public double getY()
     {
         return Double.NaN;
     }

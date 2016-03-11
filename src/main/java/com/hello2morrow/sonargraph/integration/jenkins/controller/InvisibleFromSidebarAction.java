@@ -27,22 +27,25 @@ import hudson.model.Action;
  * @author esteban
  *
  */
-public abstract class InvisibleFromSidebarAction extends AbstractHTMLAction implements Action {
-	
-	/**
-	 * Hides the Icon.
-	 */
-	@Override
-	public final String getIconFileName() {
-		return null;
-	}
+public abstract class InvisibleFromSidebarAction extends AbstractHTMLAction implements Action
+{
 
-	/**
-	 * Hides the link.
-	 */
-	@Override
-	public final String getDisplayName() {
-		return null;
-	}
+    /**
+     * Hides the Icon.
+     */
+    @Override
+    public final String getIconFileName()
+    {
+        return null;
+    }
+
+    /**
+     * Hides the link.
+     */
+    @Override
+    public final String getDisplayName()
+    {
+        return null;
+    }
 
 }
