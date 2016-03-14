@@ -135,11 +135,10 @@
 		<url>https://www.hello2morrow.com</url>
 	</organization>
 	<scm>
-		<connection>scm:git:https://github.com/jenkinsci/sonargraph-integration.git</connection>
-		<developerConnection>scm:git:https://git@github.com/jenkinsci/sonargraph-integration.git</developerConnection>
-		<url>https://github.com/jenkinsci/sonargraph-integration</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<connection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</connection>
+		<developerConnection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</developerConnection>
+		<url>https://github.com/jenkinsci/sonargraph-integration-plugin</url>
+	</scm>
 
 	<licenses>
 		<license>
