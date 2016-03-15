@@ -502,12 +502,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     public boolean isGeneratedBySonargraphBuild()
     {
-        return !isGeneratedBySonargraphAntTask();
+        return !isPreGenerated();
     }
 
-    public boolean isGeneratedBySonargraphAntTask()
+    public boolean isPreGenerated()
     {
-        return "generatedBySonargraphAntTask".equals(getReportGeneration());
+        return "preGenerated".equals(getReportGeneration());
     }
 
     public boolean isAllCharts()

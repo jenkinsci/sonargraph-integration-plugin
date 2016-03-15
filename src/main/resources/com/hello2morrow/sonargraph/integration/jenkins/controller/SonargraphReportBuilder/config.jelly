@@ -61,8 +61,8 @@
           </f:advanced>
         </f:block>
       </f:radioBlock>
-      <f:radioBlock name="reportGeneration" value="generatedBySonargraphAntTask" title="Pre-Generated"
-        checked="${instance.isGeneratedBySonargraphAntTask()}" inline="true" help="/plugin/sonargraph-integration/html/help-generatedBySonargraphAntTask.html">
+      <f:radioBlock name="reportGeneration" value="preGenerated" title="Pre-Generated"
+        checked="${instance.isPreGenerated()}" inline="true" help="/plugin/sonargraph-integration/html/help-preGenerated.html">
         <f:entry title="Sonargraph XML Report" field="reportPath">
           <f:textbox default="./target/sonargraph-report/sonargraph-report" />
         </f:entry>
