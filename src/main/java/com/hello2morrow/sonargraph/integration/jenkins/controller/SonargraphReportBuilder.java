@@ -202,13 +202,40 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             throws InterruptedException, IOException
     {
         super.logExecutionStart(build, listener, SonargraphReportBuilder.class);
+        if (isGeneratedBySonargraphBuild())
+        {
+            if (!callSonargraphBuild(build, launcher, listener))
+            {
+                return false;
+            }
+        }
+
+        final FilePath sonargraphReportDirectory = new FilePath(build.getWorkspace(), getReportDirectory());
+        final OperationResultWithOutcome<IExportMetaData> metaData = getMetaData(build.getProject().getSomeWorkspace(), getMetaDataFile());
+        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), metaData.getOutcome(), listener.getLogger()))
+        {
+            //only add the actions after the processing has been successful
+            addActions(build);
+        }
+
+        /*
+         * Must return true for jenkins to mark the build as SUCCESS. Only then,
+         * it can be downgraded to the result that was set but it can never be
+         * upgraded.
+         */
+        return true;
+    }
+
+    private boolean callSonargraphBuild(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
+            throws IOException, InterruptedException
+    {
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Calling Sonargraph Build.", null);
+
         final Jenkins jenkins = Jenkins.getInstance();
         if (jenkins == null)
         {
             return false;
         }
-
-        final FilePath absoluteReportDir = new FilePath(build.getWorkspace(), getReportDirectory());
 
         JDK jdk;
         final String jdkName = getSonargraphBuildJDK();
@@ -238,15 +265,27 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final File javaBinDir = jdk.getBinDir();
         final File javaExe = new File(javaBinDir, (File.separatorChar == '\\') ? "java.exe" : "java");
 
+        SonargraphBuild sonargraphBuild;
+        SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
+
         final String version = getSonargraphBuildVersion();
         if (version == null || version.isEmpty())
         {
-            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Sonargraph Build not configured.", null);
-            return false;
+            final SonargraphBuild[] allSonargraphBuildInstallations = descriptor.getInstallations();
+            if (allSonargraphBuildInstallations.length != 1)
+            {
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Sonargraph Build not configured.", null);
+                return false;
+            }
+            else
+            {
+                sonargraphBuild = allSonargraphBuildInstallations[0];
+            }
         }
-
-        SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
-        SonargraphBuild sonargraphBuild = descriptor.getSonargraphBuild(version);
+        else
+        {
+            sonargraphBuild = descriptor.getSonargraphBuild(version);
+        }
         if (sonargraphBuild == null)
         {
             SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown Sonargraph Build configured.", null);
@@ -306,20 +345,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                     null);
             return false;
         }
-
-        final FilePath sonargraphReportDirectory = absoluteReportDir;
-        final OperationResultWithOutcome<IExportMetaData> metaData = getMetaData(build.getProject().getSomeWorkspace(), getMetaDataFile());
-        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), metaData.getOutcome(), listener.getLogger()))
-        {
-            //only add the actions after the processing has been successful
-            addActions(build);
-        }
-
-        /*
-         * Must return true for jenkins to mark the build as SUCCESS. Only then,
-         * it can be downgraded to the result that was set but it can never be
-         * upgraded.
-         */
         return true;
     }
 
