@@ -76,7 +76,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     private static final String SONARGRAPH_BUILD_MAIN_CLASS = "com.hello2morrow.sonargraph.build.client.SonargraphBuildRunner";
 
-    private final String systemFile;
+    private final String systemDirectory;
     private final String qualityModel;
     private final String virtualModel;
     private final String reportPath;
@@ -102,7 +102,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
      * constructor.
      */
     @DataBoundConstructor
-    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemFile, final String qualityModel,
+    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemDirectory, final String qualityModel,
             final String virtualModel, final String reportPath, final String reportGeneration, final String chartConfiguration,
             final String architectureViolationsAction, final String unassignedTypesAction, final String cyclicElementsAction,
             final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
@@ -113,7 +113,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         super(architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction, architectureWarningsAction,
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
 
-        this.systemFile = systemFile;
+        this.systemDirectory = systemDirectory;
         this.qualityModel = qualityModel;
         this.virtualModel = virtualModel;
         this.reportPath = reportPath;
@@ -294,12 +294,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         sonargraphBuild = sonargraphBuild.forNode(build.getBuiltOn(), listener);
 
         final File configurationFile = File.createTempFile("sonargraphBuildConfiguration", ".xml");
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Writing SonargraphBuild temporary configuration file to " + configurationFile.getAbsolutePath(), null);
         final ConfigurationFileWriter writer = new ConfigurationFileWriter(configurationFile);
         final EnumMap<MandatoryParameter, String> parameters = new EnumMap<>(MandatoryParameter.class);
         parameters.put(MandatoryParameter.ACTIVATION_CODE, getActivationCode());
         parameters.put(MandatoryParameter.INSTALLATION_DIRECTORY, sonargraphBuild.getHome());
         parameters.put(MandatoryParameter.LANGUAGES, getLanguages(languageJava, languageCSharp, languageCPlusPlus));
-        parameters.put(MandatoryParameter.SYSTEM_DIRECTORY, getSystemFile());
+        parameters.put(MandatoryParameter.SYSTEM_DIRECTORY, getSystemDirectory());
         parameters.put(MandatoryParameter.REPORT_DIRECTORY, getReportDirectory());
         parameters.put(MandatoryParameter.REPORT_FILENAME, getReportFileName());
         parameters.put(MandatoryParameter.REPORT_TYPE, getReportType());
@@ -474,9 +475,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return "xml,html";
     }
 
-    public String getSystemFile()
+    public String getSystemDirectory()
     {
-        return systemFile;
+        return systemDirectory;
     }
 
     public String getReportGeneration()
@@ -675,7 +676,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckSystemFile(@AncestorInPath
+        public FormValidation doCheckSystemDirectory(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException
         {
