@@ -6,7 +6,7 @@
     <f:entry>
 
       <f:radioBlock name="reportGeneration" value="generatedBySonargraphBuild" title="Generate with Sonargraph Build"
-        checked="${instance.isGeneratedBySonargraphBuild()}" inline="true" help="/plugin/sonargraph-integration/html/help-generatedBySonargraphBuild.html">
+        checked="${instance.generatedBySonargraphBuild}" inline="true" help="/plugin/sonargraph-integration/html/help-generatedBySonargraphBuild.html">
         <f:entry title="Sonargraph System Directory" field="systemDirectory">
           <f:textbox />
         </f:entry>
@@ -62,7 +62,7 @@
         </f:block>
       </f:radioBlock>
       <f:radioBlock name="reportGeneration" value="preGenerated" title="Pre-Generated"
-        checked="${instance.isPreGenerated()}" inline="true" help="/plugin/sonargraph-integration/html/help-preGenerated.html">
+        checked="${(instance == null) ? 'true': instance.preGenerated}" inline="true" help="/plugin/sonargraph-integration/html/help-preGenerated.html">
         <f:entry title="Sonargraph XML Report" field="reportPath">
           <f:textbox default="./target/sonargraph-report/sonargraph-report" />
         </f:entry>
@@ -76,9 +76,9 @@
     </f:entry>
 
     <f:radioBlock name="chartConfiguration" value="allCharts" title="All charts taken from Meta Data File"
-      checked="${instance.isAllCharts()}" inline="true" help="/plugin/sonargraph-integration/html/help-allCharts.html">
+      checked="${(instance == null) ? 'true': instance.allCharts}" inline="true" help="/plugin/sonargraph-integration/html/help-allCharts.html">
     </f:radioBlock>
-    <f:radioBlock name="chartConfiguration" value="selectedCharts" title="Select Charts" checked="${instance.isSelectedCharts()}"
+    <f:radioBlock name="chartConfiguration" value="selectedCharts" title="Select Charts" checked="${instance.selectedCharts}"
       inline="true" help="/plugin/sonargraph-integration/html/help-selectedCharts.html">
       <f:entry field="metrics">
         <f:repeatable var="metric" name="metrics" items="${instance.metrics}" add="Add" header="Sonargraph Metric">
