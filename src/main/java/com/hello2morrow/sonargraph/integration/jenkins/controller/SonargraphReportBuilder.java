@@ -361,7 +361,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         if (isGeneratedBySonargraphBuild())
         {
-            return ConfigParameters.SONARGRAPH_REPORT_TARGET_DIRECTORY.getValue() + ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml";
+            return ConfigParameters.SONARGRAPH_REPORT_TARGET_DIRECTORY.getValue() + ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue();
         }
         return reportPath;
     }
