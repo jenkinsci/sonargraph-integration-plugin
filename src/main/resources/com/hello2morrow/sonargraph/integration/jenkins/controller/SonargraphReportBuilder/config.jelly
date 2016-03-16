@@ -1,0 +1,130 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+  xmlns:f="/lib/form">
+  <f:section title="Sonargraph Integration Configuration">
+
+    <f:entry>
+
+      <f:radioBlock name="reportGeneration" value="generatedBySonargraphBuild" title="Generate with Sonargraph Build"
+        checked="${instance.generatedBySonargraphBuild}" inline="true" help="/plugin/sonargraph-integration/html/help-generatedBySonargraphBuild.html">
+        <f:entry title="Sonargraph System Directory" field="systemDirectory">
+          <f:textbox />
+        </f:entry>
+
+        <f:entry title="Sonargraph License File" field="licenseFile">
+          <f:textbox />
+        </f:entry>
+        
+        <f:entry title="Sonargraph Activation Code (requires Internet access)" field="activationCode">
+          <f:textbox />
+        </f:entry>
+
+
+        <f:block title="Advanced Sonargraph Build Options">
+          <f:advanced>
+            <f:entry title="Workspace Profile" field="workspaceProfile">
+              <f:textbox />
+            </f:entry>
+            <f:entry title="Quality Model" field="qualityModel">
+              <f:textbox />
+            </f:entry>
+            <f:entry title="Virtual Model" field="virtualModel">
+              <f:textbox default="Modifiable.vm" />
+            </f:entry>
+            
+            <f:entry title="Snapshot Directory" field="snapshotDirectory">
+              <f:textbox />
+            </f:entry>
+            <f:entry title="Snapshot File Name" field="snapshotFileName">
+              <f:textbox />
+            </f:entry>
+
+            <f:entry title="Sonargraph Build Version" field="sonargraphBuildVersion">
+              <f:select />
+            </f:entry>
+
+            <f:entry title="JDK" field="sonargraphBuildJDK">
+              <f:select />
+            </f:entry>
+
+            <f:block title="Languages">
+              <f:entry title="Java" field="languageJava">
+                <f:checkbox />
+              </f:entry>
+              <f:entry title="C#" field="languageCSharp">
+                <f:checkbox />
+              </f:entry>
+              <f:entry title="C++" field="languageCPlusPlus">
+                <f:checkbox />
+              </f:entry>
+            </f:block>
+          </f:advanced>
+        </f:block>
+      </f:radioBlock>
+      <f:radioBlock name="reportGeneration" value="preGenerated" title="Pre-Generated"
+        checked="${(instance == null) ? 'true': instance.preGenerated}" inline="true" help="/plugin/sonargraph-integration/html/help-preGenerated.html">
+        <f:entry title="Sonargraph XML Report" field="reportPath">
+          <f:textbox default="./target/sonargraph-report/sonargraph-report" />
+        </f:entry>
+      </f:radioBlock>
+    </f:entry>
+  </f:section>
+
+  <f:section title="Chart Configuration">
+    <f:entry title="Meta Data File" field="metaDataFile">
+      <f:textbox />
+    </f:entry>
+
+    <f:radioBlock name="chartConfiguration" value="allCharts" title="All charts taken from Meta Data File"
+      checked="${(instance == null) ? 'true': instance.allCharts}" inline="true" help="/plugin/sonargraph-integration/html/help-allCharts.html">
+    </f:radioBlock>
+    <f:radioBlock name="chartConfiguration" value="selectedCharts" title="Select Charts" checked="${instance.selectedCharts}"
+      inline="true" help="/plugin/sonargraph-integration/html/help-selectedCharts.html">
+      <f:entry field="metrics">
+        <f:repeatable var="metric" name="metrics" items="${instance.metrics}" add="Add" header="Sonargraph Metric">
+          <table width="100%">
+            <f:entry title="Category" field="metricCategory">
+              <f:select value="${metric.metricCategory}" />
+            </f:entry>
+            <f:entry title="Name" field="metricName">
+              <f:select value="${metric.metricName}" />
+            </f:entry>
+            <f:entry title="">
+              <div align="right">
+                <f:repeatableDeleteButton value="Delete" />
+              </div>
+            </f:entry>
+          </table>
+        </f:repeatable>
+      </f:entry>
+    </f:radioBlock>
+  </f:section>
+
+  <f:section title="Mark Build">
+    <f:entry title="If architecture violations exist, mark build as" field="architectureViolationsAction">
+      <f:select />
+    </f:entry>
+    <f:entry title="If unassigned types exist, mark build as" field="unassignedTypesAction">
+      <f:select />
+    </f:entry>
+    <f:entry title="If cyclic elements exist, mark build as" field="cyclicElementsAction">
+      <f:select />
+    </f:entry>
+    <f:entry title="If threshold violations exist, mark build as" field="thresholdViolationsAction">
+      <f:select />
+    </f:entry>
+    <f:entry title="If architecture warnings exist, mark build as" field="architectureWarningsAction">
+      <f:select />
+    </f:entry>
+    <f:entry title="If workspace warnings exist, mark build as" field="workspaceWarningsAction">
+      <f:select />
+    </f:entry>
+    <f:entry title="If work items exist, mark build as" field="workItemsAction">
+      <f:select />
+    </f:entry>
+    <f:entry title="If the workspace is empty, mark build as" field="emptyWorkspaceAction">
+      <f:select />
+    </f:entry>
+  </f:section>
+
+</j:jelly>

@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<ns3:exportMetaData xmlns:ns3="http://www.hello2morrow.com/sonargraph/core/export" xmlns:ns2="http://www.hello2morrow.com/sonargraph/core/report" version="8.7.0.0" systemPathUsedForExport="CVSColumnMapperTest.sonargraph" systemId="4df288656010188b4d84a2a03bb0ecb9" timestamp="2015-12-10T18:02:00.476+01:00">
+    <issueCategories>
+        <category id="_0" name="InstallationConfiguration" presentationName="Installation Configuration"></category>
+    </issueCategories>
+    <metricProviders>
+        <provider id="_10" name="test" presentationName="Test"></provider>
+    </metricProviders>
+    <metricCategories>
+        <category id="_17" name="category1" presentationName="Category one" orderNumber="42"></category>
+    </metricCategories>
+    <metricLevels>
+        <level id="_14" name="System" presentationName="System" orderNumber="0"></level>
+    </metricLevels>
+    <metricIds>
+        <metricId id="_d" name="first" presentationName="First Metric" description="The first metric" categories="_17" provider="_10" isFloat="false" levels="_14"></metricId>
+        <metricId id="_e" name="second" presentationName="Second Metric" description="The second metric" categories="_17" provider="_10" isFloat="false" levels="_14"></metricId>
+        <metricId id="_f" name="third" presentationName="third Metric" description="The third metric" categories="_17" provider="_10" isFloat="false" levels="_14"></metricId>
+    </metricIds>
+</ns3:exportMetaData>

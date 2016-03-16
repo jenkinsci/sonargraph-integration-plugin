@@ -1,2 +1,2 @@
-# sonargraph-ng-plugin
-Jenkins Sonargraph Next Generation Plugin
+# sonargraph-integration
+Jenkins Sonargraph Integration Plugin

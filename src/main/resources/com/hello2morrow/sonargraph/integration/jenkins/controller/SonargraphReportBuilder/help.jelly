@@ -1,0 +1,29 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+  <l:ajax>
+	  <f:block>
+	  	<div>
+			Use this post-build action if your build is based on Maven. The action will create Sonargraph's XML and HTML reports and allows you 
+			to configure how the Sonargraph analysis should affect the final result of the build.
+			<br/>
+			For every Sonargraph metric supported by this plugin, you have the following options: 
+			<br/>
+			<ul>
+				<li>Don't mark: Will not change the build result in any way.</li>
+				<li>Build unstable: If the value for this metric is greater than zero, the build result will be set as "unstable".</li>
+				<li>Build failed: If the value for this metric is greater than zero, the build result will be set as "failure".</li>
+			</ul>
+			Take into account that if you have set to mark the build unstable for one metric, failed for any other and both metric's value 
+			are greater than zero, the worst state will prevail, so the build will be marked as failure in this case.
+			<br/>
+			Besides controlling the build result, the plugin also generates graphics to monitor the trend of metrics across builds 
+            and it will display the full Sonargraph HTML report for each build.
+            <br/><br/>
+            NOTE: For the free Jenkins / SonarQube license, only the options for "cyclic elements" and "empty workspace" are available.
+			<p>
+			 <center><img src="${rootURL}/plugin/sonargraph-integration/images/Sonargraph.png"/></center>
+			</p>
+		</div>
+	  </f:block>
+  </l:ajax>
+</j:jelly>

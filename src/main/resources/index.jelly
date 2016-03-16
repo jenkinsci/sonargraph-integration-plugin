@@ -1,0 +1,7 @@
+<?jelly escape-by-default='true'?>
+<!--
+  This view is used to render the installed plugins page.
+-->
+<div>
+  This plugin integrates <a href="https://www.hello2morrow.com/products/sonargraph">Sonargraph</a> functionality into Jenkins
+</div>

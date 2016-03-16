@@ -1,0 +1,36 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <l:layout title="${it.project.displayName} Sonargraph">
+    	<st:include it="${it.project}" page="sidepanel.jelly" />
+    	<l:main-panel>
+			<h1>${%Sonargraph}</h1>
+			<h2><a href="${it.reportURL}">Show most recent Sonargraph Report</a></h2>
+      		<j:if test="${it.chartsForMetrics.size() != 0}"> 
+      			<table cellspacing="15">
+	                <tr>
+	                    <th style="text-align:left;font-size:16px;font-weight:bold;color:#1122CC">Short Term Trend</th>
+	                    <th style="text-align:left;font-size:16px;font-weight:bold;color:#1122CC">Long Term Trend (24h Moving Average)</th>
+	      			</tr>
+	      			<j:forEach var="value" items="${it.chartsForMetrics}">
+	        			<tr>
+		      				<td>
+		      					<img src="getPlot?metric=${value}&amp;type=shortterm" alt="Chart for metric 'Structural Debt Index'" width="${it.defaultGraphicWidth}" height="${it.defaultGraphicHeight}"/>
+		      				</td>
+		      				<td>
+		      				    <img src="getPlot?metric=${value}&amp;type=longterm" alt="Chart for long term trend of metric 'Structural Debt Index'" width="${it.defaultGraphicWidth}" height="${it.defaultGraphicHeight}"/>
+		      				</td>
+	                	</tr>    
+	    			</j:forEach>
+      			</table>
+    		</j:if>
+    		<j:if test="${it.chartsForMetrics.size() == 0}">
+    			<h2 style="text-align:left;font-size:16px;font-weight:bold;color:#C0C0C0">
+    				Sonargraph is now configured to not display any chart. To change this, go to Sonargraph's post-build step and modify the 
+    				charts configuration under 'Advanced Settings...'.
+    			</h2>
+    		</j:if>
+      	</l:main-panel>
+    </l:layout>
+</j:jelly>
