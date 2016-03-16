@@ -334,7 +334,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         ProcStarter procStarter = launcher.new ProcStarter();
         procStarter.cmdAsSingleString(sonargraphBuildCommand);
         procStarter.stdout(listener.getLogger());
-        procStarter = procStarter.pwd(build.getWorkspace());
+        final FilePath workspace = build.getWorkspace();
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Setting working directory for Sonargraph Build to " + workspace, null);
+        procStarter = procStarter.pwd(workspace);
         final Proc proc = launcher.launch(procStarter);
         final int processExitCode = proc.join();
 
@@ -632,6 +634,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return items;
         }
 
+        public FormValidation doCheckLicenseFile(@AncestorInPath
+                final AbstractProject<?, ?> project, @QueryParameter
+                final String value) throws IOException, InterruptedException
+        {
+            return checkAbsoluteFile(value, "license");
+        }
+        
         public FormValidation doCheckQualityModel(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException, InterruptedException
@@ -643,7 +652,17 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException, InterruptedException
         {
-            return checkFileInWorkspace(project, value, "xml");
+            FormValidation validation = checkFileInWorkspace(project, value, "xml");
+            if(validation.kind != FormValidation.Kind.OK)
+            {
+                return validation;
+            }
+            final OperationResultWithOutcome<IExportMetaData> result = getMetaData(project.getSomeWorkspace(), value);
+            if (!result.isSuccess())
+            {
+                return FormValidation.error(result.toString());
+            }
+            return FormValidation.ok();
         }
 
         private FormValidation checkFileInWorkspace(final AbstractProject<?, ?> project, final String file, final String extension)
@@ -666,16 +685,37 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 {
                     return validateRelativePath;
                 }
-
-                final OperationResultWithOutcome<IExportMetaData> result = getMetaData(ws, file);
-                if (!result.isSuccess())
-                {
-                    return FormValidation.error(result.toString());
-                }
             }
             return FormValidation.ok();
         }
 
+        private FormValidation checkAbsoluteFile(final String file, final String extension)
+                throws IOException, InterruptedException
+        {
+            if (file != null && !file.isEmpty())
+            {
+                if (extension != null && !extension.isEmpty() && !file.endsWith(extension))
+                {
+                    return FormValidation.error("Please enter a valid filename. Extension must be '" + extension + "'.");
+                }
+                
+                File f = new File(file);
+                if(!f.exists())
+                {
+                    return FormValidation.error("Please enter an existing file.");                    
+                }
+                else if(!f.canRead())
+                {
+                    return FormValidation.error("Please enter a readable file.");                    
+                }
+                else if(!f.isAbsolute())
+                {
+                    return FormValidation.error("Please enter an absolute file path.");                    
+                }
+            }
+            return FormValidation.ok();
+        }
+        
         public FormValidation doCheckSystemDirectory(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException

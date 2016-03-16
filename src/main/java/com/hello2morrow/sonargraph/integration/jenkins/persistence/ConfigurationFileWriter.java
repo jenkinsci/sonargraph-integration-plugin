@@ -99,8 +99,7 @@ public class ConfigurationFileWriter
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.REPORT_FILENAME);
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.REPORT_TYPE);
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.REPORT_FORMAT);
-            // TODO add later
-            //setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.LICENSE_FILE);
+            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.LICENSE_FILE);
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.WORKSPACE_PROFILE);
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.SNAPSHOT_DIRECTORY);
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.SNAPSHOT_FILE_NAME);
