@@ -328,7 +328,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return false;
         }
 
-        final String sonargraphBuildCommand = javaExe.getAbsolutePath() + " -cp " + clientJar.getAbsolutePath() + ":" + osgiJar.getAbsolutePath()
+        final String sonargraphBuildCommand = javaExe.getAbsolutePath() + " -ea -cp " + clientJar.getAbsolutePath() + ":" + osgiJar.getAbsolutePath()
                 + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFile.getAbsolutePath();
 
         ProcStarter procStarter = launcher.new ProcStarter();
