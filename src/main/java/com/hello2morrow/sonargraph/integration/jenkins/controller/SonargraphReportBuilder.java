@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -59,6 +60,7 @@ import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.JDK;
 import hudson.model.Project;
+import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
@@ -77,7 +79,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     private static final String SONARGRAPH_BUILD_MAIN_CLASS = "com.hello2morrow.sonargraph.build.client.SonargraphBuildRunner";
 
     private final String systemDirectory;
-    private final String qualityModel;
+    private final String qualityModelFile;
     private final String virtualModel;
     private final String reportPath;
     private final String reportGeneration;
@@ -102,7 +104,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
      * constructor.
      */
     @DataBoundConstructor
-    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemDirectory, final String qualityModel,
+    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemDirectory, final String qualityModelFile,
             final String virtualModel, final String reportPath, final String reportGeneration, final String chartConfiguration,
             final String architectureViolationsAction, final String unassignedTypesAction, final String cyclicElementsAction,
             final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
@@ -114,7 +116,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
 
         this.systemDirectory = systemDirectory;
-        this.qualityModel = qualityModel;
+        this.qualityModelFile = qualityModelFile;
         this.virtualModel = virtualModel;
         this.reportPath = reportPath;
         this.reportGeneration = reportGeneration;
@@ -294,7 +296,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         sonargraphBuild = sonargraphBuild.forNode(build.getBuiltOn(), listener);
 
         final File configurationFile = File.createTempFile("sonargraphBuildConfiguration", ".xml");
-        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Writing SonargraphBuild temporary configuration file to " + configurationFile.getAbsolutePath(), null);
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
+                "Writing SonargraphBuild temporary configuration file to " + configurationFile.getAbsolutePath(), null);
         final ConfigurationFileWriter writer = new ConfigurationFileWriter(configurationFile);
         final EnumMap<MandatoryParameter, String> parameters = new EnumMap<>(MandatoryParameter.class);
         parameters.put(MandatoryParameter.ACTIVATION_CODE, getActivationCode());
@@ -305,7 +308,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.REPORT_FILENAME, getReportFileName());
         parameters.put(MandatoryParameter.REPORT_TYPE, getReportType());
         parameters.put(MandatoryParameter.REPORT_FORMAT, getReportFormat());
-        parameters.put(MandatoryParameter.QUALITY_MODEL, getQualityModel());
+        parameters.put(MandatoryParameter.QUALITY_MODEL_FILE, getQualityModelFile());
         parameters.put(MandatoryParameter.VIRTUAL_MODEL, getVirtualModel());
         parameters.put(MandatoryParameter.LICENSE_FILE, getLicenseFile());
         parameters.put(MandatoryParameter.WORKSPACE_PROFILE, getWorkspaceProfile());
@@ -328,7 +331,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return false;
         }
 
-        final String sonargraphBuildCommand = javaExe.getAbsolutePath() + " -cp " + clientJar.getAbsolutePath() + ":" + osgiJar.getAbsolutePath()
+        final String sonargraphBuildCommand = javaExe.getAbsolutePath() + " -ea -cp " + clientJar.getAbsolutePath() + ":" + osgiJar.getAbsolutePath()
                 + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFile.getAbsolutePath();
 
         ProcStarter procStarter = launcher.new ProcStarter();
@@ -492,9 +495,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return chartConfiguration;
     }
 
-    public String getQualityModel()
+    public String getQualityModelFile()
     {
-        return qualityModel;
+        return qualityModelFile;
     }
 
     public String getVirtualModel()
@@ -536,6 +539,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     @Extension
     public static final class DescriptorImpl extends AbstractBuildStepDescriptor
     {
+        static final List<String> DEFAULT_QUALITY_MODELS = Arrays.asList("Sonargraph:Default.sgqm", "Sonargraph:Java.sgqm", "Sonargraph:CSharp.sgqm",
+                "Sonargraph:CPlusPlus.sgqm");
 
         public DescriptorImpl()
         {
@@ -634,17 +639,26 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return items;
         }
 
-        public FormValidation doCheckLicenseFile(@AncestorInPath
-                final AbstractProject<?, ?> project, @QueryParameter
-                final String value) throws IOException, InterruptedException
+        public ComboBoxModel doFillQualityModelFileItems()
         {
-            return checkAbsoluteFile(value, "license");
+            return new ComboBoxModel(DEFAULT_QUALITY_MODELS);
         }
-        
-        public FormValidation doCheckQualityModel(@AncestorInPath
+
+        public FormValidation doCheckLicenseFile(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException, InterruptedException
         {
+            return checkAbsoluteFile(value, "license");
+        }
+
+        public FormValidation doCheckQualityModelFile(@AncestorInPath
+        final AbstractProject<?, ?> project, @QueryParameter
+        final String value) throws IOException, InterruptedException
+        {
+            if (DEFAULT_QUALITY_MODELS.contains(value))
+            {
+                return FormValidation.ok();
+            }
             return checkFileInWorkspace(project, value, "sgqm");
         }
 
@@ -653,7 +667,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final String value) throws IOException, InterruptedException
         {
             FormValidation validation = checkFileInWorkspace(project, value, "xml");
-            if(validation.kind != FormValidation.Kind.OK)
+            if (validation.kind != FormValidation.Kind.OK)
             {
                 return validation;
             }
@@ -689,8 +703,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return FormValidation.ok();
         }
 
-        private FormValidation checkAbsoluteFile(final String file, final String extension)
-                throws IOException, InterruptedException
+        private FormValidation checkAbsoluteFile(final String file, final String extension) throws IOException, InterruptedException
         {
             if (file != null && !file.isEmpty())
             {
@@ -698,24 +711,24 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 {
                     return FormValidation.error("Please enter a valid filename. Extension must be '" + extension + "'.");
                 }
-                
+
                 File f = new File(file);
-                if(!f.exists())
+                if (!f.exists())
                 {
-                    return FormValidation.error("Please enter an existing file.");                    
+                    return FormValidation.error("Please enter an existing file.");
                 }
-                else if(!f.canRead())
+                else if (!f.canRead())
                 {
-                    return FormValidation.error("Please enter a readable file.");                    
+                    return FormValidation.error("Please enter a readable file.");
                 }
-                else if(!f.isAbsolute())
+                else if (!f.isAbsolute())
                 {
-                    return FormValidation.error("Please enter an absolute file path.");                    
+                    return FormValidation.error("Please enter an absolute file path.");
                 }
             }
             return FormValidation.ok();
         }
-        
+
         public FormValidation doCheckSystemDirectory(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException
