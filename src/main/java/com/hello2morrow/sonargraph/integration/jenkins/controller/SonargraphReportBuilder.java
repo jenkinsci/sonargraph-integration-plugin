@@ -53,13 +53,14 @@ import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.Proc;
 import hudson.RelativePath;
-import hudson.maven.MavenModuleSet;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.JDK;
 import hudson.model.Project;
+import hudson.model.TopLevelItem;
+import hudson.model.Queue.FlyweightTask;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -143,7 +144,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     public Collection<Action> getProjectActions(final AbstractProject<?, ?> project)
     {
         final Collection<Action> actions = new ArrayList<>();
-        if (project instanceof Project || project instanceof MavenModuleSet)
+        if (project instanceof Project || (project instanceof TopLevelItem && !(project instanceof FlyweightTask)))
         {
             try
             {
