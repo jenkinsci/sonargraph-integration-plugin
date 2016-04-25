@@ -7,7 +7,7 @@
 	</parent>
 
 	<artifactId>sonargraph-integration</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<name>Sonargraph Integration Jenkins Plugin</name>
 	<packaging>hpi</packaging>
 
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>com.hello2morrow</groupId>
 			<artifactId>sonargraph-integration-access</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
@@ -53,11 +53,6 @@
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
 			<version>1.0.19</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jenkins-ci.main</groupId>
-			<artifactId>maven-plugin</artifactId>
-			<version>2.12</version>
 		</dependency>
 	</dependencies>
 
@@ -102,7 +97,7 @@
                        </goals>
                      </pluginExecutionFilter>
                      <action>
-                       <ignore/>
+                       <ignore />
                      </action>
                    </pluginExecution>
                    <pluginExecution>
@@ -116,7 +111,7 @@
                        </goals>
                      </pluginExecutionFilter>
                      <action>
-                       <ignore/>
+                       <ignore />
                      </action>
                    </pluginExecution>
                  </pluginExecutions>
@@ -138,7 +133,8 @@
 		<connection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</connection>
 		<developerConnection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/sonargraph-integration-plugin</url>
-	</scm>
+	  <tag>HEAD</tag>
+  </scm>
 
 	<licenses>
 		<license>

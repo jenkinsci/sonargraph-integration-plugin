@@ -53,13 +53,14 @@ import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.Proc;
 import hudson.RelativePath;
-import hudson.maven.MavenModuleSet;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.JDK;
 import hudson.model.Project;
+import hudson.model.TopLevelItem;
+import hudson.model.Queue.FlyweightTask;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -74,6 +75,10 @@ import jenkins.model.Jenkins;
  */
 public final class SonargraphReportBuilder extends AbstractSonargraphRecorder implements IReportPathProvider
 {
+    private static final String ORG_ECLIPSE_OSGI_JAR = "org.eclipse.osgi_.*\\.jar";
+
+    private static final String SONARGRAPH_BUILD_CLIENT_JAR = "com.hello2morrow.sonargraph.build.client_.*\\.jar";
+
     private static final String DEFAULT_META_DATA_XML = "MetaData.xml";
 
     private static final String SONARGRAPH_BUILD_MAIN_CLASS = "com.hello2morrow.sonargraph.build.client.SonargraphBuildRunner";
@@ -143,7 +148,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     public Collection<Action> getProjectActions(final AbstractProject<?, ?> project)
     {
         final Collection<Action> actions = new ArrayList<>();
-        if (project instanceof Project || project instanceof MavenModuleSet)
+        if (project instanceof Project || (project instanceof TopLevelItem && !(project instanceof FlyweightTask)))
         {
             try
             {
@@ -320,10 +325,18 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         File installationDirectory = new File(sonargraphBuild.getHome());
 
         final File pluginsDirectory = new File(installationDirectory, "plugins");
-        final File[] osgiJars = FileUtility.listFilesInDirectory(pluginsDirectory, "org.eclipse.osgi_.*\\.jar");
+        final File clientDirectory = new File(installationDirectory, "client");
+        final File[] osgiJars = FileUtility.listFilesInDirectory(pluginsDirectory, ORG_ECLIPSE_OSGI_JAR);
         final File osgiJar = osgiJars.length == 1 ? osgiJars[0] : null;
-        final File[] clientJars = FileUtility.listFilesInDirectory(pluginsDirectory, "com.hello2morrow.sonargraph.build.client_.*\\.jar");
-        final File clientJar = clientJars.length == 1 ? clientJars[0] : null;
+        // pre 8.9.0
+        File[] clientJars = FileUtility.listFilesInDirectory(pluginsDirectory, SONARGRAPH_BUILD_CLIENT_JAR);
+        File clientJar = clientJars.length == 1 ? clientJars[0] : null;
+        if(clientJar == null)
+        {
+            // since 8.9.0
+            clientJars = FileUtility.listFilesInDirectory(clientDirectory, SONARGRAPH_BUILD_CLIENT_JAR);
+            clientJar = clientJars.length == 1 ? clientJars[0] : null;
+        }
 
         if (osgiJar == null || clientJar == null)
         {
