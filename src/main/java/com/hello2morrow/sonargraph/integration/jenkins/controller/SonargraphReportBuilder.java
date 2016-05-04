@@ -777,12 +777,14 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         if (ws == null || metaDataFile == null || metaDataFile.isEmpty())
         {
+            SonargraphLogger.INSTANCE.log(Level.FINE, "Parameter metaDataFile not set, using default metaData");
             return getDefaultMetaData();
         }
 
         FilePath exportMetaDataFile = new FilePath(ws, metaDataFile);
         if (!exportMetaDataFile.exists() || exportMetaDataFile.isDirectory())
         {
+            SonargraphLogger.INSTANCE.log(Level.WARNING, "Parameter metaDataFile set, but file does not exist, or is a directory");
             return getDefaultMetaData();
         }
 
