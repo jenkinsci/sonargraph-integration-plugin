@@ -7,7 +7,7 @@
 	</parent>
 
 	<artifactId>sonargraph-integration</artifactId>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>1.0.5-SNAPSHOT</version>
 	<name>Sonargraph Integration Jenkins Plugin</name>
 	<packaging>hpi</packaging>
 
@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>com.hello2morrow</groupId>
 			<artifactId>sonargraph-integration-access</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
