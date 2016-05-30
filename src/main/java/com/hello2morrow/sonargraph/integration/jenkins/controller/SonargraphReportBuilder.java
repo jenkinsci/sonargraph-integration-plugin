@@ -64,6 +64,7 @@ import hudson.model.Queue.FlyweightTask;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import hudson.util.ListBoxModel.Option;
 import jenkins.model.Jenkins;
 
 /**
@@ -103,6 +104,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     private final String workspaceProfile;
     private final String snapshotDirectory;
     private final String snapshotFileName;
+    private final String logLevel;
 
     /**
      * Constructor. Fields in the config.jelly must match the parameters in this
@@ -115,7 +117,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
             final String workItemsAction, final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp,
             final boolean languageCPlusPlus, final String sonargraphBuildJDK, final String sonargraphBuildVersion, final String activationCode,
-            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName)
+            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName, final String logLevel)
     {
         super(architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction, architectureWarningsAction,
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
@@ -138,6 +140,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         this.workspaceProfile = workspaceProfile;
         this.snapshotDirectory = snapshotDirectory;
         this.snapshotFileName = snapshotFileName;
+        this.logLevel = logLevel;
     }
 
     /**
@@ -319,6 +322,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.WORKSPACE_PROFILE, getWorkspaceProfile());
         parameters.put(MandatoryParameter.SNAPSHOT_DIRECTORY, getSnapshotDirectory());
         parameters.put(MandatoryParameter.SNAPSHOT_FILE_NAME, getSnapshotFileName());
+        parameters.put(MandatoryParameter.LOG_LEVEL, getLogLevel());
 
         writer.createConfigurationFile(parameters, listener.getLogger());
 
@@ -469,6 +473,14 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return snapshotFileName;
     }
 
+    /**
+     * @return the logLevel
+     */
+    public String getLogLevel()
+    {
+        return logLevel;
+    }
+
     private String getReportFileName()
     {
         if (isGeneratedBySonargraphBuild())
@@ -554,6 +566,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         static final List<String> DEFAULT_QUALITY_MODELS = Arrays.asList("Sonargraph:Default.sgqm", "Sonargraph:Java.sgqm", "Sonargraph:CSharp.sgqm",
                 "Sonargraph:CPlusPlus.sgqm");
+        
+        static final List<String> LOG_LEVELS = Arrays.asList("info","off", "error", "warn", "debug", "trace", "all");
 
         public DescriptorImpl()
         {
@@ -762,7 +776,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             }
             return ws.validateRelativeDirectory(value, true);
         }
-
+        
+        public ListBoxModel doFillLogLevelItems()
+        {
+            ListBoxModel lbm = new ListBoxModel();
+            LOG_LEVELS.forEach(level -> lbm.add(level));
+            return lbm;
+        }
     }
 
     protected static OperationResultWithOutcome<IExportMetaData> getDefaultMetaData() throws IOException, InterruptedException
