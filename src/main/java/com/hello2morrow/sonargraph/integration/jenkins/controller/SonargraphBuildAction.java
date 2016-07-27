@@ -22,11 +22,14 @@ import hudson.model.AbstractBuild;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 
 public final class SonargraphBuildAction extends AbstractHTMLAction
 {
