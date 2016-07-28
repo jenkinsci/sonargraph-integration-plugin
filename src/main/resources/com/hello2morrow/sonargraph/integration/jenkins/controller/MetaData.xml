@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<ns2:exportMetaData xmlns:ns3="http://www.hello2morrow.com/sonargraph/core/report" xmlns:ns2="http://www.hello2morrow.com/sonargraph/core/export" version="8.9.1.374" systemPathUsedForExport="/MetaDataExport.sonargraph" systemId="dfb643bf620e540a417d3afdfa25d145" timestamp="2016-05-04T14:29:50.564+02:00">
+<ns3:exportMetaData xmlns:ns3="http://www.hello2morrow.com/sonargraph/core/export" xmlns:ns2="http://www.hello2morrow.com/sonargraph/core/report" version="8.9.2.387" systemPathUsedForExport="/Users/andreas/git/sgng2/com.hello2morrow.sonargraph.language.provider.java/src/test/architecture/AlarmClockWithArchitecture/AlarmClock.sonargraph" systemId="4df288656010188b4d84a2a03bb0ecb9" timestamp="2016-07-28T10:31:59.324+02:00">
     <issueCategories>
         <category id="_0" name="InstallationConfiguration" presentationName="Installation Configuration"></category>
         <category id="_1" name="SystemConfiguration" presentationName="System Configuration"></category>
@@ -99,7 +99,7 @@
         <metricId id="_55" name="CoreTotalLines" presentationName="Total Lines" description="Counts all lines including empty and comment lines." categories="_1f" provider="_10" isFloat="false" levels="_14 _15 _20"></metricId>
         <metricId id="_56" name="CoreTypesModule" presentationName="Number of Types (Module)" description="Number of types (classes, enums or similar, excluding anonymous types) in container on module level." categories="_1f" provider="_10" isFloat="false" levels="_f _26"></metricId>
         <metricId id="_57" name="CoreTypesSystem" presentationName="Number of Types (System)" description="Number of types (classes, enums or similar, excluding anonymous types) in container on system level." categories="_1f" provider="_10" isFloat="false" levels="_f"></metricId>
-        <metricId id="_58" name="CoreUnassignedComponents" presentationName="Number of Unassigned Components" description="Number of components that are not assigned to any artifact" categories="_17" provider="_10" isFloat="false" levels="_14 _15"></metricId>
+        <metricId id="_58" name="CoreUnassignedComponents" presentationName="Number of Unassigned Components" description="Number of internal components that are not assigned to any artifact" categories="_17" provider="_10" isFloat="false" levels="_14 _15"></metricId>
         <metricId id="_59" name="CoreUsedFromModule" presentationName="Used From (Module)" description="Number of all depending elements (direct and indirect) + 1 (including self) in containing module." categories="_13" provider="_10" isFloat="false" levels="_26"></metricId>
         <metricId id="_5a" name="CoreUsedFromSystem" presentationName="Used From (System)" description="Number of all depending elements (direct and indirect) + 1 (including self) in system." categories="_13" provider="_10" isFloat="false" levels="_26"></metricId>
         <metricId id="_5b" name="CoreViolatingComponents" presentationName="Number of Components with Violations" description="Number of components that contain architecture violations" categories="_17" provider="_10" isFloat="false" levels="_14 _15"></metricId>
@@ -117,4 +117,4 @@
         <metricId id="_69" name="JavaRelativeCyclicityPackages" presentationName="Relative Cyclicity (Packages)" description="Relative package cyclicity in percent." categories="_19" provider="_5f" isFloat="true" levels="_14 _15"></metricId>
         <metricId id="_6a" name="JavaStructuralDebtIndexPackages" presentationName="Structural Debt Index (Packages)" description="Cummulative structural debt index of non-ignored package cycles." categories="_24" provider="_5f" isFloat="false" levels="_14 _15"></metricId>
     </metricIds>
-</ns2:exportMetaData>
+</ns3:exportMetaData>
