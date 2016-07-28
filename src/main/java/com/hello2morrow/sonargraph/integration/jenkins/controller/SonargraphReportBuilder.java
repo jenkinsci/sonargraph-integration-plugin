@@ -103,6 +103,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     private final String workspaceProfile;
     private final String snapshotDirectory;
     private final String snapshotFileName;
+    private final String logLevel;
+    private final String logFile;
 
     /**
      * Constructor. Fields in the config.jelly must match the parameters in this
@@ -115,7 +117,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
             final String workItemsAction, final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp,
             final boolean languageCPlusPlus, final String sonargraphBuildJDK, final String sonargraphBuildVersion, final String activationCode,
-            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName)
+            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName, final String logLevel, final String logFile)
     {
         super(architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction, architectureWarningsAction,
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
@@ -138,6 +140,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         this.workspaceProfile = workspaceProfile;
         this.snapshotDirectory = snapshotDirectory;
         this.snapshotFileName = snapshotFileName;
+        this.logFile = logFile;
+        this.logLevel = logLevel;
     }
 
     /**
@@ -319,6 +323,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.WORKSPACE_PROFILE, getWorkspaceProfile());
         parameters.put(MandatoryParameter.SNAPSHOT_DIRECTORY, getSnapshotDirectory());
         parameters.put(MandatoryParameter.SNAPSHOT_FILE_NAME, getSnapshotFileName());
+        parameters.put(MandatoryParameter.LOG_LEVEL, getLogLevel());
+        parameters.put(MandatoryParameter.LOG_FILE, getLogFile());
 
         writer.createConfigurationFile(parameters, listener.getLogger());
 
@@ -469,6 +475,19 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return snapshotFileName;
     }
 
+    /**
+     * @return the logLevel
+     */
+    public String getLogLevel()
+    {
+        return logLevel;
+    }
+
+    public String getLogFile()
+    {
+        return logFile;
+    }
+
     private String getReportFileName()
     {
         if (isGeneratedBySonargraphBuild())
@@ -554,6 +573,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         static final List<String> DEFAULT_QUALITY_MODELS = Arrays.asList("Sonargraph:Default.sgqm", "Sonargraph:Java.sgqm", "Sonargraph:CSharp.sgqm",
                 "Sonargraph:CPlusPlus.sgqm");
+        
+        static final List<String> LOG_LEVELS = Arrays.asList("info", "off", "error", "warn", "debug", "trace", "all");
 
         public DescriptorImpl()
         {
@@ -664,6 +685,26 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return checkAbsoluteFile(value, "license");
         }
 
+        public FormValidation doCheckLogFile(@AncestorInPath
+                final AbstractProject<?, ?> project, @QueryParameter
+                final String value) throws IOException, InterruptedException
+        {
+            final FilePath ws = project.getSomeWorkspace();
+            if (ws == null)
+            {
+                return FormValidation.error("Please run build at least once to get a workspace.");
+            }
+            final FormValidation validateRelativePath = ws.validateRelativePath(value, false, true);
+            if (validateRelativePath.kind != FormValidation.Kind.OK)
+            {
+                return validateRelativePath;
+            }
+
+            final FilePath logfile = new FilePath(ws, value);
+            final String logfileURL = project.getAbsoluteUrl() + "ws/" + value;
+            return FormValidation.okWithMarkup("Logfile is <a href='" + logfileURL + "'>" + logfile.getRemote() + "</a>");
+        }
+        
         public FormValidation doCheckQualityModelFile(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException, InterruptedException
@@ -679,7 +720,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException, InterruptedException
         {
-            FormValidation validation = checkFileInWorkspace(project, value, "xml");
+            final FormValidation validation = checkFileInWorkspace(project, value, "xml");
             if (validation.kind != FormValidation.Kind.OK)
             {
                 return validation;
@@ -762,7 +803,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             }
             return ws.validateRelativeDirectory(value, true);
         }
-
+        
+        public ListBoxModel doFillLogLevelItems()
+        {
+            ListBoxModel items = new ListBoxModel();
+            LOG_LEVELS.forEach(level -> items.add(level));
+            return items;
+        }
     }
 
     protected static OperationResultWithOutcome<IExportMetaData> getDefaultMetaData() throws IOException, InterruptedException

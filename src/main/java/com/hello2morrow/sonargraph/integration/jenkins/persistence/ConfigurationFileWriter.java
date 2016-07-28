@@ -54,7 +54,9 @@ public class ConfigurationFileWriter
         LICENSE_FILE("licenseFile"),
         WORKSPACE_PROFILE("workspaceProfile"),
         SNAPSHOT_DIRECTORY("snapshotDirectory"),
-        SNAPSHOT_FILE_NAME("snapshotFileName");
+        SNAPSHOT_FILE_NAME("snapshotFileName"),
+        LOG_FILE("logFile"),
+        LOG_LEVEL("logLevel");
 
         private final String m_presentationName;
 
@@ -103,6 +105,8 @@ public class ConfigurationFileWriter
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.WORKSPACE_PROFILE);
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.SNAPSHOT_DIRECTORY);
             setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.SNAPSHOT_FILE_NAME);
+            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.LOG_LEVEL);
+            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.LOG_FILE);
 
             Element failSet = doc.createElement("failSet");
             sonargraphBuild.appendChild(failSet);

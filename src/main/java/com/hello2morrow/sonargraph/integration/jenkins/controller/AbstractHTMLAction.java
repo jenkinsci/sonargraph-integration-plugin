@@ -34,12 +34,16 @@ import com.hello2morrow.sonargraph.integration.jenkins.persistence.TextFileReade
 
 public abstract class AbstractHTMLAction implements Action
 {
-
+    /**
+     * Enables directory browsing for directoryToServe.
+     * Needed when showing the report, to be able to also serve referenced image and css files.
+     */
     protected void enableDirectoryBrowserSupport(StaplerRequest req, StaplerResponse rsp, FilePath directoryToServe)
             throws IOException, ServletException
     {
         DirectoryBrowserSupport directoryBrowser = new DirectoryBrowserSupport(this, directoryToServe, this.getDisplayName() + "html2", "graph.gif",
                 false);
+        SonargraphLogger.INSTANCE.log(Level.FINE, "AbstractHTMLAction.enableDirectoryBrowserSupport for directory " + directoryToServe.getRemote());
         directoryBrowser.generateResponse(req, rsp, this);
     }
 

@@ -94,7 +94,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Sonargraph analysis cannot be executed as Sonargraph report does not exist.",
                     null);
-            build.setResult(Result.ABORTED);
+            build.setResult(Result.FAILURE);
             return false;
         }
 

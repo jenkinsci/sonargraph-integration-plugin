@@ -55,7 +55,8 @@ public final class SonargraphHTMLReportAction extends InvisibleFromSidebarAction
     @Override
     public void doDynamic(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException
     {
-        enableDirectoryBrowserSupport(req, rsp, new FilePath(project.getSomeWorkspace(), pathProvider.getReportDirectory()));
+        final FilePath directory = new FilePath(project.getSomeWorkspace(), pathProvider.getReportDirectory());
+        enableDirectoryBrowserSupport(req, rsp, directory);
     }
 
     @Override
