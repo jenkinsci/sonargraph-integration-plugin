@@ -22,9 +22,8 @@ import hudson.FilePath;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import com.hello2morrow.sonargraph.integration.jenkins.controller.ConfigParameters;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 
 /**
@@ -40,12 +39,13 @@ public class ReportHistoryFileManager
     /** Path to the folder containing sonargraph report files generated for every build */
     private FilePath m_sonargraphReportHistoryDir;
 
-    public ReportHistoryFileManager(FilePath projectRootDir, String reportHistoryDirName, PrintStream logger) throws IOException, InterruptedException
+    public ReportHistoryFileManager(FilePath projectRootDir, String reportHistoryBaseDirectoryName, PrintStream logger) throws IOException, InterruptedException
     {
         assert projectRootDir != null : "The path to the folder where architect reports are stored must not be null";
+        assert reportHistoryBaseDirectoryName != null && !reportHistoryBaseDirectoryName.isEmpty() : "reportHistoryBaseDirectoryName must not be empty";
         assert logger != null : "Parameter 'logger' of method 'ReportHistoryFileManager' must not be null";
 
-        m_sonargraphReportHistoryDir = new FilePath(projectRootDir, reportHistoryDirName);
+        m_sonargraphReportHistoryDir = new FilePath(projectRootDir, reportHistoryBaseDirectoryName);
         if (!m_sonargraphReportHistoryDir.exists())
         {
             try
@@ -65,37 +65,7 @@ public class ReportHistoryFileManager
         return m_sonargraphReportHistoryDir;
     }
 
-    /**
-     * Stores a generated architect report in the location defined for this purpose. 
-     * @param architectReport the architect report file.
-     * @throws InterruptedException 
-     */
-    public void storeGeneratedReport(FilePath architectReport, Integer buildNumber, PrintStream logger) throws IOException, InterruptedException
-    {
-        assert architectReport != null : "Parameter 'architectReport' of method 'storeGeneratedReport' must not be null";
-        assert architectReport.exists() : "Parameter 'architectReport' must be an existing file. '" + architectReport.getRemote()
-                + "' does not exist.";
-
-        if ((architectReport == null) || (buildNumber == null))
-        {
-            return;
-        }
-
-        if (!m_sonargraphReportHistoryDir.exists())
-        {
-            String msg = "Unable to create directory " + m_sonargraphReportHistoryDir.getRemote();
-            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, msg, null);
-            throw new IOException(msg);
-        }
-
-        Pattern extensionPattern = Pattern.compile("\\.[a-zA-Z0-9]*$");
-        Matcher extensionMatcher = extensionPattern.matcher(architectReport.getRemote());
-        String extension = extensionMatcher.find() ? extensionMatcher.group() : "";
-        FilePath to = new FilePath(m_sonargraphReportHistoryDir, SONARGRAPH_JENKINS_REPORT_FILE_NAME_PREFIX + buildNumber + extension);
-        architectReport.copyTo(to);
-    }
-
-    public void storeGeneratedReportDirectory(FilePath reportDirectory, Integer buildNumber, PrintStream logger)
+    public void storeGeneratedReportDirectory(FilePath reportDirectory, String reportName, Integer buildNumber, PrintStream logger)
             throws IOException, InterruptedException
     {
         assert reportDirectory != null : "Parameter 'reportDirectory' of method 'soterdGeneratedReportDirectory' must not be null";
@@ -108,6 +78,24 @@ public class ReportHistoryFileManager
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, msg, null);
             throw new IOException(msg);
         }
-        reportDirectory.copyRecursiveTo(new FilePath(m_sonargraphReportHistoryDir, "sonargraph-report-build-" + buildNumber));
+        // copy all report related files (*.gif, *.css, ...) except xml and html report
+        final FilePath targetHistoryDirectory = new FilePath(m_sonargraphReportHistoryDir, "sonargraph-report-build-" + buildNumber);
+        reportDirectory.copyRecursiveTo("**/*.*", "*.html,*.xml",  targetHistoryDirectory);
+        
+        // copy xml report, and rename it
+        final FilePath sourceXmlReportFile = new FilePath(reportDirectory, reportName + ".xml");
+        if (sourceXmlReportFile.exists())
+        {
+            final FilePath targetXmlReportFile = new FilePath(targetHistoryDirectory, ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml");
+            sourceXmlReportFile.copyTo(targetXmlReportFile);
+        }
+        
+        // copy html report, and rename it
+        final FilePath sourceHtmlReportFile = new FilePath(reportDirectory, reportName + ".html");
+        if (sourceHtmlReportFile.exists())
+        {
+            final FilePath targetHtmlReportFile = new FilePath(targetHistoryDirectory, ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".html");
+            sourceHtmlReportFile.copyTo(targetHtmlReportFile);
+        }
     }
 }

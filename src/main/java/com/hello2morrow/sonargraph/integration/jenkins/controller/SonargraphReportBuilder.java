@@ -35,7 +35,6 @@ import org.kohsuke.stapler.QueryParameter;
 
 import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
-import com.hello2morrow.sonargraph.integration.access.foundation.FileUtility;
 import com.hello2morrow.sonargraph.integration.access.foundation.OperationResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.foundation.StringUtility;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
@@ -75,9 +74,9 @@ import jenkins.model.Jenkins;
  */
 public final class SonargraphReportBuilder extends AbstractSonargraphRecorder implements IReportPathProvider
 {
-    private static final String ORG_ECLIPSE_OSGI_JAR = "org.eclipse.osgi_.*\\.jar";
+    private static final String ORG_ECLIPSE_OSGI_JAR = "org.eclipse.osgi_*.jar";
 
-    private static final String SONARGRAPH_BUILD_CLIENT_JAR = "com.hello2morrow.sonargraph.build.client_.*\\.jar";
+    private static final String SONARGRAPH_BUILD_CLIENT_JAR = "com.hello2morrow.sonargraph.build.client_*.jar";
 
     private static final String DEFAULT_META_DATA_XML = "MetaData.xml";
 
@@ -273,8 +272,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return false;
         }
         jdk = jdk.forNode(build.getBuiltOn(), listener);
-        final File javaBinDir = jdk.getBinDir();
-        final File javaExe = new File(javaBinDir, (File.separatorChar == '\\') ? "java.exe" : "java");
+        final FilePath javaDir = new FilePath(launcher.getChannel(), jdk.getHome());
+        final FilePath javaBinDir = new FilePath(javaDir, "bin");
+        final FilePath javaExe = new FilePath(javaBinDir, (File.separatorChar == '\\') ? "java.exe" : "java");
 
         SonargraphBuild sonargraphBuild;
         SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
@@ -304,10 +304,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
         sonargraphBuild = sonargraphBuild.forNode(build.getBuiltOn(), listener);
 
-        final File configurationFile = File.createTempFile("sonargraphBuildConfiguration", ".xml");
+        // local configuration file, always on master
+        final File configurationFileMaster = File.createTempFile("sonargraphBuildConfigurationMaster", ".xml");
+        
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
-                "Writing SonargraphBuild temporary configuration file to " + configurationFile.getAbsolutePath(), null);
-        final ConfigurationFileWriter writer = new ConfigurationFileWriter(configurationFile);
+                "Writing SonargraphBuild temporary configuration file on master to " + configurationFileMaster.getAbsolutePath(), null);
+        final ConfigurationFileWriter writer = new ConfigurationFileWriter(configurationFileMaster);
         final EnumMap<MandatoryParameter, String> parameters = new EnumMap<>(MandatoryParameter.class);
         parameters.put(MandatoryParameter.ACTIVATION_CODE, getActivationCode());
         parameters.put(MandatoryParameter.INSTALLATION_DIRECTORY, sonargraphBuild.getHome());
@@ -327,20 +329,22 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.LOG_FILE, getLogFile());
 
         writer.createConfigurationFile(parameters, listener.getLogger());
+        final String content = new FilePath(configurationFileMaster).readToString();
+        final FilePath configurationFileSlave = javaDir.createTextTempFile("sonargraphBuildConfigurationSlave", ".xml", content, false);
 
-        File installationDirectory = new File(sonargraphBuild.getHome());
-
-        final File pluginsDirectory = new File(installationDirectory, "plugins");
-        final File clientDirectory = new File(installationDirectory, "client");
-        final File[] osgiJars = FileUtility.listFilesInDirectory(pluginsDirectory, ORG_ECLIPSE_OSGI_JAR);
-        final File osgiJar = osgiJars.length == 1 ? osgiJars[0] : null;
+        final FilePath installationDirectory = new FilePath(launcher.getChannel(), sonargraphBuild.getHome());
+        final FilePath pluginsDirectory = new FilePath(installationDirectory, "plugins");
+        final FilePath clientDirectory = new FilePath(installationDirectory, "client");
+        
+        final FilePath[] osgiJars = pluginsDirectory.list(ORG_ECLIPSE_OSGI_JAR);
+        final FilePath osgiJar = osgiJars.length == 1 ? osgiJars[0] : null;
         // pre 8.9.0
-        File[] clientJars = FileUtility.listFilesInDirectory(pluginsDirectory, SONARGRAPH_BUILD_CLIENT_JAR);
-        File clientJar = clientJars.length == 1 ? clientJars[0] : null;
+        FilePath[] clientJars = pluginsDirectory.list(SONARGRAPH_BUILD_CLIENT_JAR);
+        FilePath clientJar = clientJars.length == 1 ? clientJars[0] : null;
         if(clientJar == null)
         {
             // since 8.9.0
-            clientJars = FileUtility.listFilesInDirectory(clientDirectory, SONARGRAPH_BUILD_CLIENT_JAR);
+            clientJars = clientDirectory.list(SONARGRAPH_BUILD_CLIENT_JAR);
             clientJar = clientJars.length == 1 ? clientJars[0] : null;
         }
 
@@ -350,8 +354,11 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return false;
         }
 
-        final String sonargraphBuildCommand = javaExe.getAbsolutePath() + " -ea -cp " + clientJar.getAbsolutePath() + File.pathSeparator + osgiJar.getAbsolutePath()
-                + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFile.getAbsolutePath();
+        // separator taken from launcher, to also work on slaves
+        final String classpathSeparator = launcher.isUnix() ? ":" : ";";
+        
+        final String sonargraphBuildCommand = javaExe.getRemote() + " -ea -cp " + clientJar.getRemote() + classpathSeparator + osgiJar.getRemote()
+                + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFileSlave.getRemote();
 
         ProcStarter procStarter = launcher.new ProcStarter();
         procStarter.cmdAsSingleString(sonargraphBuildCommand);
@@ -714,6 +721,26 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 return FormValidation.ok();
             }
             return checkFileInWorkspace(project, value, "sgqm");
+        }
+        
+        public FormValidation doCheckReportPath(@AncestorInPath
+                final AbstractProject<?, ?> project, @QueryParameter
+                final String value) throws IOException, InterruptedException
+        {
+            if (value != null && !value.isEmpty())
+            {
+                final File withParent = new File(value);
+                final File parent = withParent.getParentFile();
+                if (parent == null)
+                {
+                    return FormValidation.error("Please enter a path with at least one directory.");
+                }
+                if (value.endsWith(".xml"))
+                {
+                    return FormValidation.error("Please enter a path without extension \".xml\".");
+                }
+            }
+            return checkFileInWorkspace(project, value + ".xml", null);
         }
 
         public FormValidation doCheckMetaDataFile(@AncestorInPath

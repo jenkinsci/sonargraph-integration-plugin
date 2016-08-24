@@ -20,12 +20,7 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-
-import org.kohsuke.stapler.QueryParameter;
-
-import com.hello2morrow.sonargraph.integration.access.foundation.StringUtility;
 
 public abstract class AbstractBuildStepDescriptor extends BuildStepDescriptor<Publisher>
 {
