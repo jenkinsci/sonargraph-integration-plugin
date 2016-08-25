@@ -20,12 +20,7 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
-import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-
-import org.kohsuke.stapler.QueryParameter;
-
-import com.hello2morrow.sonargraph.integration.access.foundation.StringUtility;
 
 public abstract class AbstractBuildStepDescriptor extends BuildStepDescriptor<Publisher>
 {
@@ -92,10 +87,4 @@ public abstract class AbstractBuildStepDescriptor extends BuildStepDescriptor<Pu
         return items;
     }
 
-    public FormValidation doCheckReportDirectory(@QueryParameter
-    final String value)
-    {
-        return StringUtility.validateNotNullAndRegexp(value, "[\\/\\\\a-zA-Z0-9_.-]+") ? FormValidation.ok()
-                : FormValidation.error("Please enter a valid path for the report directory");
-    }
 }

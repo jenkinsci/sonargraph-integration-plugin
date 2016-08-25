@@ -17,7 +17,6 @@
  *******************************************************************************/
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
@@ -30,9 +29,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.hello2morrow.sonargraph.integration.jenkins.controller.ConfigParameters;
+
 public class ReportHistoryFileManagerTest
 {
-    private static final String reporFileName = "src/test/resources/sonargraph-sonar-report.xml";
     private static final String archReportHistoryPath = "src/test/resources/temp";
     private static final String buildReportDirectoryPath = "src/test/resources/report";
     private FilePath sonargraphReporFile;
@@ -96,20 +96,6 @@ public class ReportHistoryFileManagerTest
     }
 
     @Test
-    public void testStoreGeneratedReport() throws IOException, InterruptedException
-    {
-        final ReportHistoryFileManager rhfm = new ReportHistoryFileManager(new FilePath((VirtualChannel) null, archReportHistoryPath),
-                "sonargraphReportHistory", m_logger);
-        final Integer buildNumber = 1;
-        sonargraphReporFile = new FilePath(rhfm.getReportHistoryDirectory(),
-                ReportHistoryFileManager.SONARGRAPH_JENKINS_REPORT_FILE_NAME_PREFIX + buildNumber + ".xml");
-        assertFalse(sonargraphReporFile.exists());
-
-        rhfm.storeGeneratedReport(new FilePath((VirtualChannel) null, reporFileName), buildNumber, m_logger);
-        assertTrue(sonargraphReporFile.exists());
-    }
-
-    @Test
     public void testStoreGeneratedReportDirectory() throws IOException, InterruptedException
     {
         final ReportHistoryFileManager rhfm = new ReportHistoryFileManager(new FilePath((VirtualChannel) null, archReportHistoryPath),
@@ -119,14 +105,14 @@ public class ReportHistoryFileManagerTest
         {
             buildReportDirectory.mkdirs();
         }
-        final File tesFile = new File(buildReportDirectory.getRemote(), "tesFile.xml");
-        if (!tesFile.exists())
+        final File testFile = new File(buildReportDirectory.getRemote(), "testFile.xml");
+        if (!testFile.exists())
         {
-            tesFile.createNewFile();
+            testFile.createNewFile();
         }
-        rhfm.storeGeneratedReportDirectory(buildReportDirectory, 1, m_logger);
+        rhfm.storeGeneratedReportDirectory(buildReportDirectory, "testFile", 1, m_logger);
         final String buildReportDirInHistory = "sonargraph-report-build-1";
         assertTrue(new FilePath(rhfm.getReportHistoryDirectory(), buildReportDirInHistory).exists());
-        assertTrue(new File(rhfm.getReportHistoryDirectory() + "/" + buildReportDirInHistory, "tesFile.xml").exists());
+        assertTrue(new File(rhfm.getReportHistoryDirectory() + "/" + buildReportDirInHistory, ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml").exists());
     }
 }

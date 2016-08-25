@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 
+import org.jenkinsci.remoting.RoleChecker;
+
 import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.ISonargraphSystemController;
 import com.hello2morrow.sonargraph.integration.access.controller.ISystemInfoProcessor;
@@ -42,6 +44,7 @@ import com.hello2morrow.sonargraph.integration.jenkins.persistence.CSVFileHandle
 
 import hudson.FilePath;
 import hudson.model.Result;
+import hudson.remoting.VirtualChannel;
 
 /**
  * Class that analyzes the values found for the metrics and takes action
@@ -63,29 +66,29 @@ class SonargraphBuildAnalyzer
     private Result m_overallBuildResult;
 
     private OutputStream m_logger = null;
-    private final ISonargraphSystemController m_controller;
+    private static final ISonargraphSystemController s_controller = new ControllerFactory().createController();
 
     /**
      * Constructor.
-     * @param architectReportPath Absolute path to the Sonargraph architect report.
-     * @throws InterruptedException
-     * @throws IOException
+     * 
+     * @param sonargraphReportPath Absolute path to the Sonargraph report.
+     * @throws InterruptedException 
+     * @throws IOException 
      */
-    public SonargraphBuildAnalyzer(final FilePath architectReportPath, final IExportMetaData metricMetaData, final OutputStream logger)
-            throws IOException, InterruptedException
+    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final IExportMetaData metricMetaData, final OutputStream logger) throws IOException, InterruptedException
     {
-        assert architectReportPath != null : "The path for the Sonargraph architect report must not be null";
+        assert sonargraphReportPath != null : "The path for the Sonargraph architect report must not be null";
         assert metricMetaData != null : "Parameter 'metricMetaData' of method 'SonargraphBuildAnalyzer' must not be null";
 
         assert logger != null : "Parameter 'logger' of method 'SonargraphBuildAnalyzer' mu st not be null";
         m_logger = logger;
-        m_controller = new ControllerFactory().createController();
-        final OperationResult operationResult = m_controller.loadSystemReport(new File(architectReportPath.toURI()));
+        
+        final OperationResult operationResult = sonargraphReportPath.act(new LoadSystemReport());
 
         if (operationResult.isFailure())
         {
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.SEVERE,
-                    "Failed to load report from '" + architectReportPath + "': " + operationResult.toString(), null);
+                    "Failed to load report from '" + sonargraphReportPath + "': " + operationResult.toString(), null);
         }
 
         m_exportMetaData = metricMetaData != null ? metricMetaData : ISingleExportMetaData.EMPTY;
@@ -101,12 +104,12 @@ class SonargraphBuildAnalyzer
      */
     public Result changeBuildResultIfViolationThresholdsExceeded(final Integer thresholdUnstable, final Integer thresholdFailed)
     {
-        if (!m_controller.hasSoftwareSystem())
+        if (!s_controller.hasSoftwareSystem())
         {
             return null;
         }
 
-        final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
+        final ISystemInfoProcessor infoProcessor = s_controller.createSystemInfoProcessor();
         final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName()
                 .equals(IIssueCategory.StandardName.ARCHITECTURE_VIOLATION.getStandardName()) && !issue.hasResolution();
         final Integer numberOfViolations = infoProcessor.getIssues(filter).size();
@@ -127,12 +130,12 @@ class SonargraphBuildAnalyzer
 
     public void changeBuildResultIfIssuesExist(IIssueCategory.StandardName issueCategory, final String userDefinedAction)
     {
-        if (!m_controller.hasSoftwareSystem())
+        if (!s_controller.hasSoftwareSystem())
         {
             return;
         }
 
-        final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
+        final ISystemInfoProcessor infoProcessor = s_controller.createSystemInfoProcessor();
         final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName().equals(issueCategory.getStandardName())
                 && !issue.hasResolution();
         final int numberOfIssues = infoProcessor.getIssues(filter).size();
@@ -160,12 +163,12 @@ class SonargraphBuildAnalyzer
 
     public void changeBuildResultIfMetricValueNotZero(final String metricName, final String userDefinedAction)
     {
-        if (!m_controller.hasSoftwareSystem())
+        if (!s_controller.hasSoftwareSystem())
         {
             return;
         }
 
-        final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
+        final ISystemInfoProcessor infoProcessor = s_controller.createSystemInfoProcessor();
         final Optional<IMetricValue> metricValue = infoProcessor.getMetricValue(metricName);
         if (!metricValue.isPresent())
         {
@@ -196,11 +199,11 @@ class SonargraphBuildAnalyzer
 
     public void changeBuildResultIfMetricValueIsZero(final String metricName, final String userDefinedAction)
     {
-        if (!m_controller.hasSoftwareSystem())
+        if (!s_controller.hasSoftwareSystem())
         {
             return;
         }
-        final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
+        final ISystemInfoProcessor infoProcessor = s_controller.createSystemInfoProcessor();
         final Optional<IMetricValue> metricValue = infoProcessor.getMetricValue(metricName);
 
         if (!metricValue.isPresent())
@@ -241,13 +244,13 @@ class SonargraphBuildAnalyzer
      */
     public void saveMetricsToCSV(final File metricHistoryFile, final long timeOfBuild, final Integer buildNumber) throws IOException
     {
-        if (!m_controller.hasSoftwareSystem())
+        if (!s_controller.hasSoftwareSystem())
         {
             return;
         }
         final IMetricHistoryProvider fileHandler = new CSVFileHandler(metricHistoryFile, m_exportMetaData);
         final HashMap<IMetricId, String> buildMetricValues = new HashMap<>();
-        final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
+        final ISystemInfoProcessor infoProcessor = s_controller.createSystemInfoProcessor();
 
         for (final IMetricId metric : m_exportMetaData.getMetricIds().values())
         {
@@ -264,5 +267,22 @@ class SonargraphBuildAnalyzer
     public Result getOverallBuildResult()
     {
         return m_overallBuildResult;
+    }
+    
+    private static final class LoadSystemReport implements FilePath.FileCallable<OperationResult>
+    {
+        private static final long serialVersionUID = 2405830264590692887L;
+
+        @Override
+        public void checkRoles(RoleChecker checker) throws SecurityException
+        {
+            // do nothing 
+        }
+
+        @Override
+        public OperationResult invoke(File file, VirtualChannel channel) throws IOException, InterruptedException
+        {
+            return s_controller.loadSystemReport(file);
+        }
     }
 }

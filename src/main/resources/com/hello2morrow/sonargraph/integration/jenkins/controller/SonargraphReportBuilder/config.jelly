@@ -72,7 +72,7 @@
       <f:radioBlock name="reportGeneration" value="preGenerated" title="Pre-Generated"
         checked="${(instance == null) ? 'true': instance.preGenerated}" inline="true" help="/plugin/sonargraph-integration/html/help-preGenerated.html">
         <f:entry title="Sonargraph XML Report" field="reportPath">
-          <f:textbox default="./target/sonargraph-report/sonargraph-report" />
+          <f:textbox default="./target/sonargraph/sonargraph-report" />
         </f:entry>
       </f:radioBlock>
     </f:entry>
