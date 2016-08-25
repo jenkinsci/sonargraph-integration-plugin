@@ -3,15 +3,8 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>2.11</version>
+		<version>1.609.3</version>
 	</parent>
-	
-	<properties>
-		<jenkins.version>1.609.3</jenkins.version>
-		<java.level>8</java.level>
-		<jenkins-test-harness.version>2.13</jenkins-test-harness.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>	
 
 	<artifactId>sonargraph-integration</artifactId>
 	<version>1.1.2-SNAPSHOT</version>
@@ -128,6 +121,9 @@
           </plugins>
         </pluginManagement>
 	</build>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<url>https://wiki.jenkins-ci.org/display/JENKINS/Sonargraph+Integration+Plugin</url>
 	<organization>
 		<name>hello2morrow GmbH, hello2morrow Inc., hello2morrow S.A.S</name>
