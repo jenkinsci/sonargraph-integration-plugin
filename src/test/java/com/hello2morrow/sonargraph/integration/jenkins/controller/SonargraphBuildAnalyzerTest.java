@@ -83,19 +83,19 @@ public class SonargraphBuildAnalyzerTest
 
         //Actual number of unresolved architecture violations is 2
 
-        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(5, 10);
+        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(8, 10);
         assertNull("No change expected if thresholds are not violated", result);
 
-        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(2, 5);
+        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(7, 10);
         assertEquals("Change expected if unstable threshold reached", Result.UNSTABLE, result);
 
-        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(1, 5);
+        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(3, 8);
         assertEquals("Change expected if unstable threshold violated", Result.UNSTABLE, result);
 
-        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(0, 2);
+        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(0, 7);
         assertEquals("Change expected if failure threshold reached", Result.FAILURE, result);
 
-        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(0, 1);
+        result = analyzer.changeBuildResultIfViolationThresholdsExceeded(0, 6);
         assertEquals("Change expected if failure threshold violated", Result.FAILURE, result);
     }
 
