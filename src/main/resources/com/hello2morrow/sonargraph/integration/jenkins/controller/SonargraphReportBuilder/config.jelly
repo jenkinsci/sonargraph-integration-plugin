@@ -59,13 +59,33 @@
               </f:entry>
             </f:block>
             
-            <f:entry title="Log level" field="logLevel">
-              <f:select />
-            </f:entry>
+            <f:section title="Split Report">
             
-            <f:entry title="Log file" field="logFile">
-              <f:textbox default="sonargraph_build.log"/>
-            </f:entry>                   
+	            <f:entry title="Split By Module" field="splitByModule">
+	              <f:checkbox default="false"/>
+	            </f:entry>
+	            
+	            <f:entry title="Element Count To Split Html Report" field="elementCountToSplitHtmlReport">
+	              <f:textbox default="1000"/>
+	            </f:entry>  
+            
+	            <f:entry title="Max Element Count For Html Details Page" field="maxElementCountForHtmlDetailsPage">
+	              <f:textbox default="2000"/>
+	            </f:entry>
+            
+            </f:section>
+                        
+            <f:section title="Logging">
+            
+	            <f:entry title="Log level" field="logLevel">
+	              <f:select />
+	            </f:entry>
+	            
+	            <f:entry title="Log file" field="logFile">
+	              <f:textbox default="sonargraph_build.log"/>
+	            </f:entry>  
+            
+            </f:section>                 
           </f:advanced>
         </f:block>
       </f:radioBlock>

@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson"
+  xmlns:f="/lib/form">
+
+  <f:section title="Sonargraph License Server" name="sonargraph">
+  <p>
+If you are running a dedicated Sonargraph license server, then specify host and port of it.
+If these parameters are not specified, the web-based
+hello2morrow license server will be used for
+activation code based licenses.
+  	</p>
+    <f:entry title="License Server Host (Host name or IP address)" field="licenseServerHost">
+      <f:textbox />
+    </f:entry>
+    <f:entry title="License Server Port" field="licenseServerPort">
+      <f:textbox default="8080"/>
+    </f:entry>
+  </f:section>
+  
+</j:jelly>
+ 

@@ -56,7 +56,12 @@ public class ConfigurationFileWriter
         SNAPSHOT_DIRECTORY("snapshotDirectory"),
         SNAPSHOT_FILE_NAME("snapshotFileName"),
         LOG_FILE("logFile"),
-        LOG_LEVEL("logLevel");
+        LOG_LEVEL("logLevel"),
+        LICENSE_SERVER_HOST("licenseServerHost"),
+        LICENSE_SERVER_PORT("licenseServerPort"),
+        ELEMENT_COUNT_TO_SPLIT_HTML_REPORT("elementCountToSplitHtmlReport"),
+        MAX_ELEMENT_COUNT_FOR_HTML_DETEILS_PAGE("maxElementCountForHtmlDetailsPage"),
+        SPLIT_BY_MODULE("splitByModule");
 
         private final String m_presentationName;
 
@@ -92,21 +97,7 @@ public class ConfigurationFileWriter
             Document doc = docBuilder.newDocument();
             Element sonargraphBuild = doc.createElement("sonargraphBuild");
             doc.appendChild(sonargraphBuild);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.ACTIVATION_CODE);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.LANGUAGES);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.INSTALLATION_DIRECTORY);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.SYSTEM_DIRECTORY);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.VIRTUAL_MODEL);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.REPORT_DIRECTORY);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.REPORT_FILENAME);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.REPORT_TYPE);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.REPORT_FORMAT);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.LICENSE_FILE);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.WORKSPACE_PROFILE);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.SNAPSHOT_DIRECTORY);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.SNAPSHOT_FILE_NAME);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.LOG_LEVEL);
-            setStartupAttribute(sonargraphBuild, parameters, MandatoryParameter.LOG_FILE);
+            setStartupAttributes(sonargraphBuild, parameters);
 
             Element failSet = doc.createElement("failSet");
             sonargraphBuild.appendChild(failSet);
@@ -130,13 +121,17 @@ public class ConfigurationFileWriter
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to create configuration file '", tfe);
         }
     }
-
-    private void setStartupAttribute(Element element, EnumMap<MandatoryParameter, String> params, MandatoryParameter param)
+    
+    private void setStartupAttributes(Element element, EnumMap<MandatoryParameter, String> params)
     {
-        final String value = params.get(param);
-        if (value != null)
+        for(MandatoryParameter parameter : params.keySet())
         {
-            element.setAttribute(param.getPresentationName(), value);
+            final String value = params.get(parameter);
+            if (value != null)
+            {
+                element.setAttribute(parameter.getPresentationName(), value);
+            }
         }
+           
     }
 }
