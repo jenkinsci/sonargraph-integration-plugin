@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
 
 import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
@@ -64,6 +65,7 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
 
 /**
  * This class contains all the functionality of the build step.
@@ -75,12 +77,11 @@ import jenkins.model.Jenkins;
 public final class SonargraphReportBuilder extends AbstractSonargraphRecorder implements IReportPathProvider
 {
     private static final String ORG_ECLIPSE_OSGI_JAR = "org.eclipse.osgi_*.jar";
-
     private static final String SONARGRAPH_BUILD_CLIENT_JAR = "com.hello2morrow.sonargraph.build.client_*.jar";
-
     private static final String DEFAULT_META_DATA_XML = "MetaData.xml";
-
     private static final String SONARGRAPH_BUILD_MAIN_CLASS = "com.hello2morrow.sonargraph.build.client.SonargraphBuildRunner";
+
+    public static final int MAX_PORT_NUMBER = 65535;
 
     private final String systemDirectory;
     private final String qualityModelFile;
@@ -105,8 +106,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     private final String logLevel;
     private final String logFile;
 
+    private final boolean splitByModule;
+    private final String elementCountToSplitHtmlReport;
+    private final String maxElementCountForHtmlDetailsPage;
+
     /**
-     * Constructor. Fields in the config.jelly must match the parameters in this
+     * Constructor. Fields in the config.jelly/global.jelly must match the parameters in this
      * constructor.
      */
     @DataBoundConstructor
@@ -116,7 +121,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
             final String workItemsAction, final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp,
             final boolean languageCPlusPlus, final String sonargraphBuildJDK, final String sonargraphBuildVersion, final String activationCode,
-            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName, final String logLevel, final String logFile)
+            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName,
+            final String logLevel, final String logFile, final String elementCountToSplitHtmlReport, final String maxElementCountForHtmlDetailsPage,
+            final boolean splitByModule)
     {
         super(architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction, architectureWarningsAction,
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
@@ -141,6 +148,10 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         this.snapshotFileName = snapshotFileName;
         this.logFile = logFile;
         this.logLevel = logLevel;
+
+        this.splitByModule = splitByModule;
+        this.elementCountToSplitHtmlReport = elementCountToSplitHtmlReport;
+        this.maxElementCountForHtmlDetailsPage = maxElementCountForHtmlDetailsPage;
     }
 
     /**
@@ -306,7 +317,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         // local configuration file, always on master
         final File configurationFileMaster = File.createTempFile("sonargraphBuildConfigurationMaster", ".xml");
-        
+
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
                 "Writing SonargraphBuild temporary configuration file on master to " + configurationFileMaster.getAbsolutePath(), null);
         final ConfigurationFileWriter writer = new ConfigurationFileWriter(configurationFileMaster);
@@ -322,11 +333,18 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.QUALITY_MODEL_FILE, getQualityModelFile());
         parameters.put(MandatoryParameter.VIRTUAL_MODEL, getVirtualModel());
         parameters.put(MandatoryParameter.LICENSE_FILE, getLicenseFile());
+
+        parameters.put(MandatoryParameter.LICENSE_SERVER_HOST, getDescriptor().getLicenseServerHost());
+        parameters.put(MandatoryParameter.LICENSE_SERVER_PORT, getDescriptor().getLicenseServerPort());
         parameters.put(MandatoryParameter.WORKSPACE_PROFILE, getWorkspaceProfile());
         parameters.put(MandatoryParameter.SNAPSHOT_DIRECTORY, getSnapshotDirectory());
         parameters.put(MandatoryParameter.SNAPSHOT_FILE_NAME, getSnapshotFileName());
         parameters.put(MandatoryParameter.LOG_LEVEL, getLogLevel());
         parameters.put(MandatoryParameter.LOG_FILE, getLogFile());
+
+        parameters.put(MandatoryParameter.SPLIT_BY_MODULE, isSplitByModule() ? "true" : "false");
+        parameters.put(MandatoryParameter.ELEMENT_COUNT_TO_SPLIT_HTML_REPORT, getElementCountToSplitHtmlReport());
+        parameters.put(MandatoryParameter.MAX_ELEMENT_COUNT_FOR_HTML_DETEILS_PAGE, getMaxElementCountForHtmlDetailsPage());
 
         writer.createConfigurationFile(parameters, listener.getLogger());
         final String content = new FilePath(configurationFileMaster).readToString();
@@ -335,13 +353,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final FilePath installationDirectory = new FilePath(launcher.getChannel(), sonargraphBuild.getHome());
         final FilePath pluginsDirectory = new FilePath(installationDirectory, "plugins");
         final FilePath clientDirectory = new FilePath(installationDirectory, "client");
-        
+
         final FilePath[] osgiJars = pluginsDirectory.list(ORG_ECLIPSE_OSGI_JAR);
         final FilePath osgiJar = osgiJars.length == 1 ? osgiJars[0] : null;
         // pre 8.9.0
         FilePath[] clientJars = pluginsDirectory.list(SONARGRAPH_BUILD_CLIENT_JAR);
         FilePath clientJar = clientJars.length == 1 ? clientJars[0] : null;
-        if(clientJar == null)
+        if (clientJar == null)
         {
             // since 8.9.0
             clientJars = clientDirectory.list(SONARGRAPH_BUILD_CLIENT_JAR);
@@ -356,7 +374,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         // separator taken from launcher, to also work on slaves
         final String classpathSeparator = launcher.isUnix() ? ":" : ";";
-        
+
         final String sonargraphBuildCommand = javaExe.getRemote() + " -ea -cp " + clientJar.getRemote() + classpathSeparator + osgiJar.getRemote()
                 + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFileSlave.getRemote();
 
@@ -544,6 +562,21 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return virtualModel;
     }
 
+    public String getMaxElementCountForHtmlDetailsPage()
+    {
+        return maxElementCountForHtmlDetailsPage;
+    }
+
+    public String getElementCountToSplitHtmlReport()
+    {
+        return elementCountToSplitHtmlReport;
+    }
+
+    public boolean isSplitByModule()
+    {
+        return splitByModule;
+    }
+
     public boolean isGeneratedBySonargraphBuild()
     {
         return !isPreGenerated();
@@ -580,12 +613,48 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         static final List<String> DEFAULT_QUALITY_MODELS = Arrays.asList("Sonargraph:Default.sgqm", "Sonargraph:Java.sgqm", "Sonargraph:CSharp.sgqm",
                 "Sonargraph:CPlusPlus.sgqm");
-        
+
         static final List<String> LOG_LEVELS = Arrays.asList("info", "off", "error", "warn", "debug", "trace", "all");
+
+        private String licenseServerHost;
+        private String licenseServerPort;
 
         public DescriptorImpl()
         {
             super();
+            load();
+        }
+
+        public String getLicenseServerHost()
+        {
+            return licenseServerHost;
+        }
+
+        public String getLicenseServerPort()
+        {
+            return licenseServerPort;
+        }
+
+        public void setLicenseServerHost(String licenseServerHost)
+        {
+            this.licenseServerHost = licenseServerHost;
+            SonargraphLogger.INSTANCE.log(Level.INFO, "License Server Host is " + licenseServerHost);
+        }
+
+        public void setLicenseServerPort(String licenseServerPort)
+        {
+            this.licenseServerPort = licenseServerPort;
+            SonargraphLogger.INSTANCE.log(Level.INFO, "License Server Port is " + licenseServerPort);
+        }
+
+        @Override
+        public boolean configure(StaplerRequest req, JSONObject json) throws FormException
+        {
+            json = json.getJSONObject("sonargraph");
+            setLicenseServerHost(json.getString("licenseServerHost"));
+            setLicenseServerPort(json.getString("licenseServerPort"));
+            save();
+            return true;
         }
 
         @Override
@@ -691,10 +760,44 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         {
             return checkAbsoluteFile(value, "license");
         }
+        
+        public FormValidation doCheckElementCountToSplitHtmlReport(@QueryParameter String value)
+        {
+            if(value == null || value.isEmpty()) return FormValidation.ok();
+            
+            return checkSplitIntegerParameter(value);
+        }
+
+        public FormValidation doCheckMaxElementCountForHtmlDetailsPage(@QueryParameter String value)
+        {
+            return checkSplitIntegerParameter(value);
+        }
+
+        public FormValidation doCheckLicenseServerPort(@QueryParameter String value)
+        {
+            if (value == null || value.isEmpty())
+            {
+                return FormValidation.ok();
+            }
+
+            try
+            {
+                final int parsed = Integer.parseUnsignedInt(value);
+                if (parsed > 0 && parsed <= MAX_PORT_NUMBER)
+                {
+                    return FormValidation.ok();
+                }
+            }
+            catch (NumberFormatException nfe)
+            {
+                // do nothing
+            }
+            return FormValidation.error("Please enter a valid port number.");
+        }
 
         public FormValidation doCheckLogFile(@AncestorInPath
-                final AbstractProject<?, ?> project, @QueryParameter
-                final String value) throws IOException, InterruptedException
+        final AbstractProject<?, ?> project, @QueryParameter
+        final String value) throws IOException, InterruptedException
         {
             final FilePath ws = project.getSomeWorkspace();
             if (ws == null)
@@ -711,7 +814,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             final String logfileURL = project.getAbsoluteUrl() + "ws/" + value;
             return FormValidation.okWithMarkup("Logfile is <a href='" + logfileURL + "'>" + logfile.getRemote() + "</a>");
         }
-        
+
         public FormValidation doCheckQualityModelFile(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException, InterruptedException
@@ -722,10 +825,10 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             }
             return checkFileInWorkspace(project, value, "sgqm");
         }
-        
+
         public FormValidation doCheckReportPath(@AncestorInPath
-                final AbstractProject<?, ?> project, @QueryParameter
-                final String value) throws IOException, InterruptedException
+        final AbstractProject<?, ?> project, @QueryParameter
+        final String value) throws IOException, InterruptedException
         {
             if (value != null && !value.isEmpty())
             {
@@ -758,6 +861,29 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 return FormValidation.error(result.toString());
             }
             return FormValidation.ok();
+        }
+        
+        /**
+         * Split integer parameters must be >= -1.
+         * 
+         * @param value the value to check.
+         * @return FormValidation.ok when value is a valid split integer value, FormValidation.error otherwise.
+         */
+        private FormValidation checkSplitIntegerParameter(String value)
+        {
+            try
+            {
+                int parsed = Integer.parseInt(value);
+                if (parsed >= -1)
+                {
+                    return FormValidation.ok();
+                }
+            }
+            catch(NumberFormatException nfe)
+            {
+                // do nothing
+            }
+            return FormValidation.error("Please enter either '-1' (never split), or '0' (use default), or a positive integer value.");
         }
 
         private FormValidation checkFileInWorkspace(final AbstractProject<?, ?> project, final String file, final String extension)
@@ -830,13 +956,14 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             }
             return ws.validateRelativeDirectory(value, true);
         }
-        
+
         public ListBoxModel doFillLogLevelItems()
         {
             ListBoxModel items = new ListBoxModel();
             LOG_LEVELS.forEach(level -> items.add(level));
             return items;
         }
+
     }
 
     protected static OperationResultWithOutcome<IExportMetaData> getDefaultMetaData() throws IOException, InterruptedException
