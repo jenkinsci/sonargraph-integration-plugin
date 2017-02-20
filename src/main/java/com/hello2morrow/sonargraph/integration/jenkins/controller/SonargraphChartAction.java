@@ -198,11 +198,27 @@ public class SonargraphChartAction implements Action, ProminentProjectAction
         return ConfigParameters.ACTION_URL_NAME.getValue();
     }
 
+    /**
+     * Report URL is used as html href for "Show most recent Sonargraph Report" in SonargraphChartAction/index.jelly.
+     * Depends on global Jenkins URL being set correctly in Jenkins.
+     * Otherwise a relative path is used, which may work or not.
+     * 
+     * @return the absolute or relative url/path for the most recent sonargraph report.
+     */
     public String getReportURL()
     {
-        final JenkinsLocationConfiguration globalConfig = new JenkinsLocationConfiguration();
-        return globalConfig.getUrl() + ConfigParameters.JOB_FOLDER.getValue() + project.getName() + "/"
-                + ConfigParameters.HTML_REPORT_ACTION_URL.getValue();
+        final JenkinsLocationConfiguration globalConfig = JenkinsLocationConfiguration.get();
+        final String url = globalConfig.getUrl();
+        final String projectName = project.getName();
+
+        if (url != null)
+        {
+            return url + ConfigParameters.JOB_FOLDER.getValue() + projectName + "/" + ConfigParameters.HTML_REPORT_ACTION_URL.getValue();
+        }
+        else
+        {
+            return "../" + ConfigParameters.HTML_REPORT_ACTION_URL.getValue();
+        }
     }
 
     public static String getSimpleValue(final String parameterName, final Map<String, String[]> params)
