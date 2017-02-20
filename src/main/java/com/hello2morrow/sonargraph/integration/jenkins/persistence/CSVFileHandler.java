@@ -235,7 +235,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
         {
             if (valueString.equals(NOT_EXISTING_VALUE))
             {
-                SonargraphLogger.INSTANCE.log(Level.INFO, "Skipping value for metric '" + metric.getName() + "' for build number '"
+                SonargraphLogger.INSTANCE.log(Level.FINE, "Skipping value for metric '" + metric.getName() + "' for build number '"
                         + buildNumberString + "'; it did not exist in Sonargraph XML report.");
                 sonargraphDataset.add(new NotExistingDataPoint(buildNumber));
                 return;
