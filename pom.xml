@@ -1,15 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.609.3</version>
+		<version>2.22</version>
 	</parent>
-
+	
 	<artifactId>sonargraph-integration</artifactId>
 	<version>2.0.2-SNAPSHOT</version>
 	<name>Sonargraph Integration Jenkins Plugin</name>
 	<packaging>hpi</packaging>
+
+	<properties>
+		<jenkins.version>1.609.3</jenkins.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>	
 
 	<distributionManagement>
 		<repository>
@@ -29,12 +35,22 @@
 			<id>repo.jenkins-ci.org</id>
 			<url>http://repo.jenkins-ci.org/public/</url>
 		</repository>
+		<repository>
+        	<id>central</id>
+        	<name>repo</name>
+        	<url>http://repo.jenkins-ci.org/repo</url>
+    	</repository>
 	</repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
 			<id>repo.jenkins-ci.org</id>
 			<url>http://repo.jenkins-ci.org/public/</url>
+		</pluginRepository>
+		<pluginRepository>
+        	<id>central</id>
+        	<name>repo</name>
+        	<url>http://repo.jenkins-ci.org/repo</url>
 		</pluginRepository>
 	</pluginRepositories>
 
@@ -48,12 +64,6 @@
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
 			<version>3.4</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>
@@ -75,17 +85,44 @@
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>display-info</id>
+						<goals>
+							<goal>display-info</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<enforceBytecodeVersion>
+									<maxJdkVersion>1.8</maxJdkVersion>
+								</enforceBytecodeVersion>
+							</rules>
+						</configuration>
+					</execution>
+					<execution>
+						<id>enforce-versions</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>1.8</version>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		    <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jenkins-ci.tools</groupId>
-                <artifactId>maven-hpi-plugin</artifactId>
-                <version>1.114</version><!--$NO-MVN-MAN-VER$-->
             </plugin>
         </plugins>
         <pluginManagement>
@@ -104,6 +141,7 @@
                        <artifactId>maven-enforcer-plugin</artifactId>
                        <versionRange>[1.0.0,)</versionRange>
                        <goals>
+                         <goal>enforce</goal>
                          <goal>display-info</goal>
                        </goals>
                      </pluginExecutionFilter>
@@ -125,6 +163,19 @@
                        <ignore />
                      </action>
                    </pluginExecution>
+                   <pluginExecution>
+                     <pluginExecutionFilter>
+                       <groupId>org.apache.maven.plugins</groupId>
+                       <artifactId>maven-javadoc-plugin</artifactId>
+                       <versionRange>[2.10,)</versionRange>
+                       <goals>
+                         <goal>javadoc</goal>
+                       </goals>
+                     </pluginExecutionFilter>
+                     <action>
+                       <ignore />
+                     </action>
+                   </pluginExecution>
                  </pluginExecutions>
                </lifecycleMappingMetadata>
              </configuration>
@@ -132,9 +183,7 @@
           </plugins>
         </pluginManagement>
 	</build>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+
 	<url>https://wiki.jenkins-ci.org/display/JENKINS/Sonargraph+Integration+Plugin</url>
 	<organization>
 		<name>hello2morrow GmbH, hello2morrow Inc., hello2morrow S.A.S</name>
@@ -144,8 +193,8 @@
 		<connection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</connection>
 		<developerConnection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/sonargraph-integration-plugin</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<licenses>
 		<license>
