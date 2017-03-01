@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
-import com.hello2morrow.sonargraph.integration.access.foundation.StringUtility;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IIssueCategory;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
@@ -78,9 +77,11 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         final FilePath projectRootDir = new FilePath(build.getProject().getRootDir());
         final ReportHistoryFileManager reportHistoryManager = new ReportHistoryFileManager(projectRootDir, 
                 ConfigParameters.REPORT_HISTORY_FOLDER.getValue(), logger);
+        
+        FilePath reportFile = null;
         try
         {
-            reportHistoryManager.storeGeneratedReportDirectory(sonargraphReportDirectory, reportFileName,  build.getNumber(), logger);
+            reportFile = reportHistoryManager.storeGeneratedReportDirectory(sonargraphReportDirectory, reportFileName,  build.getNumber(), logger);
         }
         catch (final IOException ex)
         {
@@ -88,9 +89,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
             return false;
         }
 
-        final String reportFileNameWithExtension = StringUtility.addXmlExtensionIfNotPreset(reportFileName);
-        final FilePath reportFile = new FilePath(sonargraphReportDirectory, reportFileNameWithExtension);
-        if (!reportFile.exists())
+        if (reportFile == null || !reportFile.exists() || reportFile.isRemote() || reportFile.isDirectory())
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Sonargraph analysis cannot be executed as Sonargraph report does not exist.",
                     null);

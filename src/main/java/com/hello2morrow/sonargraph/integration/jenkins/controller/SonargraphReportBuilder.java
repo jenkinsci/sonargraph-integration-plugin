@@ -167,46 +167,38 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             try
             {
                 final FilePath someWorkspace = project.getSomeWorkspace();
-                if (someWorkspace != null)
+                OperationResultWithOutcome<IExportMetaData> result = getMetaData(someWorkspace, getMetaDataFile());
+
+                if (result.isSuccess())
                 {
-
-                    OperationResultWithOutcome<IExportMetaData> result = getMetaData(someWorkspace, getMetaDataFile());
-
-                    if (result.isSuccess())
+                    List<String> metricList;
+                    final IExportMetaData exportMetaData = result.getOutcome();
+                    if (isAllCharts())
                     {
-                        List<String> metricList;
-                        final IExportMetaData exportMetaData = result.getOutcome();
-                        if (isAllCharts())
+                        IMetricLevel systemLevel = exportMetaData.getMetricLevels().get("System");
+                        List<IMetricId> allSystemMetrics = exportMetaData.getMetricIdsForLevel(systemLevel);
+                        metricList = new ArrayList<>(allSystemMetrics.size());
+                        for (IMetricId metricId : allSystemMetrics)
                         {
-                            IMetricLevel systemLevel = exportMetaData.getMetricLevels().get("System");
-                            List<IMetricId> allSystemMetrics = exportMetaData.getMetricIdsForLevel(systemLevel);
-                            metricList = new ArrayList<>(allSystemMetrics.size());
-                            for (IMetricId metricId : allSystemMetrics)
-                            {
-                                metricList.add(metricId.getName());
-                            }
+                            metricList.add(metricId.getName());
                         }
-                        else
-                        {
-                            metricList = new ArrayList<>();
-                            if (metrics != null)
-                            {
-                                for (Metric metric : metrics)
-                                {
-                                    metricList.add(metric.getMetricName());
-                                }
-                            }
-                        }
-                        actions.add(new SonargraphChartAction(project, metricList, exportMetaData));
                     }
                     else
                     {
-                        SonargraphLogger.INSTANCE.log(Level.SEVERE, "Cannot add SonargraphChartAction, no Meta Data found.");
+                        metricList = new ArrayList<>();
+                        if (metrics != null)
+                        {
+                            for (Metric metric : metrics)
+                            {
+                                metricList.add(metric.getMetricName());
+                            }
+                        }
                     }
+                    actions.add(new SonargraphChartAction(project, metricList, exportMetaData));
                 }
                 else
                 {
-                    SonargraphLogger.INSTANCE.log(Level.WARNING, "SonargraphChartAction needs a workspace");
+                    SonargraphLogger.INSTANCE.log(Level.SEVERE, "Cannot add SonargraphChartAction, no Meta Data found.");
                 }
             }
             catch (IOException | InterruptedException e)
@@ -760,11 +752,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         {
             return checkAbsoluteFile(value, "license");
         }
-        
+
         public FormValidation doCheckElementCountToSplitHtmlReport(@QueryParameter String value)
         {
-            if(value == null || value.isEmpty()) return FormValidation.ok();
-            
+            if (value == null || value.isEmpty())
+                return FormValidation.ok();
+
             return checkSplitIntegerParameter(value);
         }
 
@@ -862,7 +855,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             }
             return FormValidation.ok();
         }
-        
+
         /**
          * Split integer parameters must be >= -1.
          * 
@@ -879,7 +872,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                     return FormValidation.ok();
                 }
             }
-            catch(NumberFormatException nfe)
+            catch (NumberFormatException nfe)
             {
                 // do nothing
             }
