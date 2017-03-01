@@ -98,7 +98,6 @@ public class SonargraphChartAction implements Action, ProminentProjectAction
      */
     public void doGetPlot(final StaplerRequest req, final StaplerResponse rsp)
     {
-        @SuppressWarnings("unchecked")
         final Map<String, String[]> parameterMap = req.getParameterMap();
         final String metricName = getSimpleValue(METRIC_PARAMETER, parameterMap);
 
