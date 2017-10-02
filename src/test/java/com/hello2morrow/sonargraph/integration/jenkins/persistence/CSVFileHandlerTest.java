@@ -36,9 +36,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
-import com.hello2morrow.sonargraph.integration.access.foundation.OperationResultWithOutcome;
-import com.hello2morrow.sonargraph.integration.access.foundation.StringUtility;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
+import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.model.BuildDataPoint;
@@ -72,7 +71,7 @@ public class CSVFileHandlerTest
     public static void setUpClass() throws IOException
     {
         File exportMetaDataFile = new File(META_DATA_XML);
-        OperationResultWithOutcome<IExportMetaData> result = new ControllerFactory().createMetaDataController()
+        ResultWithOutcome<IExportMetaData> result = ControllerAccess.createMetaDataController()
                 .loadExportMetaData(exportMetaDataFile);
         if (result.isSuccess())
         {
@@ -114,8 +113,8 @@ public class CSVFileHandlerTest
         final CSVFileHandler handler = new CSVFileHandler(newFile, s_metaData);
         final String shoudBeTheFirstLine = handler.createHeaderLine();
 
-        final CSVReader csvReader = new CSVReader(new FileReader(newFile), StringUtility.CSV_SEPARATOR);
-        assertArrayEquals(shoudBeTheFirstLine.split(String.valueOf(StringUtility.CSV_SEPARATOR)), csvReader.readNext());
+        final CSVReader csvReader = new CSVReader(new FileReader(newFile), CSVFileHandler.CSV_SEPARATOR);
+        assertArrayEquals(shoudBeTheFirstLine.split(String.valueOf(CSVFileHandler.CSV_SEPARATOR)), csvReader.readNext());
         csvReader.close();
     }
 
@@ -204,7 +203,7 @@ public class CSVFileHandlerTest
         buildMetrics.put(m_metric5, "200.456");
         final long timestamp = System.currentTimeMillis();
         csvFileHandler.writeMetricValues(1, timestamp, buildMetrics);
-        final CSVReader csvReader = new CSVReader(new FileReader(newFile), StringUtility.CSV_SEPARATOR);
+        final CSVReader csvReader = new CSVReader(new FileReader(newFile), CSVFileHandler.CSV_SEPARATOR);
         csvReader.readNext(); //Do nothing with the first line
         final String[] line = csvReader.readNext();
         csvReader.close();

@@ -36,7 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
-import com.hello2morrow.sonargraph.integration.access.foundation.StringUtility;
+import com.hello2morrow.sonargraph.integration.access.foundation.Utility;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
@@ -53,6 +53,8 @@ import com.opencsv.CSVReader;
  */
 public class CSVFileHandler implements IMetricHistoryProvider
 {
+    public static final char CSV_SEPARATOR = ';';
+    
     private static final String BUILDNUMBER_COLUMN_NAME = "buildnumber";
     private static final String TIMESTAMP_COLUMN_NAME = "timestamp";
 
@@ -98,7 +100,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
         {
             return;
         }
-        final String newHeader = String.join(String.valueOf(StringUtility.CSV_SEPARATOR), newColumnNames);
+        final String newHeader = String.join(String.valueOf(CSV_SEPARATOR), newColumnNames);
 
         Path temp;
         try
@@ -116,14 +118,14 @@ public class CSVFileHandler implements IMetricHistoryProvider
                 BufferedReader reader = Files.newBufferedReader(temp, StandardCharsets.US_ASCII))
         {
             writer.write(newHeader);
-            writer.write(StringUtility.LINE_SEPARATOR);
+            writer.write(Utility.LINE_SEPARATOR);
             reader.readLine(); // NOSONAR ignore old header line
 
             String line;
             while ((line = reader.readLine()) != null)
             {
                 writer.write(line);
-                writer.write(StringUtility.LINE_SEPARATOR);
+                writer.write(Utility.LINE_SEPARATOR);
             }
         }
         catch (final IOException ioe)
@@ -136,7 +138,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
     private String[] getHeaderLine()
     {
 
-        try (final CSVReader csvReader = new CSVReader(new FileReader(m_file), StringUtility.CSV_SEPARATOR);)
+        try (final CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR);)
         {
             final String[] nextLine = csvReader.readNext();
             return nextLine;
@@ -150,12 +152,12 @@ public class CSVFileHandler implements IMetricHistoryProvider
 
     public String createHeaderLine()
     {
-        final StringBuilder headerLine = new StringBuilder(BUILDNUMBER_COLUMN_NAME).append(StringUtility.CSV_SEPARATOR);
+        final StringBuilder headerLine = new StringBuilder(BUILDNUMBER_COLUMN_NAME).append(CSV_SEPARATOR);
         headerLine.append(TIMESTAMP_COLUMN_NAME);
 
         for (final String metricName : m_metaData.getMetricIds().keySet())
         {
-            headerLine.append(StringUtility.CSV_SEPARATOR);
+            headerLine.append(CSV_SEPARATOR);
             headerLine.append(metricName);
         }
         return headerLine.toString();
@@ -171,7 +173,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
             return sonargraphDataset;
         }
 
-        try (CSVReader csvReader = new CSVReader(new FileReader(m_file), StringUtility.CSV_SEPARATOR))
+        try (CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR))
         {
             String[] nextLine;
             final int column = m_columnMapper.getIndex(metric.getName());
@@ -272,12 +274,12 @@ public class CSVFileHandler implements IMetricHistoryProvider
     {
         final FileWriter fileWriter = new FileWriter(m_file, true);
         final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        final StringBuilder line = new StringBuilder(buildnumber.toString()).append(StringUtility.CSV_SEPARATOR);
+        final StringBuilder line = new StringBuilder(buildnumber.toString()).append(CSV_SEPARATOR);
 
         line.append(timestamp);
         for (final String metric : m_columnMapper.getColumnNames(true))
         {
-            line.append(StringUtility.CSV_SEPARATOR);
+            line.append(CSV_SEPARATOR);
             final String value = metricValues.get(m_metaData.getMetricIds().get(metric));
             if (value == null)
             {

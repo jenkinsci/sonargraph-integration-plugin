@@ -27,9 +27,9 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
-import com.hello2morrow.sonargraph.integration.access.foundation.OperationResultWithOutcome;
+import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.ISingleExportMetaData;
 
@@ -41,9 +41,9 @@ public class CSVColumnMapperTest
     @BeforeClass
     public static void setUp() throws IOException
     {
-        final IMetaDataController metaDataController = new ControllerFactory().createMetaDataController();
+        final IMetaDataController metaDataController = ControllerAccess.createMetaDataController();
         File metaDataFile = new File(META_DATA_XML);
-        OperationResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(metaDataFile);
+        ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(metaDataFile);
         if (result.isSuccess())
         {
             s_metaData = result.getOutcome();
