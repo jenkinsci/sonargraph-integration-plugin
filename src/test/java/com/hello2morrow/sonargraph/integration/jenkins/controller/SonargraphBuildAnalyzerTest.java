@@ -20,9 +20,6 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import hudson.FilePath;
-import hudson.model.Result;
-import hudson.remoting.VirtualChannel;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,11 +29,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
-import com.hello2morrow.sonargraph.integration.access.foundation.OperationResultWithOutcome;
+import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricId.StandardName;
+
+import hudson.FilePath;
+import hudson.model.Result;
+import hudson.remoting.VirtualChannel;
 
 public class SonargraphBuildAnalyzerTest
 {
@@ -51,8 +52,8 @@ public class SonargraphBuildAnalyzerTest
     @Before
     public void setUp() throws IOException
     {
-        final IMetaDataController metaDataController = new ControllerFactory().createMetaDataController();
-        final OperationResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(new File(METRIC_META_DATA_FILE_NAME));
+        final IMetaDataController metaDataController = ControllerAccess.createMetaDataController();
+        final ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(new File(METRIC_META_DATA_FILE_NAME));
         assertTrue(result.toString(), result.isSuccess());
         m_metricMetaData = result.getOutcome();
 

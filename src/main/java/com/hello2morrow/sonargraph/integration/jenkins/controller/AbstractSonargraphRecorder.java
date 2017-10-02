@@ -35,7 +35,6 @@ import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogg
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.PluginVersionReader;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ReportHistoryFileManager;
 
-@SuppressWarnings("unchecked")
 public abstract class AbstractSonargraphRecorder extends Recorder
 {
     private final String architectureViolationsAction;

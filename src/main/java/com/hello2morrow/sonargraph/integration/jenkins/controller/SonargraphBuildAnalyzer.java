@@ -29,10 +29,10 @@ import java.util.logging.Level;
 
 import org.jenkinsci.remoting.RoleChecker;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
 import com.hello2morrow.sonargraph.integration.access.controller.ISonargraphSystemController;
 import com.hello2morrow.sonargraph.integration.access.controller.ISystemInfoProcessor;
-import com.hello2morrow.sonargraph.integration.access.foundation.OperationResult;
+import com.hello2morrow.sonargraph.integration.access.foundation.Result;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IIssue;
 import com.hello2morrow.sonargraph.integration.access.model.IIssueCategory;
@@ -44,7 +44,7 @@ import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvi
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.CSVFileHandler;
 
 import hudson.FilePath;
-import hudson.model.Result;
+
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -61,13 +61,13 @@ class SonargraphBuildAnalyzer
      * HashMap containing a code for the build result and a Result object for
      * each code.
      */
-    private final HashMap<String, Result> m_buildResults = new HashMap<>();
+    private final HashMap<String, hudson.model.Result> m_buildResults = new HashMap<>();
 
     /** Final result of the build process after being affected by the metrics analysis.s */
-    private Result m_overallBuildResult;
+    private hudson.model.Result m_overallBuildResult;
 
     private OutputStream m_logger = null;
-    private final ISonargraphSystemController m_controller = new ControllerFactory().createController();
+    private final ISonargraphSystemController m_controller = ControllerAccess.createController();
 
     /**
      * Constructor.
@@ -84,7 +84,7 @@ class SonargraphBuildAnalyzer
         assert logger != null : "Parameter 'logger' of method 'SonargraphBuildAnalyzer' mu st not be null";
         m_logger = logger;
         
-        final OperationResult operationResult = sonargraphReportPath.act(new LoadSystemReport(m_controller));
+        final Result operationResult = sonargraphReportPath.act(new LoadSystemReport(m_controller));
 
         if (operationResult.isFailure())
         {
@@ -94,8 +94,8 @@ class SonargraphBuildAnalyzer
 
         m_exportMetaData = metricMetaData != null ? metricMetaData : ISingleExportMetaData.EMPTY;
 
-        m_buildResults.put(BuildActionsEnum.UNSTABLE.getActionCode(), Result.UNSTABLE);
-        m_buildResults.put(BuildActionsEnum.FAILED.getActionCode(), Result.FAILURE);
+        m_buildResults.put(BuildActionsEnum.UNSTABLE.getActionCode(), hudson.model.Result.UNSTABLE);
+        m_buildResults.put(BuildActionsEnum.FAILED.getActionCode(), hudson.model.Result.FAILURE);
 
         m_overallBuildResult = null;
     }
@@ -103,7 +103,7 @@ class SonargraphBuildAnalyzer
     /**
      * Analyzes architecture specific metrics.
      */
-    public Result changeBuildResultIfViolationThresholdsExceeded(final Integer thresholdUnstable, final Integer thresholdFailed)
+    public hudson.model.Result changeBuildResultIfViolationThresholdsExceeded(final Integer thresholdUnstable, final Integer thresholdFailed)
     {
         if (!m_controller.hasSoftwareSystem())
         {
@@ -154,7 +154,7 @@ class SonargraphBuildAnalyzer
                     + " because value for '" + issueCategory.getPresentationName() + "' is " + numberOfIssues, null);
         }
         else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
-                && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
+                && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
@@ -190,7 +190,7 @@ class SonargraphBuildAnalyzer
                     + " because value for '" + metricValue.get().getId().getPresentationName() + "' is " + value, null);
         }
         else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
-                && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
+                && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
@@ -224,7 +224,7 @@ class SonargraphBuildAnalyzer
 
             }
             else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
-                    && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(Result.FAILURE)))
+                    && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
             {
                 m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
                 SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
@@ -265,12 +265,12 @@ class SonargraphBuildAnalyzer
         fileHandler.writeMetricValues(buildNumber, timeOfBuild, buildMetricValues);
     }
 
-    public Result getOverallBuildResult()
+    public hudson.model.Result getOverallBuildResult()
     {
         return m_overallBuildResult;
     }
     
-    private static final class LoadSystemReport implements FilePath.FileCallable<OperationResult>
+    private static final class LoadSystemReport implements FilePath.FileCallable<Result>
     {
         private static final long serialVersionUID = 2405830264590692887L;
         
@@ -288,7 +288,7 @@ class SonargraphBuildAnalyzer
         }
 
         @Override
-        public OperationResult invoke(File file, VirtualChannel channel) throws IOException, InterruptedException
+        public Result invoke(File file, VirtualChannel channel) throws IOException, InterruptedException
         {
             assert file != null : "Parameter 'file' in method 'invoke' must not be null";
             SonargraphLogger.INSTANCE.log(Level.INFO, "Load system report from file " + file.getAbsolutePath());

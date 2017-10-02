@@ -34,10 +34,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
-import com.hello2morrow.sonargraph.integration.access.foundation.OperationResultWithOutcome;
-import com.hello2morrow.sonargraph.integration.access.foundation.StringUtility;
+import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricCategory;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
@@ -167,7 +166,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             try
             {
                 final FilePath someWorkspace = project.getSomeWorkspace();
-                OperationResultWithOutcome<IExportMetaData> result = getMetaData(someWorkspace, getMetaDataFile());
+                ResultWithOutcome<IExportMetaData> result = getMetaData(someWorkspace, getMetaDataFile());
 
                 if (result.isSuccess())
                 {
@@ -224,7 +223,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         final FilePath sonargraphReportDirectory = new FilePath(build.getWorkspace(), getReportDirectory());
-        final OperationResultWithOutcome<IExportMetaData> metaData = getMetaData(build.getProject().getSomeWorkspace(), getMetaDataFile());
+        final ResultWithOutcome<IExportMetaData> metaData = getMetaData(build.getProject().getSomeWorkspace(), getMetaDataFile());
         if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), metaData.getOutcome(), listener.getLogger()))
         {
             //only add the actions after the processing has been successful
@@ -695,7 +694,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         {
             final ListBoxModel items = new ListBoxModel();
             final FilePath ws = project.getSomeWorkspace();
-            final OperationResultWithOutcome<IExportMetaData> result = getMetaData(ws, metaDataFile);
+            final ResultWithOutcome<IExportMetaData> result = getMetaData(ws, metaDataFile);
             if (result.isSuccess())
             {
                 final IExportMetaData metaData = result.getOutcome();
@@ -722,7 +721,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         {
             final ListBoxModel items = new ListBoxModel();
             final FilePath ws = project.getSomeWorkspace();
-            final OperationResultWithOutcome<IExportMetaData> result = getMetaData(ws, metaDataFile);
+            final ResultWithOutcome<IExportMetaData> result = getMetaData(ws, metaDataFile);
             if (result.isSuccess())
             {
                 final IExportMetaData metaData = result.getOutcome();
@@ -848,7 +847,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             {
                 return validation;
             }
-            final OperationResultWithOutcome<IExportMetaData> result = getMetaData(project.getSomeWorkspace(), value);
+            final ResultWithOutcome<IExportMetaData> result = getMetaData(project.getSomeWorkspace(), value);
             if (!result.isSuccess())
             {
                 return FormValidation.error(result.toString());
@@ -938,7 +937,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 return FormValidation.ok();
             }
 
-            if (!StringUtility.validateNotNullAndRegexp(value, "([a-zA-Z]:\\\\)?[\\/\\\\a-zA-Z0-9_.-]+.sonargraph$"))
+            if (!validateNotNullAndRegexp(value, "([a-zA-Z]:\\\\)?[\\/\\\\a-zA-Z0-9_.-]+.sonargraph$"))
             {
                 return FormValidation.error("Please enter a valid system directory");
             }
@@ -959,14 +958,14 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     }
 
-    protected static OperationResultWithOutcome<IExportMetaData> getDefaultMetaData() throws IOException, InterruptedException
+    protected static ResultWithOutcome<IExportMetaData> getDefaultMetaData() throws IOException, InterruptedException
     {
-        final IMetaDataController controller = new ControllerFactory().createMetaDataController();
+        final IMetaDataController controller = ControllerAccess.createMetaDataController();
         InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
         return controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
     }
 
-    protected static OperationResultWithOutcome<IExportMetaData> getMetaData(final FilePath ws, String metaDataFile)
+    protected static ResultWithOutcome<IExportMetaData> getMetaData(final FilePath ws, String metaDataFile)
             throws IOException, InterruptedException
     {
         if (ws == null || metaDataFile == null || metaDataFile.isEmpty())
@@ -982,10 +981,24 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return getDefaultMetaData();
         }
 
-        final IMetaDataController controller = new ControllerFactory().createMetaDataController();
-        OperationResultWithOutcome<IExportMetaData> result = controller.loadExportMetaData(exportMetaDataFile.read(),
+        final IMetaDataController controller = ControllerAccess.createMetaDataController();
+        ResultWithOutcome<IExportMetaData> result = controller.loadExportMetaData(exportMetaDataFile.read(),
                 exportMetaDataFile.toURI().toString());
         return result;
     }
+    
+    public static boolean validateNotNullAndRegexp(final String value, final String pattern)
+    {
+        if (value == null)
+        {
+            return false;
+        }
 
+        if (!value.matches(pattern))
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
