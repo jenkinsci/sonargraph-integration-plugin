@@ -366,7 +366,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         // separator taken from launcher, to also work on slaves
         final String classpathSeparator = launcher.isUnix() ? ":" : ";";
 
-        final String sonargraphBuildCommand = javaExe.getRemote() + " -ea -cp " + clientJar.getRemote() + classpathSeparator + osgiJar.getRemote()
+        final String sonargraphBuildCommand = handleBlanksForConsoleCommand(javaExe.getRemote()) + " -ea -cp " + handleBlanksForConsoleCommand(clientJar.getRemote()) + classpathSeparator + handleBlanksForConsoleCommand(osgiJar.getRemote())
                 + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFileSlave.getRemote();
 
         ProcStarter procStarter = launcher.new ProcStarter();
@@ -387,6 +387,18 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return false;
         }
         return true;
+    }
+
+    private String handleBlanksForConsoleCommand(String partOfCommand)
+    {
+        if(partOfCommand.contains(" "))
+        {
+            return "\"" + partOfCommand + "\"";
+        }
+        else
+        {
+            return partOfCommand;
+        }
     }
 
     private String getReportType()
