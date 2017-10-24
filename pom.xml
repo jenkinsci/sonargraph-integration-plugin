@@ -207,14 +207,6 @@
 
 	<developers>
 		<developer>
-			<id>ingmarkellner</id>
-			<name>Ingmar Kellner</name>
-		</developer>
-		<developer>
-			<id>esteban-h2m</id>
-			<name>Esteban Angee</name>
-		</developer>
-		<developer>
 			<id>andreashoyerh2m</id>
 			<name>Andreas Hoyer</name>
 		</developer>
