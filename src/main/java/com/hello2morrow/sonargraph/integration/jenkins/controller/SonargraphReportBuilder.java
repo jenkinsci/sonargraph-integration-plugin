@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2016 hello2morrow GmbH
- * mailto: info AT hello2morrow DOT com
+ * Copyright (C) 2015-2018 hello2morrow GmbH
+ * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions
- * and limitations under the License.
- *******************************************************************************/
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import java.io.File;
@@ -56,10 +56,12 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Describable;
 import hudson.model.JDK;
 import hudson.model.Project;
 import hudson.model.TopLevelItem;
 import hudson.model.Queue.FlyweightTask;
+import hudson.tools.ToolInstaller;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -253,24 +255,32 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final String jdkName = getSonargraphBuildJDK();
         if (jdkName == null || jdkName.isEmpty())
         {
+            // no JDK  defined for SonargraphBuild, try to get the one Jenkins was started with
             final List<JDK> allJDKs = jenkins.getJDKs();
-            if (allJDKs.size() != 1)
+            if (allJDKs.size() == 0)
             {
-                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Please configure a JDK for Sonargraph Build.", null);
-                return false;
+                jdk = new JDK("default", System.getProperty("java.home"));
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.WARNING, "Must try to use JDK Jenkins is running with for Sonargraph Build.", null);
+            }
+            else if (allJDKs.size() == 1)
+            {
+                jdk = allJDKs.get(0);
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Using default JDK '" + jdk.getName() + "' for Sonargraph Build.", null);
             }
             else
             {
                 jdk = allJDKs.get(0);
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.WARNING, "There are multiple JDKs, please configure one of them. Using JDK '" + jdk.getName() + "' (the first one) for Sonargraph Build.", null);
             }
         }
         else
         {
             jdk = jenkins.getJDK(jdkName);
+            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Using configured JDK '" + jdkName + "' for Sonargraph Build.", null);
         }
         if (jdk == null)
         {
-            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown JDK configured for Sonargraph Build.", null);
+            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown JDK '" + jdkName + "' configured for Sonargraph Build.", null);
             return false;
         }
         jdk = jdk.forNode(build.getBuiltOn(), listener);
@@ -366,8 +376,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         // separator taken from launcher, to also work on slaves
         final String classpathSeparator = launcher.isUnix() ? ":" : ";";
 
-        final String sonargraphBuildCommand = handleBlanksForConsoleCommand(javaExe.getRemote()) + " -ea -cp " + handleBlanksForConsoleCommand(clientJar.getRemote()) + classpathSeparator + handleBlanksForConsoleCommand(osgiJar.getRemote())
-                + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFileSlave.getRemote();
+        final String sonargraphBuildCommand = handleBlanksForConsoleCommand(javaExe.getRemote()) + " -ea -cp "
+                + handleBlanksForConsoleCommand(clientJar.getRemote()) + classpathSeparator + handleBlanksForConsoleCommand(osgiJar.getRemote()) + " "
+                + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFileSlave.getRemote();
 
         ProcStarter procStarter = launcher.new ProcStarter();
         procStarter.cmdAsSingleString(sonargraphBuildCommand);
@@ -391,7 +402,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     private String handleBlanksForConsoleCommand(String partOfCommand)
     {
-        if(partOfCommand.contains(" "))
+        if (partOfCommand.contains(" "))
         {
             return "\"" + partOfCommand + "\"";
         }
@@ -977,8 +988,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
     }
 
-    protected static ResultWithOutcome<IExportMetaData> getMetaData(final FilePath ws, String metaDataFile)
-            throws IOException, InterruptedException
+    protected static ResultWithOutcome<IExportMetaData> getMetaData(final FilePath ws, String metaDataFile) throws IOException, InterruptedException
     {
         if (ws == null || metaDataFile == null || metaDataFile.isEmpty())
         {
@@ -994,11 +1004,10 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         final IMetaDataController controller = ControllerAccess.createMetaDataController();
-        ResultWithOutcome<IExportMetaData> result = controller.loadExportMetaData(exportMetaDataFile.read(),
-                exportMetaDataFile.toURI().toString());
+        ResultWithOutcome<IExportMetaData> result = controller.loadExportMetaData(exportMetaDataFile.read(), exportMetaDataFile.toURI().toString());
         return result;
     }
-    
+
     public static boolean validateNotNullAndRegexp(final String value, final String pattern)
     {
         if (value == null)
