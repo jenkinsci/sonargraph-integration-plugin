@@ -241,7 +241,7 @@ class SonargraphBuildAnalyzer
     }
 
     /**
-     * Appends all gathered metrics to the sonargraph CSV file.
+     * Append all metrics from report to sonargraph CSV file.
      */
     public void saveMetricsToCSV(final File metricHistoryFile, final long timeOfBuild, final Integer buildNumber) throws IOException
     {
@@ -253,7 +253,7 @@ class SonargraphBuildAnalyzer
         final HashMap<IMetricId, String> buildMetricValues = new HashMap<>();
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
 
-        for (final IMetricId metric : m_exportMetaData.getMetricIds().values())
+        for (final IMetricId metric : infoProcessor.getMetricIds())
         {
             final Optional<IMetricValue> systemMetricValue = infoProcessor.getMetricValue(metric.getName());
             if (systemMetricValue.isPresent())
