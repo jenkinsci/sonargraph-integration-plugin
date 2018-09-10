@@ -23,9 +23,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 
 import hudson.Extension;
 import hudson.ProxyConfiguration;
@@ -64,9 +68,10 @@ public class SonargraphBuildInstaller extends DownloadFromUrlInstaller
         List<Installable> installables = null;
         long lastMillis = 0;
 
-        
-        public DescriptorImpl() {}
-        
+        public DescriptorImpl()
+        {
+        }
+
         @Override
         public boolean isApplicable(Class<? extends ToolInstallation> toolType)
         {
@@ -83,20 +88,33 @@ public class SonargraphBuildInstaller extends DownloadFromUrlInstaller
         {
             if (installables == null || checkAgain())
             {
-                InputStream in = ProxyConfiguration.getInputStream(new URL(SONARGRAPH_BUILD_JSON));
-                BufferedReader streamReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-                StringBuilder responseStrBuilder = new StringBuilder();
-
-                String inputStr;
-                while ((inputStr = streamReader.readLine()) != null)
+                SonargraphLogger.INSTANCE.log(Level.INFO, "Trying to get list of installables from {0} ...", SONARGRAPH_BUILD_JSON);
+                try (InputStream in = ProxyConfiguration.getInputStream(new URL(SONARGRAPH_BUILD_JSON));
+                        BufferedReader streamReader = new BufferedReader(new InputStreamReader(in, "UTF-8")))
                 {
-                    responseStrBuilder.append(inputStr);
-                }
-                in.close();
 
-                JSONObject d = JSONObject.fromObject(responseStrBuilder.toString());
-                installables = Arrays.asList(((InstallableList) JSONObject.toBean(d, InstallableList.class)).list);
-                lastMillis = System.currentTimeMillis();
+                    StringBuilder responseStrBuilder = new StringBuilder();
+
+                    String inputStr;
+                    while ((inputStr = streamReader.readLine()) != null)
+                    {
+                        responseStrBuilder.append(inputStr);
+                    }
+                    JSONObject d = JSONObject.fromObject(responseStrBuilder.toString());
+                    installables = Arrays.asList(((InstallableList) JSONObject.toBean(d, InstallableList.class)).list);
+                    SonargraphLogger.INSTANCE.log(Level.INFO, "Got list of {0} installables.", installables.size());
+
+                }
+                catch (Exception e)
+                {
+                    SonargraphLogger.INSTANCE.log(Level.SEVERE, "{0} while getting installables: {1}", new Object[] {e.getClass().getName(), e.getMessage()});
+                    installables = Collections.emptyList();
+                }
+                finally
+                {
+                    lastMillis = System.currentTimeMillis();
+                }
+
             }
             return installables;
         }
