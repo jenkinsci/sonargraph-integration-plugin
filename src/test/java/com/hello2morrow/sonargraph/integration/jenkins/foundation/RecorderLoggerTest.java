@@ -33,7 +33,7 @@ import org.junit.Test;
 public class RecorderLoggerTest
 {
     private static final String dummyLogFileName = "src/test/resources/dummy.log";
-    private File dummyLogFile = new File(dummyLogFileName);
+    private final File dummyLogFile = new File(dummyLogFileName);
 
     @Before
     public void before() throws IOException
@@ -47,12 +47,12 @@ public class RecorderLoggerTest
     }
 
     @After
-    public void tearDown() throws IOException
+    public void tearDown()
     {
         removeFiles();
     }
 
-    private void removeFiles() throws IOException
+    private void removeFiles()
     {
         if ((dummyLogFile != null) & dummyLogFile.exists())
         {
@@ -63,15 +63,15 @@ public class RecorderLoggerTest
     @Test
     public void testLogToConsoleOutput() throws IOException
     {
-        PrintStream logger = new PrintStream(dummyLogFileName);
-        String testText = "test Text";
+        final PrintStream logger = new PrintStream(dummyLogFileName);
+        final String testText = "test Text";
         SonargraphLogger.logToConsoleOutput(logger, Level.INFO, testText, null);
         SonargraphLogger.logToConsoleOutput(logger, Level.WARNING, testText, null);
         SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, testText, null);
         logger.close();
 
-        FileReader reader = new FileReader(dummyLogFile);
-        BufferedReader buffReader = new BufferedReader(reader);
+        final FileReader reader = new FileReader(dummyLogFile);
+        final BufferedReader buffReader = new BufferedReader(reader);
 
         String line;
         line = buffReader.readLine();

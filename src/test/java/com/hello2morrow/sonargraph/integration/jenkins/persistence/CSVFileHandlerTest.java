@@ -56,7 +56,7 @@ public class CSVFileHandlerTest
 
     private static IExportMetaData s_metaData;
 
-    private final List<BuildDataPoint> referenceDataSet = new ArrayList<BuildDataPoint>();
+    private final List<BuildDataPoint> referenceDataSet = new ArrayList<>();
 
     private IMetricId m_metric1;
     private IMetricId m_metric2;
@@ -70,9 +70,8 @@ public class CSVFileHandlerTest
     @BeforeClass
     public static void setUpClass() throws IOException
     {
-        File exportMetaDataFile = new File(META_DATA_XML);
-        ResultWithOutcome<IExportMetaData> result = ControllerAccess.createMetaDataController()
-                .loadExportMetaData(exportMetaDataFile);
+        final File exportMetaDataFile = new File(META_DATA_XML);
+        final ResultWithOutcome<IExportMetaData> result = ControllerAccess.createMetaDataController().loadExportMetaData(exportMetaDataFile);
         if (result.isSuccess())
         {
             s_metaData = result.getOutcome();
@@ -84,7 +83,7 @@ public class CSVFileHandlerTest
     }
 
     @Before
-    public void setUp() throws IOException
+    public void setUp()
     {
         int buildNumber = 31;
         final double value = 3.0;
