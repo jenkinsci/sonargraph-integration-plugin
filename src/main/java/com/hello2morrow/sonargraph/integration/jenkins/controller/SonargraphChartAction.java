@@ -40,7 +40,6 @@ import com.hello2morrow.sonargraph.integration.jenkins.model.XYLineAndShapePlot;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.CSVFileHandler;
 
 import hudson.model.AbstractProject;
-import hudson.model.Action;
 import hudson.model.ProminentProjectAction;
 import hudson.util.Graph;
 import jenkins.model.JenkinsLocationConfiguration;
@@ -50,7 +49,7 @@ import jenkins.model.JenkinsLocationConfiguration;
  * @author esteban
  *
  */
-public class SonargraphChartAction implements Action, ProminentProjectAction
+public class SonargraphChartAction implements ProminentProjectAction
 {
     private static final String TYPE_PARAMETER = "type";
     private static final String METRIC_PARAMETER = "metric";
@@ -107,7 +106,7 @@ public class SonargraphChartAction implements Action, ProminentProjectAction
             return;
         }
 
-        IMetricId metric = metaData.getMetricIds().get(metricName);
+        final IMetricId metric = metaData.getMetricIds().get(metricName);
         if (metric == null)
         {
             SonargraphLogger.INSTANCE.log(Level.SEVERE, "Specified metric '" + metricName + "' is not supported.");
@@ -214,10 +213,7 @@ public class SonargraphChartAction implements Action, ProminentProjectAction
         {
             return url + ConfigParameters.JOB_FOLDER.getValue() + projectName + "/" + ConfigParameters.HTML_REPORT_ACTION_URL.getValue();
         }
-        else
-        {
-            return "../" + ConfigParameters.HTML_REPORT_ACTION_URL.getValue();
-        }
+        return "../" + ConfigParameters.HTML_REPORT_ACTION_URL.getValue();
     }
 
     public static String getSimpleValue(final String parameterName, final Map<String, String[]> params)

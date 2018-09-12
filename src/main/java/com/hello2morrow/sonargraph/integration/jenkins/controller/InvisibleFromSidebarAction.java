@@ -17,8 +17,6 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-import hudson.model.Action;
-
 /**
  * Extending from this class means that your action will not be visible as a
  * link in the sidebar, but since you can implement the getURLName method, It
@@ -27,9 +25,8 @@ import hudson.model.Action;
  * @author esteban
  *
  */
-public abstract class InvisibleFromSidebarAction extends AbstractHTMLAction implements Action
+public abstract class InvisibleFromSidebarAction extends AbstractHTMLAction
 {
-
     /**
      * Hides the Icon.
      */
@@ -47,5 +44,4 @@ public abstract class InvisibleFromSidebarAction extends AbstractHTMLAction impl
     {
         return null;
     }
-
 }

@@ -38,11 +38,10 @@ import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstallerDescriptor;
 import net.sf.json.JSONObject;
 
-public class SonargraphBuildInstaller extends DownloadFromUrlInstaller
+public final class SonargraphBuildInstaller extends DownloadFromUrlInstaller
 {
-
     @DataBoundConstructor
-    public SonargraphBuildInstaller(String id)
+    public SonargraphBuildInstaller(final String id)
     {
         super(id);
     }
@@ -50,7 +49,7 @@ public class SonargraphBuildInstaller extends DownloadFromUrlInstaller
     @Override
     public Installable getInstallable() throws IOException
     {
-        for (Installable i : ((DescriptorImpl) getDescriptor()).getInstallables())
+        for (final Installable i : ((DescriptorImpl) getDescriptor()).getInstallables())
         {
             if (id.equals(i.id))
             {
@@ -73,7 +72,7 @@ public class SonargraphBuildInstaller extends DownloadFromUrlInstaller
         }
 
         @Override
-        public boolean isApplicable(Class<? extends ToolInstallation> toolType)
+        public boolean isApplicable(final Class<? extends ToolInstallation> toolType)
         {
             return toolType == SonargraphBuild.class;
         }
@@ -84,7 +83,7 @@ public class SonargraphBuildInstaller extends DownloadFromUrlInstaller
             return "Install from hello2morrow";
         }
 
-        public List<Installable> getInstallables() throws IOException
+        public List<Installable> getInstallables()
         {
             if (installables == null || checkAgain())
             {
@@ -93,21 +92,22 @@ public class SonargraphBuildInstaller extends DownloadFromUrlInstaller
                         BufferedReader streamReader = new BufferedReader(new InputStreamReader(in, "UTF-8")))
                 {
 
-                    StringBuilder responseStrBuilder = new StringBuilder();
+                    final StringBuilder responseStrBuilder = new StringBuilder();
 
                     String inputStr;
                     while ((inputStr = streamReader.readLine()) != null)
                     {
                         responseStrBuilder.append(inputStr);
                     }
-                    JSONObject d = JSONObject.fromObject(responseStrBuilder.toString());
+                    final JSONObject d = JSONObject.fromObject(responseStrBuilder.toString());
                     installables = Arrays.asList(((InstallableList) JSONObject.toBean(d, InstallableList.class)).list);
                     SonargraphLogger.INSTANCE.log(Level.INFO, "Got list of {0} installables.", installables.size());
 
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {
-                    SonargraphLogger.INSTANCE.log(Level.SEVERE, "{0} while getting installables: {1}", new Object[] {e.getClass().getName(), e.getMessage()});
+                    SonargraphLogger.INSTANCE.log(Level.SEVERE, "{0} while getting installables: {1}",
+                            new Object[] { e.getClass().getName(), e.getMessage() });
                     installables = Collections.emptyList();
                 }
                 finally
@@ -121,7 +121,7 @@ public class SonargraphBuildInstaller extends DownloadFromUrlInstaller
 
         private boolean checkAgain()
         {
-            boolean result = System.currentTimeMillis() - lastMillis > THIRTY_MINUTES;
+            final boolean result = System.currentTimeMillis() - lastMillis > THIRTY_MINUTES;
             return result;
         }
     }
