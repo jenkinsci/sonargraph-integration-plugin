@@ -44,7 +44,7 @@ public class DefaultJDKTest
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
-    
+
     MavenModuleSet mavenProject;
 
     @Before
@@ -55,7 +55,7 @@ public class DefaultJDKTest
         j.getInstance().getDescriptorList(ToolInstallation.class).add(new SonargraphBuild.DescriptorImpl());
         j.getInstance().getDescriptorList(Publisher.class).add(new SonargraphReportBuilder.DescriptorImpl());
         SonargraphBuildInstallations.configureSonargraphBuildNewest();
-        
+
         mavenProject = j.createProject(MavenModuleSet.class);
         mavenProject.setGoals("compile");
         Publisher sonargraph = createSonargraphReportBuilder();

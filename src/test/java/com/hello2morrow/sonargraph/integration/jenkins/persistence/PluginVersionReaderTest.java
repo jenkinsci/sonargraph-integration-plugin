@@ -17,11 +17,9 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
-
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.PluginVersionReader;
 
 public class PluginVersionReaderTest
 {

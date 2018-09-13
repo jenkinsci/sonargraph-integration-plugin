@@ -18,8 +18,6 @@
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
 import static org.junit.Assert.assertTrue;
-import hudson.FilePath;
-import hudson.remoting.VirtualChannel;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +28,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.hello2morrow.sonargraph.integration.jenkins.controller.ConfigParameters;
+
+import hudson.FilePath;
+import hudson.remoting.VirtualChannel;
 
 public class ReportHistoryFileManagerTest
 {
@@ -113,6 +114,7 @@ public class ReportHistoryFileManagerTest
         rhfm.storeGeneratedReportDirectory(buildReportDirectory, "testFile", 1, m_logger);
         final String buildReportDirInHistory = "sonargraph-report-build-1";
         assertTrue(new FilePath(rhfm.getReportHistoryDirectory(), buildReportDirInHistory).exists());
-        assertTrue(new File(rhfm.getReportHistoryDirectory() + "/" + buildReportDirInHistory, ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml").exists());
+        assertTrue(new File(rhfm.getReportHistoryDirectory() + "/" + buildReportDirInHistory,
+                ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml").exists());
     }
 }

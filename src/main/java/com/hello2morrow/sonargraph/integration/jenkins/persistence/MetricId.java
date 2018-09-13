@@ -47,7 +47,7 @@ public class MetricId implements Serializable
             }
         }
     }
-    
+
     public MetricId(String id, String name, boolean isFloat, List<String> categories)
     {
         this.id = id;
@@ -55,7 +55,7 @@ public class MetricId implements Serializable
         this.isFloat = isFloat;
         if (categories != null)
         {
-                m_categories.addAll(categories);
+            m_categories.addAll(categories);
         }
     }
 
@@ -73,7 +73,7 @@ public class MetricId implements Serializable
     {
         return id;
     }
-    
+
     public boolean isFloat()
     {
         return isFloat;
@@ -153,6 +153,5 @@ public class MetricId implements Serializable
         MetricId result = new MetricId(metricId.getName(), metricId.getPresentationName(), metricId.isFloat(), categories);
         return result;
     }
-
 
 }

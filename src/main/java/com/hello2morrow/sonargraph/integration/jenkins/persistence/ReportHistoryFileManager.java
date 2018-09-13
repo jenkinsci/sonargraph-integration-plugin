@@ -40,11 +40,13 @@ public final class ReportHistoryFileManager
     /** Path to the folder containing sonargraph report files generated for every build */
     private FilePath m_sonargraphReportHistoryDir;
 
-    public ReportHistoryFileManager(FilePath projectRootDir, String reportHistoryBaseDirectoryName, PrintStream logger) throws IOException, InterruptedException
+    public ReportHistoryFileManager(FilePath projectRootDir, String reportHistoryBaseDirectoryName, PrintStream logger)
+            throws IOException, InterruptedException
     {
         assert projectRootDir != null : "The path to the folder where architect reports are stored must not be null";
         assert !projectRootDir.isRemote() : "The path to the folder where architect reports are stored must not be remote";
-        assert reportHistoryBaseDirectoryName != null && !reportHistoryBaseDirectoryName.isEmpty() : "reportHistoryBaseDirectoryName must not be empty";
+        assert reportHistoryBaseDirectoryName != null
+                && !reportHistoryBaseDirectoryName.isEmpty() : "reportHistoryBaseDirectoryName must not be empty";
         assert logger != null : "Parameter 'logger' of method 'ReportHistoryFileManager' must not be null";
 
         m_sonargraphReportHistoryDir = new FilePath(projectRootDir, reportHistoryBaseDirectoryName);
@@ -82,9 +84,10 @@ public final class ReportHistoryFileManager
         }
         // copy all report related files (*.gif, *.css, ...) except xml and html report
         final FilePath targetHistoryDirectory = new FilePath(m_sonargraphReportHistoryDir, "sonargraph-report-build-" + buildNumber);
-        reportDirectory.copyRecursiveTo("**/*.*", "*.html,*.xml",  targetHistoryDirectory);
-        SonargraphLogger.logToConsoleOutput(logger, Level.INFO, "Copied report related files to directory " + targetHistoryDirectory.getRemote(), null);
-        
+        reportDirectory.copyRecursiveTo("**/*.*", "*.html,*.xml", targetHistoryDirectory);
+        SonargraphLogger.logToConsoleOutput(logger, Level.INFO, "Copied report related files to directory " + targetHistoryDirectory.getRemote(),
+                null);
+
         // copy xml report, and rename it
         FilePath targetXmlReportFile = null;
         final FilePath sourceXmlReportFile = new FilePath(reportDirectory, reportName + ".xml");
@@ -92,26 +95,29 @@ public final class ReportHistoryFileManager
         {
             targetXmlReportFile = new FilePath(targetHistoryDirectory, ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml");
             sourceXmlReportFile.copyTo(targetXmlReportFile);
-            SonargraphLogger.logToConsoleOutput(logger, Level.INFO, "Copied xml report file from " + sourceXmlReportFile.getRemote() + " to " + targetXmlReportFile.getRemote(), null);
+            SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
+                    "Copied xml report file from " + sourceXmlReportFile.getRemote() + " to " + targetXmlReportFile.getRemote(), null);
         }
         else
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.WARNING, "No xml report file found at " + sourceXmlReportFile.getRemote(), null);
         }
-        
+
         // copy html report, and rename it
         final FilePath sourceHtmlReportFile = new FilePath(reportDirectory, reportName + ".html");
         if (sourceHtmlReportFile.exists())
         {
-            final FilePath targetHtmlReportFile = new FilePath(targetHistoryDirectory, ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".html");
+            final FilePath targetHtmlReportFile = new FilePath(targetHistoryDirectory,
+                    ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".html");
             sourceHtmlReportFile.copyTo(targetHtmlReportFile);
-            SonargraphLogger.logToConsoleOutput(logger, Level.INFO, "Copied html report file from " + sourceHtmlReportFile.getRemote() + " to " + targetHtmlReportFile.getRemote(), null);
+            SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
+                    "Copied html report file from " + sourceHtmlReportFile.getRemote() + " to " + targetHtmlReportFile.getRemote(), null);
         }
         else
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.WARNING, "No html report file found at " + sourceHtmlReportFile.getRemote(), null);
         }
-        
+
         // return copied xml report from master
         return targetXmlReportFile;
     }

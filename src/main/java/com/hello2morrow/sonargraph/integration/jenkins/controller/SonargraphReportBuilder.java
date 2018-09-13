@@ -741,7 +741,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 final MetricIds metaData = result.getOutcome();
                 for (final MetricId metric : metaData.getMetricIdsForCategory(metricCategory))
                 {
-                        items.add(metric.getName(), metric.getId());
+                    items.add(metric.getName(), metric.getId());
                 }
             }
             SonargraphLogger.INSTANCE.log(Level.INFO, "doFillMetricNameItems: iems found: " + items.size());
@@ -955,7 +955,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final IMetaDataController controller = ControllerAccess.createMetaDataController();
         InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
         ResultWithOutcome<IExportMetaData> exportMetaData = controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
-        
+
         if (exportMetaData.isSuccess())
         {
             result.setOutcome(MetricIds.fromExportMetaData(exportMetaData.getOutcome()));

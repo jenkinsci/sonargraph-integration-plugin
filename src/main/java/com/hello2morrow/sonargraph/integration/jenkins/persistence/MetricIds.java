@@ -106,17 +106,18 @@ public class MetricIds implements Serializable
         for (Object next : jsonCollection)
         {
             DynaBean dynaBean = (DynaBean) next;
-            MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"), (List<String>) dynaBean.get("categories"));
+            MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"),
+                    (List<String>) dynaBean.get("categories"));
             result.addMetricId(metricId);
         }
 
         return result;
     }
-    
+
     public static MetricIds fromExportMetaData(IExportMetaData exportMetaData)
     {
         MetricIds result = new MetricIds();
-        for(IMetricId next : exportMetaData.getMetricIdsForLevel(exportMetaData.getMetricLevels().get(IMetricLevel.SYSTEM)))
+        for (IMetricId next : exportMetaData.getMetricIdsForLevel(exportMetaData.getMetricLevels().get(IMetricLevel.SYSTEM)))
         {
             result.addMetricId(MetricId.from(next));
         }

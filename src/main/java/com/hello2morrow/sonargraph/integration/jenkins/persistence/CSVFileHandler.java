@@ -66,9 +66,9 @@ public final class CSVFileHandler implements IMetricHistoryProvider
     public CSVFileHandler(final File csvFile, final IExportMetaData exportMetaData)
     {
         this(csvFile, MetricIds.fromExportMetaData(exportMetaData));
-        
+
     }
-    
+
     public CSVFileHandler(final File csvFile, final MetricIds metaData)
     {
         m_file = csvFile;

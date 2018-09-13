@@ -17,7 +17,6 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -75,14 +74,15 @@ class SonargraphBuildAnalyzer
      * @throws InterruptedException 
      * @throws IOException 
      */
-    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final MetricIds metricMetaData, final OutputStream logger) throws IOException, InterruptedException
+    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final MetricIds metricMetaData, final OutputStream logger)
+            throws IOException, InterruptedException
     {
         assert sonargraphReportPath != null : "The path for the Sonargraph architect report must not be null";
         assert metricMetaData != null : "Parameter 'metricMetaData' of method 'SonargraphBuildAnalyzer' must not be null";
 
         assert logger != null : "Parameter 'logger' of method 'SonargraphBuildAnalyzer' mu st not be null";
         m_logger = logger;
-        
+
         final Result operationResult = sonargraphReportPath.act(new LoadSystemReport(m_controller));
 
         if (operationResult.isFailure())
@@ -110,8 +110,8 @@ class SonargraphBuildAnalyzer
         }
 
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
-        final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName()
-                .equals("ArchitectureViolation") && !issue.hasResolution();
+        final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName().equals("ArchitectureViolation")
+                && !issue.hasResolution();
         final Integer numberOfViolations = infoProcessor.getIssues(filter).size();
         if (numberOfViolations > 0)
         {
@@ -149,15 +149,17 @@ class SonargraphBuildAnalyzer
         if (userDefinedAction.equals(BuildActionsEnum.FAILED.getActionCode()))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.FAILED.getActionCode());
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
-                    + " because value for '" + issueCategory + "' is " + numberOfIssues, null);
+            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO,
+                    "Changing build result to " + m_overallBuildResult.toString() + " because value for '" + issueCategory + "' is " + numberOfIssues,
+                    null);
         }
         else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
                 && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
-                    + " because value for '" + issueCategory + "' is " + numberOfIssues, null);
+            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO,
+                    "Changing build result to " + m_overallBuildResult.toString() + " because value for '" + issueCategory + "' is " + numberOfIssues,
+                    null);
         }
     }
 
@@ -268,11 +270,11 @@ class SonargraphBuildAnalyzer
     {
         return m_overallBuildResult;
     }
-    
+
     private static final class LoadSystemReport implements FilePath.FileCallable<Result>
     {
         private static final long serialVersionUID = 2405830264590692887L;
-        
+
         private ISonargraphSystemController m_controller;
 
         public LoadSystemReport(ISonargraphSystemController controller)

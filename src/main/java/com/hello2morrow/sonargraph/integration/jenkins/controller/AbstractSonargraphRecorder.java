@@ -74,13 +74,13 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         assert sonargraphReportDirectory != null : "Parameter 'sonargraphReportDirectory' of method 'processSonargraphReport' must not be null";
 
         final FilePath projectRootDir = new FilePath(build.getProject().getRootDir());
-        final ReportHistoryFileManager reportHistoryManager = new ReportHistoryFileManager(projectRootDir, 
+        final ReportHistoryFileManager reportHistoryManager = new ReportHistoryFileManager(projectRootDir,
                 ConfigParameters.REPORT_HISTORY_FOLDER.getValue(), logger);
-        
+
         FilePath reportFile = null;
         try
         {
-            reportFile = reportHistoryManager.storeGeneratedReportDirectory(sonargraphReportDirectory, reportFileName,  build.getNumber(), logger);
+            reportFile = reportHistoryManager.storeGeneratedReportDirectory(sonargraphReportDirectory, reportFileName, build.getNumber(), logger);
         }
         catch (final IOException ex)
         {
@@ -92,8 +92,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Sonargraph analysis cannot be executed as Sonargraph report does not exist.",
                     null);
-            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Report file \"" + reportFile + "\" does not exist.",
-                    null);
+            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Report file \"" + reportFile + "\" does not exist.", null);
             build.setResult(Result.FAILURE);
             return false;
         }

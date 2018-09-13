@@ -121,10 +121,10 @@ public class ConfigurationFileWriter
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to create configuration file '", tfe);
         }
     }
-    
+
     private void setStartupAttributes(Element element, EnumMap<MandatoryParameter, String> params)
     {
-        for(MandatoryParameter parameter : params.keySet())
+        for (MandatoryParameter parameter : params.keySet())
         {
             final String value = params.get(parameter);
             if (value != null)
@@ -132,6 +132,6 @@ public class ConfigurationFileWriter
                 element.setAttribute(parameter.getPresentationName(), value);
             }
         }
-           
+
     }
 }
