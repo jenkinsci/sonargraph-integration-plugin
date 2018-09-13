@@ -17,10 +17,6 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-import hudson.FilePath;
-import hudson.model.Action;
-import hudson.model.DirectoryBrowserSupport;
-
 import java.io.IOException;
 import java.util.logging.Level;
 
@@ -31,6 +27,10 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.TextFileReader;
+
+import hudson.FilePath;
+import hudson.model.Action;
+import hudson.model.DirectoryBrowserSupport;
 
 public abstract class AbstractHTMLAction implements Action
 {

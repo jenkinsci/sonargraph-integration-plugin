@@ -39,7 +39,6 @@ import org.junit.rules.TemporaryFolder;
 import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.model.BuildDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvider;
@@ -54,15 +53,15 @@ public class CSVFileHandlerTest
     private static final String NON_EXISTING_CSV_FILE_NAME = "non-existing.csv";
     private static final String CORRUPT_CSV_FILE_PATH = "src/test/resources/corrupt.csv";
 
-    private static IExportMetaData s_metaData;
+    private static MetricIds s_metaData;
 
     private final List<BuildDataPoint> referenceDataSet = new ArrayList<BuildDataPoint>();
 
-    private IMetricId m_metric1;
-    private IMetricId m_metric2;
-    private IMetricId m_metric3;
-    private IMetricId m_metric4;
-    private IMetricId m_metric5;
+    private MetricId m_metric1;
+    private MetricId m_metric2;
+    private MetricId m_metric3;
+    private MetricId m_metric4;
+    private MetricId m_metric5;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -75,7 +74,7 @@ public class CSVFileHandlerTest
                 .loadExportMetaData(exportMetaDataFile);
         if (result.isSuccess())
         {
-            s_metaData = result.getOutcome();
+            s_metaData = MetricIds.fromExportMetaData(result.getOutcome());
         }
         else
         {
@@ -196,7 +195,7 @@ public class CSVFileHandlerTest
         final File newFile = new File(folder.getRoot(), NON_EXISTING_CSV_FILE_NAME);
         final IMetricHistoryProvider csvFileHandler = new CSVFileHandler(newFile, s_metaData);
 
-        final HashMap<IMetricId, String> buildMetrics = new HashMap<>();
+        final HashMap<MetricId, String> buildMetrics = new HashMap<>();
         buildMetrics.put(m_metric1, "2.6");
         buildMetrics.put(m_metric2, "7");
         buildMetrics.put(m_metric3, "3");

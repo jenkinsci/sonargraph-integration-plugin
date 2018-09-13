@@ -33,18 +33,17 @@ import com.hello2morrow.sonargraph.integration.access.controller.ControllerAcces
 import com.hello2morrow.sonargraph.integration.access.controller.ISonargraphSystemController;
 import com.hello2morrow.sonargraph.integration.access.controller.ISystemInfoProcessor;
 import com.hello2morrow.sonargraph.integration.access.foundation.Result;
-import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IIssue;
-import com.hello2morrow.sonargraph.integration.access.model.IIssueCategory;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricValue;
-import com.hello2morrow.sonargraph.integration.access.model.ISingleExportMetaData;
+import com.hello2morrow.sonargraph.integration.access.model.Severity;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.CSVFileHandler;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 
 import hudson.FilePath;
-
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -55,7 +54,7 @@ import hudson.remoting.VirtualChannel;
  */
 class SonargraphBuildAnalyzer
 {
-    private final IExportMetaData m_exportMetaData;
+    private final MetricIds m_exportMetaData;
 
     /**
      * HashMap containing a code for the build result and a Result object for
@@ -76,7 +75,7 @@ class SonargraphBuildAnalyzer
      * @throws InterruptedException 
      * @throws IOException 
      */
-    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final IExportMetaData metricMetaData, final OutputStream logger) throws IOException, InterruptedException
+    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final MetricIds metricMetaData, final OutputStream logger) throws IOException, InterruptedException
     {
         assert sonargraphReportPath != null : "The path for the Sonargraph architect report must not be null";
         assert metricMetaData != null : "Parameter 'metricMetaData' of method 'SonargraphBuildAnalyzer' must not be null";
@@ -92,7 +91,7 @@ class SonargraphBuildAnalyzer
                     "Failed to load report from '" + sonargraphReportPath + "': " + operationResult.toString(), null);
         }
 
-        m_exportMetaData = metricMetaData != null ? metricMetaData : ISingleExportMetaData.EMPTY;
+        m_exportMetaData = metricMetaData;
 
         m_buildResults.put(BuildActionsEnum.UNSTABLE.getActionCode(), hudson.model.Result.UNSTABLE);
         m_buildResults.put(BuildActionsEnum.FAILED.getActionCode(), hudson.model.Result.FAILURE);
@@ -112,7 +111,7 @@ class SonargraphBuildAnalyzer
 
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
         final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName()
-                .equals(IIssueCategory.StandardName.ARCHITECTURE_VIOLATION.getStandardName()) && !issue.hasResolution();
+                .equals("ArchitectureViolation") && !issue.hasResolution();
         final Integer numberOfViolations = infoProcessor.getIssues(filter).size();
         if (numberOfViolations > 0)
         {
@@ -129,7 +128,7 @@ class SonargraphBuildAnalyzer
         return null;
     }
 
-    public void changeBuildResultIfIssuesExist(IIssueCategory.StandardName issueCategory, final String userDefinedAction)
+    public void changeBuildResultIfIssuesExist(String issueCategory, Severity minimumSeverity, final String userDefinedAction)
     {
         if (!m_controller.hasSoftwareSystem())
         {
@@ -137,13 +136,13 @@ class SonargraphBuildAnalyzer
         }
 
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
-        final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName().equals(issueCategory.getStandardName())
-                && !issue.hasResolution();
+        final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName().equals(issueCategory)
+                && issue.getIssueType().getSeverity().ordinal() <= minimumSeverity.ordinal() && !issue.hasResolution();
         final int numberOfIssues = infoProcessor.getIssues(filter).size();
         if (numberOfIssues <= 0)
         {
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.FINE,
-                    "Not changing build result because number of '" + issueCategory.getPresentationName() + "' is " + numberOfIssues, null);
+                    "Not changing build result because number of '" + issueCategory + "' is " + numberOfIssues, null);
             return;
         }
 
@@ -151,14 +150,14 @@ class SonargraphBuildAnalyzer
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.FAILED.getActionCode());
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
-                    + " because value for '" + issueCategory.getPresentationName() + "' is " + numberOfIssues, null);
+                    + " because value for '" + issueCategory + "' is " + numberOfIssues, null);
         }
         else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
                 && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
-                    + " because value for '" + issueCategory.getPresentationName() + "' is " + numberOfIssues, null);
+                    + " because value for '" + issueCategory + "' is " + numberOfIssues, null);
         }
     }
 
@@ -250,7 +249,7 @@ class SonargraphBuildAnalyzer
             return;
         }
         final IMetricHistoryProvider fileHandler = new CSVFileHandler(metricHistoryFile, m_exportMetaData);
-        final HashMap<IMetricId, String> buildMetricValues = new HashMap<>();
+        final HashMap<MetricId, String> buildMetricValues = new HashMap<>();
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
 
         for (final IMetricId metric : infoProcessor.getMetricIds())
@@ -258,7 +257,7 @@ class SonargraphBuildAnalyzer
             final Optional<IMetricValue> systemMetricValue = infoProcessor.getMetricValue(metric.getName());
             if (systemMetricValue.isPresent())
             {
-                buildMetricValues.put(metric, systemMetricValue.get().getValue().toString());
+                buildMetricValues.put(MetricId.from(metric), systemMetricValue.get().getValue().toString());
             }
         }
 

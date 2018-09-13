@@ -41,8 +41,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
 
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
 
 public class TimeSeriesPlot extends AbstractPlot
 {
@@ -68,7 +68,7 @@ public class TimeSeriesPlot extends AbstractPlot
      * Creates a XYDataset from a CSV file.
      */
     @Override
-    protected XYDataset createXYDataset(final IMetricId metric, final int maximumNumberOfDataPoints) throws IOException
+    protected XYDataset createXYDataset(final MetricId metric, final int maximumNumberOfDataPoints) throws IOException
     {
         assert metric != null : "Parameter 'metric' of method 'createXYDataset' must not be null";
 
@@ -108,7 +108,7 @@ public class TimeSeriesPlot extends AbstractPlot
         }
 
         final TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection();
-        final TimeSeries avgDataset = MovingAverage.createMovingAverage(timeSeries, "Avg of " + metric.getPresentationName(), MOVING_AVG_PERIOD, 0);
+        final TimeSeries avgDataset = MovingAverage.createMovingAverage(timeSeries, "Avg of " + metric.getName(), MOVING_AVG_PERIOD, 0);
         setDataSetSize(avgDataset.getItemCount());
         timeSeriesCollection.addSeries(avgDataset);
 

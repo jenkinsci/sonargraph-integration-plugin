@@ -24,9 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 
 import org.kohsuke.stapler.AncestorInPath;
@@ -38,12 +36,11 @@ import com.hello2morrow.sonargraph.integration.access.controller.ControllerAcces
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricCategory;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricLevel;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter.MandatoryParameter;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.tool.SonargraphBuild;
 
 import hudson.Extension;
@@ -56,12 +53,10 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Describable;
 import hudson.model.JDK;
 import hudson.model.Project;
 import hudson.model.TopLevelItem;
 import hudson.model.Queue.FlyweightTask;
-import hudson.tools.ToolInstaller;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -167,22 +162,16 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         {
             try
             {
-                final FilePath someWorkspace = project.getSomeWorkspace();
-                ResultWithOutcome<IExportMetaData> result = getMetaData(someWorkspace, getMetaDataFile());
+                ResultWithOutcome<MetricIds> result = getMetricIds();
 
                 if (result.isSuccess())
                 {
                     List<String> metricList;
-                    final IExportMetaData exportMetaData = result.getOutcome();
+                    final MetricIds exportMetaData = result.getOutcome();
                     if (isAllCharts())
                     {
-                        IMetricLevel systemLevel = exportMetaData.getMetricLevels().get("System");
-                        List<IMetricId> allSystemMetrics = exportMetaData.getMetricIdsForLevel(systemLevel);
-                        metricList = new ArrayList<>(allSystemMetrics.size());
-                        for (IMetricId metricId : allSystemMetrics)
-                        {
-                            metricList.add(metricId.getName());
-                        }
+                        metricList = new ArrayList<>();
+                        metricList.addAll(exportMetaData.getMetricIds().keySet());
                     }
                     else
                     {
@@ -225,7 +214,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         final FilePath sonargraphReportDirectory = new FilePath(build.getWorkspace(), getReportDirectory());
-        final ResultWithOutcome<IExportMetaData> metaData = getMetaData(build.getProject().getSomeWorkspace(), getMetaDataFile());
+        final ResultWithOutcome<MetricIds> metaData = getMetricIds();
         if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), metaData.getOutcome(), listener.getLogger()))
         {
             //only add the actions after the processing has been successful
@@ -260,27 +249,34 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             if (allJDKs.size() == 0)
             {
                 jdk = new JDK("default", System.getProperty("java.home"));
-                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.WARNING, "Must try to use JDK Jenkins is running with for Sonargraph Build.", null);
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.WARNING,
+                        "Must try to use JDK Jenkins is running with for Sonargraph Build.", null);
             }
             else if (allJDKs.size() == 1)
             {
                 jdk = allJDKs.get(0);
-                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Using default JDK '" + jdk.getName() + "' for Sonargraph Build.", null);
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
+                        "Using default JDK '" + jdk.getName() + "' for Sonargraph Build.", null);
             }
             else
             {
                 jdk = allJDKs.get(0);
-                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.WARNING, "There are multiple JDKs, please configure one of them. Using JDK '" + jdk.getName() + "' (the first one) for Sonargraph Build.", null);
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.WARNING,
+                        "There are multiple JDKs, please configure one of them. Using JDK '" + jdk.getName()
+                                + "' (the first one) for Sonargraph Build.",
+                        null);
             }
         }
         else
         {
             jdk = jenkins.getJDK(jdkName);
-            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Using configured JDK '" + jdkName + "' for Sonargraph Build.", null);
+            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Using configured JDK '" + jdkName + "' for Sonargraph Build.",
+                    null);
         }
         if (jdk == null)
         {
-            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown JDK '" + jdkName + "' configured for Sonargraph Build.", null);
+            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown JDK '" + jdkName + "' configured for Sonargraph Build.",
+                    null);
             return false;
         }
         jdk = jdk.forNode(build.getBuiltOn(), listener);
@@ -711,55 +707,44 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         public ListBoxModel doFillMetricCategoryItems(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter("metaDataFile")
-        @RelativePath("..")
-        final String metaDataFile) throws IOException, InterruptedException
+        final AbstractProject<?, ?> project) throws IOException, InterruptedException
         {
             final ListBoxModel items = new ListBoxModel();
-            final FilePath ws = project.getSomeWorkspace();
-            final ResultWithOutcome<IExportMetaData> result = getMetaData(ws, metaDataFile);
+            final ResultWithOutcome<MetricIds> result = getMetricIds();
             if (result.isSuccess())
             {
-                final IExportMetaData metaData = result.getOutcome();
-                List<IMetricId> systemMetrics = metaData.getMetricIdsForLevel(metaData.getMetricLevels().get("System"));
-                Set<IMetricCategory> categories = new HashSet<>();
+                final MetricIds metaData = result.getOutcome();
+                for (String c : metaData.getMetricCategories())
+                    SonargraphLogger.INSTANCE.log(Level.INFO, "category {0}", c);
 
-                for (IMetricId metricId : systemMetrics)
-                {
-                    categories.addAll(metricId.getCategories());
-                }
-
-                categories.stream().sorted(new IMetricCategory.MetricCategoryComparator())
-                        .forEachOrdered(category -> items.add(category.getPresentationName(), category.getName()));
+                metaData.getMetricCategories().stream().sorted().forEachOrdered(category -> items.add(category, category));
             }
 
             return items;
         }
 
         public ListBoxModel doFillMetricNameItems(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String metricCategory, @QueryParameter("metaDataFile")
+        final AbstractProject<?, ?> project, @QueryParameter String metricCategory, @QueryParameter("metaDataFile")
         @RelativePath("..")
         final String metaDataFile) throws IOException, InterruptedException
         {
+            if (metricCategory == null || metricCategory.isEmpty())
+            {
+                SonargraphLogger.INSTANCE.log(Level.WARNING, "metric category is unset, assume 'Architecture'");
+                metricCategory = "Architecture";
+            }
             final ListBoxModel items = new ListBoxModel();
-            final FilePath ws = project.getSomeWorkspace();
-            final ResultWithOutcome<IExportMetaData> result = getMetaData(ws, metaDataFile);
+
+            final ResultWithOutcome<MetricIds> result = getMetricIds();
             if (result.isSuccess())
             {
-                final IExportMetaData metaData = result.getOutcome();
-                final IMetricCategory category = metaData.getMetricCategories().get(metricCategory);
-                if (category != null)
+                final MetricIds metaData = result.getOutcome();
+                for (final MetricId metric : metaData.getMetricIdsForCategory(metricCategory))
                 {
-                    for (final IMetricId metric : metaData.getMetricIdsForLevel(metaData.getMetricLevels().get("System")))
-                    {
-                        if (metric.getCategories().contains(category))
-                        {
-                            items.add(metric.getPresentationName(), metric.getName());
-                        }
-                    }
+                        items.add(metric.getName(), metric.getId());
                 }
             }
+            SonargraphLogger.INSTANCE.log(Level.INFO, "doFillMetricNameItems: iems found: " + items.size());
             return items;
         }
 
@@ -859,23 +844,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 }
             }
             return checkFileInWorkspace(project, value + ".xml", null);
-        }
-
-        public FormValidation doCheckMetaDataFile(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException, InterruptedException
-        {
-            final FormValidation validation = checkFileInWorkspace(project, value, "xml");
-            if (validation.kind != FormValidation.Kind.OK)
-            {
-                return validation;
-            }
-            final ResultWithOutcome<IExportMetaData> result = getMetaData(project.getSomeWorkspace(), value);
-            if (!result.isSuccess())
-            {
-                return FormValidation.error(result.toString());
-            }
-            return FormValidation.ok();
         }
 
         /**
@@ -981,30 +949,21 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     }
 
-    protected static ResultWithOutcome<IExportMetaData> getDefaultMetaData() throws IOException, InterruptedException
+    protected static ResultWithOutcome<MetricIds> getMetricIds() throws IOException, InterruptedException
     {
+        ResultWithOutcome<MetricIds> result = new ResultWithOutcome<>("Get stored MetricIds");
         final IMetaDataController controller = ControllerAccess.createMetaDataController();
         InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
-        return controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
-    }
-
-    protected static ResultWithOutcome<IExportMetaData> getMetaData(final FilePath ws, String metaDataFile) throws IOException, InterruptedException
-    {
-        if (ws == null || metaDataFile == null || metaDataFile.isEmpty())
+        ResultWithOutcome<IExportMetaData> exportMetaData = controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
+        
+        if (exportMetaData.isSuccess())
         {
-            SonargraphLogger.INSTANCE.log(Level.FINE, "Parameter metaDataFile not set, using default metaData");
-            return getDefaultMetaData();
+            result.setOutcome(MetricIds.fromExportMetaData(exportMetaData.getOutcome()));
         }
-
-        FilePath exportMetaDataFile = new FilePath(ws, metaDataFile);
-        if (!exportMetaDataFile.exists() || exportMetaDataFile.isDirectory())
+        else
         {
-            SonargraphLogger.INSTANCE.log(Level.WARNING, "Parameter metaDataFile set, but file does not exist, or is a directory");
-            return getDefaultMetaData();
+            result.addMessagesFrom(exportMetaData);
         }
-
-        final IMetaDataController controller = ControllerAccess.createMetaDataController();
-        ResultWithOutcome<IExportMetaData> result = controller.loadExportMetaData(exportMetaDataFile.read(), exportMetaDataFile.toURI().toString());
         return result;
     }
 

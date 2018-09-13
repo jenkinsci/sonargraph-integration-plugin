@@ -17,15 +17,15 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-import hudson.FilePath;
-import hudson.model.AbstractProject;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import hudson.FilePath;
+import hudson.model.AbstractProject;
 
 public final class SonargraphHTMLReportAction extends InvisibleFromSidebarAction
 {

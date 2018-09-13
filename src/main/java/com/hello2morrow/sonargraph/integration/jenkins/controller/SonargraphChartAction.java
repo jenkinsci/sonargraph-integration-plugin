@@ -29,15 +29,14 @@ import org.jfree.chart.JFreeChart;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
-import com.hello2morrow.sonargraph.integration.access.model.ISingleExportMetaData;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.AbstractPlot;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.model.TimeSeriesPlot;
 import com.hello2morrow.sonargraph.integration.jenkins.model.XYLineAndShapePlot;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.CSVFileHandler;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -70,13 +69,13 @@ public class SonargraphChartAction implements Action, ProminentProjectAction
     private static final String BUILD = "Build";
     private static final String DATE = "Date";
 
-    private final IExportMetaData metaData;
+    private final MetricIds metaData;
     private final List<String> selectedMetrics;
 
-    public SonargraphChartAction(final AbstractProject<?, ?> project, final List<String> selectedMetrics, final IExportMetaData metricMetaData)
+    public SonargraphChartAction(final AbstractProject<?, ?> project, final List<String> selectedMetrics, final MetricIds metricMetaData)
     {
         this.project = project;
-        this.metaData = metricMetaData != null ? metricMetaData : ISingleExportMetaData.EMPTY;
+        this.metaData = metricMetaData;
         this.selectedMetrics = selectedMetrics;
     }
 
@@ -107,7 +106,7 @@ public class SonargraphChartAction implements Action, ProminentProjectAction
             return;
         }
 
-        IMetricId metric = metaData.getMetricIds().get(metricName);
+        MetricId metric = metaData.getMetricId(metricName);
         if (metric == null)
         {
             SonargraphLogger.INSTANCE.log(Level.SEVERE, "Specified metric '" + metricName + "' is not supported.");

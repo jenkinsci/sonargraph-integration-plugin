@@ -30,8 +30,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
 
 public abstract class AbstractPlot
 {
@@ -57,7 +57,7 @@ public abstract class AbstractPlot
      * @param categoryName Name for the X-Axis, representing a category
      * @return Chart built with the given parameters.
      */
-    public final JFreeChart createXYChart(final IMetricId metric, final String categoryName, final int maximumNumberOfDataPoints,
+    public final JFreeChart createXYChart(final MetricId metric, final String categoryName, final int maximumNumberOfDataPoints,
             final boolean hideLegend)
     {
         XYDataset dataset = null;
@@ -69,13 +69,13 @@ public abstract class AbstractPlot
         {
             SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to read metrics from data file '" + m_datasetProvider.getStorageName() + "'", ioe);
         }
-        final JFreeChart chart = createChartInternal(metric.getPresentationName(), categoryName, metric.getPresentationName(), dataset);
+        final JFreeChart chart = createChartInternal(metric.getName(), categoryName, metric.getName(), dataset);
         final XYPlot plot = (XYPlot) chart.getPlot();
 
         int dataPoints = 0;
         if (dataset == null)
         {
-            plot.setNoDataMessage("There was an error loading data for metric '" + metric.getPresentationName() + "'");
+            plot.setNoDataMessage("There was an error loading data for metric '" + metric.getName() + "'");
         }
         else
         {
@@ -85,7 +85,7 @@ public abstract class AbstractPlot
             }
             if (dataPoints == 0)
             {
-                plot.setNoDataMessage("No data found for metric '" + metric.getPresentationName() + "'");
+                plot.setNoDataMessage("No data found for metric '" + metric.getName() + "'");
             }
         }
         if ((dataset == null) || (dataPoints == 0))
@@ -107,9 +107,9 @@ public abstract class AbstractPlot
     /**
      * Creates a XYDataset from a CSV file.
      */
-    protected XYDataset createXYDataset(final IMetricId metric, final int maximumNumberOfDataPoints) throws IOException
+    protected XYDataset createXYDataset(final MetricId metric, final int maximumNumberOfDataPoints) throws IOException
     {
-        final XYSeries xySeries = new XYSeries(metric.getPresentationName());
+        final XYSeries xySeries = new XYSeries(metric.getName());
         List<IDataPoint> dataset = m_datasetProvider.readMetricValues(metric);
 
         final int size = dataset.size();

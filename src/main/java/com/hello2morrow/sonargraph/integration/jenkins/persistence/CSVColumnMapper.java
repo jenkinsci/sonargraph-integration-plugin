@@ -39,6 +39,16 @@ public final class CSVColumnMapper
 
     public CSVColumnMapper(final IExportMetaData metricMetaData, final String... existingColumnNames)
     {
+        this(metricMetaData.getMetricIds().keySet(), existingColumnNames);
+    }
+
+    public CSVColumnMapper(final MetricIds metricMetaData, final String... existingColumnNames)
+    {
+        this(metricMetaData.getMetricIds().keySet(), existingColumnNames);
+    }
+
+    private CSVColumnMapper(final Set<String> metricIds, final String... existingColumnNames)
+    {
         m_columnNames.add("buildnumber");
         m_columnNames.add("timestamp");
 
@@ -46,7 +56,7 @@ public final class CSVColumnMapper
         {
             m_columnNames.add(columnName);
         }
-        m_columnNames.addAll(metricMetaData.getMetricIds().keySet());
+        m_columnNames.addAll(metricIds);
     }
 
     public int getIndex(final String columnName)

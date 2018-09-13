@@ -17,9 +17,6 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-import hudson.FilePath;
-import hudson.model.AbstractBuild;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -27,6 +24,9 @@ import javax.servlet.ServletException;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import hudson.FilePath;
+import hudson.model.AbstractBuild;
 
 public final class SonargraphBuildAction extends AbstractHTMLAction
 {

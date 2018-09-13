@@ -17,26 +17,24 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import static org.junit.Assert.assertEquals;
 
-import hudson.FilePath;
+import org.junit.Test;
 
-public class TextFileReader
+public class MetricIdsTest
 {
-    public String readLargeTextFile(final FilePath largeTextFilePath) throws IOException, InterruptedException
+    @Test
+    public void testMetricIdsToJson()
     {
-        final StringBuilder completeTextFile = new StringBuilder();
-        try (BufferedReader bfReader = new BufferedReader(new InputStreamReader(largeTextFilePath.read())))
-        {
-            String currentLine;
-            while ((currentLine = bfReader.readLine()) != null)
-            {
-                completeTextFile.append(currentLine);
-            }
-        }
-
-        return completeTextFile.toString();
+        MetricIds metricIds = new MetricIds();
+        MetricId first = new MetricId("first", "First Metric Id", false);
+        metricIds.addMetricId(first);
+        MetricId second = new MetricId("second", "Second Metric Id", false, "Cycle");
+        metricIds.addMetricId(second);
+        MetricId third = new MetricId("third", "Third Metric Id", false, "Cycle", "Size", "Robert C. Martin");
+        metricIds.addMetricId(third);
+        final String jsonString = MetricIds.toJSON(metricIds);
+        MetricIds fromString = MetricIds.fromJSON(jsonString);
+        assertEquals(metricIds, fromString);
     }
 }

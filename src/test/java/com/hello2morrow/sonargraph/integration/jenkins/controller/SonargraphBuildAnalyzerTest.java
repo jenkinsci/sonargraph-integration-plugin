@@ -34,6 +34,7 @@ import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataContro
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricId.StandardName;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 
 import hudson.FilePath;
 import hudson.model.Result;
@@ -47,7 +48,7 @@ public class SonargraphBuildAnalyzerTest
     private static final String DUMMY_LOG_FILE_NAME = "./src/test/resources/dummy.log";
     private File m_dummyLogFile;
     private PrintStream m_logger;
-    private IExportMetaData m_metricMetaData;
+    private MetricIds m_metricMetaData;
 
     @Before
     public void setUp() throws IOException
@@ -55,7 +56,7 @@ public class SonargraphBuildAnalyzerTest
         final IMetaDataController metaDataController = ControllerAccess.createMetaDataController();
         final ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(new File(METRIC_META_DATA_FILE_NAME));
         assertTrue(result.toString(), result.isSuccess());
-        m_metricMetaData = result.getOutcome();
+        m_metricMetaData = MetricIds.fromExportMetaData(result.getOutcome());
 
         m_dummyLogFile = new File(DUMMY_LOG_FILE_NAME);
         if (!m_dummyLogFile.exists())

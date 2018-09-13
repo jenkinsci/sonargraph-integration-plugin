@@ -38,7 +38,6 @@ import java.util.logging.Level;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.Utility;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.BuildDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IDataPoint;
@@ -61,10 +60,16 @@ public class CSVFileHandler implements IMetricHistoryProvider
     private static final String NOT_EXISTING_VALUE = "-";
 
     private final File m_file;
-    private final IExportMetaData m_metaData;
+    private final MetricIds m_metaData;
     private final CSVColumnMapper m_columnMapper;
 
-    public CSVFileHandler(final File csvFile, final IExportMetaData metaData)
+    public CSVFileHandler(final File csvFile, final IExportMetaData exportMetaData)
+    {
+        this(csvFile, MetricIds.fromExportMetaData(exportMetaData));
+        
+    }
+    
+    public CSVFileHandler(final File csvFile, final MetricIds metaData)
     {
         m_file = csvFile;
         m_metaData = metaData;
@@ -164,7 +169,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
     }
 
     @Override
-    public List<IDataPoint> readMetricValues(final IMetricId metric) throws IOException
+    public List<IDataPoint> readMetricValues(final MetricId metric) throws IOException
     {
         final List<IDataPoint> sonargraphDataset = new ArrayList<>();
 
@@ -176,7 +181,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
         try (CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR))
         {
             String[] nextLine;
-            final int column = m_columnMapper.getIndex(metric.getName());
+            final int column = m_columnMapper.getIndex(metric.getId());
             csvReader.readNext(); //We do nothing with the header line.
             while ((nextLine = csvReader.readNext()) != null)
             {
@@ -197,7 +202,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
         return sonargraphDataset;
     }
 
-    protected void processLine(final String[] nextLine, final int column, final List<IDataPoint> sonargraphDataset, final IMetricId metric,
+    protected void processLine(final String[] nextLine, final int column, final List<IDataPoint> sonargraphDataset, final MetricId metric,
             final NumberFormat numberFormat)
     {
         int buildNumber;
@@ -270,7 +275,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
     }
 
     @Override
-    public void writeMetricValues(final Integer buildnumber, final long timestamp, final Map<IMetricId, String> metricValues) throws IOException
+    public void writeMetricValues(final Integer buildnumber, final long timestamp, final Map<MetricId, String> metricValues) throws IOException
     {
         final FileWriter fileWriter = new FileWriter(m_file, true);
         final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);

@@ -99,10 +99,6 @@
   </f:section>
 
   <f:section title="Chart Configuration">
-    <f:entry title="Meta Data File" field="metaDataFile">
-      <f:textbox />
-    </f:entry>
-
     <f:radioBlock name="chartConfiguration" value="allCharts" title="All charts taken from Meta Data File"
       checked="${(instance == null) ? 'true': instance.allCharts}" inline="true" help="/plugin/sonargraph-integration/html/help-allCharts.html">
     </f:radioBlock>

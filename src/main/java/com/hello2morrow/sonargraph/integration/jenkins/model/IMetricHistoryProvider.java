@@ -21,14 +21,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
 
 public interface IMetricHistoryProvider
 {
     /**
      * @return List of data points for a specific metric.
      */
-    public List<IDataPoint> readMetricValues(IMetricId metric) throws IOException;
+    public List<IDataPoint> readMetricValues(MetricId metric) throws IOException;
 
     /**
      * Appends all supported metrics for a specific build.
@@ -36,7 +36,7 @@ public interface IMetricHistoryProvider
      * @param timestamp when the build has been executed
      * @param metricValues map containing the supported metrics and their values for the current build.
      */
-    public void writeMetricValues(Integer buildNumber, long timestamp, Map<IMetricId, String> metricValues) throws IOException;
+    public void writeMetricValues(Integer buildNumber, long timestamp, Map<MetricId, String> metricValues) throws IOException;
 
     public String getStorageName();
 }

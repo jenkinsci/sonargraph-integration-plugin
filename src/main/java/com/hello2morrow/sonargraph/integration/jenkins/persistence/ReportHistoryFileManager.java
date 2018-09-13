@@ -17,14 +17,14 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import hudson.FilePath;
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
 import com.hello2morrow.sonargraph.integration.jenkins.controller.ConfigParameters;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
+
+import hudson.FilePath;
 
 /**
  * Class that handles copies of each generated architect report to calculate trends or

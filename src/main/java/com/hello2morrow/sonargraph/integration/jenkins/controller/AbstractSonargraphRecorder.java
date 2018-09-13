@@ -17,23 +17,23 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-import hudson.FilePath;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.AbstractBuild;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Recorder;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
-import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
-import com.hello2morrow.sonargraph.integration.access.model.IIssueCategory;
+import com.hello2morrow.sonargraph.integration.access.model.Severity;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.PluginVersionReader;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ReportHistoryFileManager;
+
+import hudson.FilePath;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
+import hudson.model.Result;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Recorder;
 
 public abstract class AbstractSonargraphRecorder extends Recorder
 {
@@ -68,7 +68,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     }
 
     protected boolean processSonargraphReport(final AbstractBuild<?, ?> build, final FilePath sonargraphReportDirectory, final String reportFileName,
-            final IExportMetaData exportMetaData, final PrintStream logger) throws IOException, InterruptedException
+            final MetricIds exportMetaData, final PrintStream logger) throws IOException, InterruptedException
     {
         assert build != null : "Parameter 'build' of method 'processSonargraphReport' must not be null";
         assert sonargraphReportDirectory != null : "Parameter 'sonargraphReportDirectory' of method 'processSonargraphReport' must not be null";
@@ -100,14 +100,13 @@ public abstract class AbstractSonargraphRecorder extends Recorder
 
         final SonargraphBuildAnalyzer sonargraphBuildAnalyzer = new SonargraphBuildAnalyzer(reportFile, exportMetaData, logger);
 
-        //FIXME [IK, AH] Metric constants need to be changed. Put in integration.access project?
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.ARCHITECTURE_VIOLATION, architectureViolationsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureViolation", Severity.NONE, architectureViolationsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfMetricValueNotZero("CoreUnassignedComponents", unassignedTypesAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.CYCLE_GROUP, cyclicElementsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.THRESHOLD_VIOLATION, thresholdViolationsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.ARCHITECTURE_CONSISTENCY, architectureWarningsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.WORKSPACE, workspaceWarningsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.TODO, workItemsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("CycleGroup", Severity.ERROR, cyclicElementsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ThresholdViolation", Severity.NONE, thresholdViolationsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureConsistency", Severity.NONE, architectureWarningsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Workspace", Severity.NONE, workspaceWarningsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Todo", Severity.NONE, workItemsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfMetricValueIsZero("CoreComponents", emptyWorkspaceAction);
         final Result buildResult = sonargraphBuildAnalyzer.getOverallBuildResult();
 
