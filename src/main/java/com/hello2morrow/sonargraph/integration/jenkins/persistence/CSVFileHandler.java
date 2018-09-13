@@ -50,10 +50,10 @@ import com.opencsv.CSVReader;
  * Handles operations on a CSV file.
  * @author esteban
  */
-public class CSVFileHandler implements IMetricHistoryProvider
+public final class CSVFileHandler implements IMetricHistoryProvider
 {
     public static final char CSV_SEPARATOR = ';';
-    
+
     private static final String BUILDNUMBER_COLUMN_NAME = "buildnumber";
     private static final String TIMESTAMP_COLUMN_NAME = "timestamp";
 
@@ -142,7 +142,6 @@ public class CSVFileHandler implements IMetricHistoryProvider
 
     private String[] getHeaderLine()
     {
-
         try (final CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR);)
         {
             final String[] nextLine = csvReader.readNext();
@@ -306,5 +305,4 @@ public class CSVFileHandler implements IMetricHistoryProvider
     {
         return m_file.getAbsolutePath();
     }
-
 }

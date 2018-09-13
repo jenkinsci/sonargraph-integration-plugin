@@ -67,7 +67,7 @@ public class SonargraphBuildAnalyzerTest
     }
 
     @After
-    public void tearDown() throws IOException
+    public void tearDown()
     {
         m_logger.close();
         if ((m_dummyLogFile != null) & m_dummyLogFile.exists())

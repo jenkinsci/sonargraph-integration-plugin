@@ -30,34 +30,32 @@ public final class SonargraphBuildInstallations
 {
     private SonargraphBuildInstallations()
     {
+        super();
     }
 
     public static SonargraphBuild configureSonargraphBuildNewest()
     {
         try
         {
-            SonargraphBuildInstaller installer = new SonargraphBuildInstaller("newest");
-            SonargraphBuild sonargraphBuild = new SonargraphBuild("newest", getInstallationDirectory("newest"),
+            final SonargraphBuildInstaller installer = new SonargraphBuildInstaller("newest");
+            final SonargraphBuild sonargraphBuild = new SonargraphBuild("newest", getInstallationDirectory("newest"),
                     Collections.singletonList(new InstallSourceProperty(Collections.singletonList(installer))));
             Jenkins.getInstance().getDescriptorByType(SonargraphBuild.DescriptorImpl.class).setInstallations(sonargraphBuild);
             return sonargraphBuild;
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
         }
         return null;
     }
 
-    private static String getInstallationDirectory(String subdirectory)
+    private static String getInstallationDirectory(final String subdirectory)
     {
-        String directory = System.getProperty("toolDirectory");
+        final String directory = System.getProperty("toolDirectory");
         if (directory != null)
         {
             return directory + "/Tools/SonargraphBuild/" + subdirectory;
         }
-        else
-        {
-            return "";
-        }
+        return "";
     }
 }
