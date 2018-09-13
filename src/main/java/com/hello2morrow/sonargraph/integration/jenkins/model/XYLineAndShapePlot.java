@@ -31,34 +31,34 @@ public class XYLineAndShapePlot extends AbstractPlot
     private static final String COLON = ": ";
     private static final String BUILD = "Build #";
 
-    public XYLineAndShapePlot(IMetricHistoryProvider datasetProvider)
+    public XYLineAndShapePlot(final IMetricHistoryProvider datasetProvider)
     {
         super(datasetProvider);
     }
 
     @Override
-    protected JFreeChart createChartInternal(String chartTitle, String categoryName, String yAxisName, XYDataset dataset)
+    protected JFreeChart createChartInternal(final String chartTitle, final String categoryName, final String yAxisName, final XYDataset dataset)
     {
         return ChartFactory.createXYLineChart(chartTitle, categoryName, yAxisName, dataset, PlotOrientation.VERTICAL, false, true, false);
     }
 
     @Override
-    protected void applyRendering(XYPlot plot)
+    protected void applyRendering(final XYPlot plot)
     {
-        NumberAxis axis = (NumberAxis) plot.getDomainAxis();
+        final NumberAxis axis = (NumberAxis) plot.getDomainAxis();
         axis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
+        final XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
         renderer.setBaseShapesVisible(true);
         renderer.setSeriesPaint(0, DATA_COLOR);
 
         //Unfortunately, the tooltips are not visible, when the graph gets rendered as a PNG
-        StandardXYToolTipGenerator toolTipGenerator = new StandardXYToolTipGenerator()
+        final StandardXYToolTipGenerator toolTipGenerator = new StandardXYToolTipGenerator()
         {
             private static final long serialVersionUID = -5803780142385784897L;
 
             @Override
-            public String generateToolTip(XYDataset dataset, int series, int item)
+            public String generateToolTip(final XYDataset dataset, final int series, final int item)
             {
                 return new StringBuilder(BUILD).append(dataset.getXValue(series, item)).append(COLON).append(dataset.getYValue(series, item))
                         .toString();

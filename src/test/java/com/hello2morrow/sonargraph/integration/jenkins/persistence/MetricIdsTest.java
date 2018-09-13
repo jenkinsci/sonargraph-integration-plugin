@@ -26,15 +26,15 @@ public class MetricIdsTest
     @Test
     public void testMetricIdsToJson()
     {
-        MetricIds metricIds = new MetricIds();
-        MetricId first = new MetricId("first", "First Metric Id", false);
+        final MetricIds metricIds = new MetricIds();
+        final MetricId first = new MetricId("first", "First Metric Id", false);
         metricIds.addMetricId(first);
-        MetricId second = new MetricId("second", "Second Metric Id", false, "Cycle");
+        final MetricId second = new MetricId("second", "Second Metric Id", false, "Cycle");
         metricIds.addMetricId(second);
-        MetricId third = new MetricId("third", "Third Metric Id", false, "Cycle", "Size", "Robert C. Martin");
+        final MetricId third = new MetricId("third", "Third Metric Id", false, "Cycle", "Size", "Robert C. Martin");
         metricIds.addMetricId(third);
         final String jsonString = MetricIds.toJSON(metricIds);
-        MetricIds fromString = MetricIds.fromJSON(jsonString);
+        final MetricIds fromString = MetricIds.fromJSON(jsonString);
         assertEquals(metricIds, fromString);
     }
 }

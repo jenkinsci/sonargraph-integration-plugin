@@ -58,11 +58,11 @@ public class DefaultJDKTest
 
         mavenProject = j.createProject(MavenModuleSet.class);
         mavenProject.setGoals("compile");
-        Publisher sonargraph = createSonargraphReportBuilder();
+        final Publisher sonargraph = createSonargraphReportBuilder();
         mavenProject.getPublishers().add(sonargraph);
 
         // Extracts "src/test/resources/alarm-clock.zip" into the workspace
-        URL resource = getClass().getResource("/alarm-clock.zip");
+        final URL resource = getClass().getResource("/alarm-clock.zip");
         mavenProject.setScm(new ExtractResourceSCM(resource));
     }
 
@@ -70,7 +70,7 @@ public class DefaultJDKTest
     public void testUsingDefaultJDK() throws Exception
     {
         mavenProject.renameTo("testUsingDefaultJDK");
-        MavenModuleSetBuild mmsb = j.buildAndAssertSuccess(mavenProject);
+        final MavenModuleSetBuild mmsb = j.buildAndAssertSuccess(mavenProject);
         j.assertLogContains("Using default JDK 'default' for Sonargraph Build.", mmsb);
     }
 
@@ -80,57 +80,57 @@ public class DefaultJDKTest
         j.getInstance().setJDKs(new ArrayList<JDK>());
 
         mavenProject.renameTo("testNoJDK");
-        MavenModuleSetBuild mmsb = j.buildAndAssertSuccess(mavenProject);
+        final MavenModuleSetBuild mmsb = j.buildAndAssertSuccess(mavenProject);
         j.assertLogContains("Must try to use JDK Jenkins is running with for Sonargraph Build.", mmsb);
     }
 
     @Test
     public void testMultipleJDK() throws Exception
     {
-        List<JDK> jdks = new ArrayList<>();
+        final List<JDK> jdks = new ArrayList<>();
         jdks.addAll(j.getInstance().getJDKs());
         jdks.add(new JDK("dummy1", ""));
         jdks.add(new JDK("dummy2", ""));
         j.getInstance().setJDKs(jdks);
 
         mavenProject.renameTo("testMultipleJDK");
-        MavenModuleSetBuild mmsb = j.buildAndAssertSuccess(mavenProject);
+        final MavenModuleSetBuild mmsb = j.buildAndAssertSuccess(mavenProject);
         j.assertLogContains("There are multiple JDKs, please configure one of them.", mmsb);
     }
 
     private static SonargraphReportBuilder createSonargraphReportBuilder()
     {
-        List<Metric> metrics = Collections.emptyList();
-        String metaDataFile = "";
-        String systemDirectory = "AlarmClock.sonargraph";
-        String qualityModelFile = "";
-        String virtualModel = "Modifiable.vm";
-        String reportPath = "";
-        String reportGeneration = "";
-        String chartConfiguration = "";
-        String architectureViolationsAction = "";
-        String unassignedTypesAction = "";
-        String cyclicElementsAction = "";
-        String thresholdViolationsAction = "";
-        String architectureWarningsAction = "";
-        String workspaceWarningsAction = "";
-        String workItemsAction = "";
-        String emptyWorkspaceAction = "";
-        boolean languageJava = false;
-        boolean languageCSharp = false;
-        boolean languageCPlusPlus = false;
-        String sonargraphBuildJDK = "";
-        String sonargraphBuildVersion = "newest";
-        String activationCode = System.getProperty("sonargraph.activationcode.test", "");
-        String licenseFile = "";
-        String workspaceProfile = "";
-        String snapshotDirectory = "";
-        String snapshotFileName = "";
-        String logLevel = "";
-        String logFile = "";
-        String elementCountToSplitHtmlReport = "1000";
-        String maxElementCountForHtmlDetailsPage = "2000";
-        boolean splitByModule = false;
+        final List<Metric> metrics = Collections.emptyList();
+        final String metaDataFile = "";
+        final String systemDirectory = "AlarmClock.sonargraph";
+        final String qualityModelFile = "";
+        final String virtualModel = "Modifiable.vm";
+        final String reportPath = "";
+        final String reportGeneration = "";
+        final String chartConfiguration = "";
+        final String architectureViolationsAction = "";
+        final String unassignedTypesAction = "";
+        final String cyclicElementsAction = "";
+        final String thresholdViolationsAction = "";
+        final String architectureWarningsAction = "";
+        final String workspaceWarningsAction = "";
+        final String workItemsAction = "";
+        final String emptyWorkspaceAction = "";
+        final boolean languageJava = false;
+        final boolean languageCSharp = false;
+        final boolean languageCPlusPlus = false;
+        final String sonargraphBuildJDK = "";
+        final String sonargraphBuildVersion = "newest";
+        final String activationCode = System.getProperty("sonargraph.activationcode.test", "");
+        final String licenseFile = "";
+        final String workspaceProfile = "";
+        final String snapshotDirectory = "";
+        final String snapshotFileName = "";
+        final String logLevel = "";
+        final String logFile = "";
+        final String elementCountToSplitHtmlReport = "1000";
+        final String maxElementCountForHtmlDetailsPage = "2000";
+        final boolean splitByModule = false;
 
         return new SonargraphReportBuilder(metrics, metaDataFile, systemDirectory, qualityModelFile, virtualModel, reportPath, reportGeneration,
                 chartConfiguration, architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction,

@@ -87,44 +87,44 @@ public class ConfigurationFileWriter
         m_file = file;
     }
 
-    public void createConfigurationFile(EnumMap<MandatoryParameter, String> parameters, PrintStream logger)
+    public void createConfigurationFile(final EnumMap<MandatoryParameter, String> parameters, final PrintStream logger)
     {
         try
         {
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-            Document doc = docBuilder.newDocument();
-            Element sonargraphBuild = doc.createElement("sonargraphBuild");
+            final Document doc = docBuilder.newDocument();
+            final Element sonargraphBuild = doc.createElement("sonargraphBuild");
             doc.appendChild(sonargraphBuild);
             setStartupAttributes(sonargraphBuild, parameters);
 
-            Element failSet = doc.createElement("failSet");
+            final Element failSet = doc.createElement("failSet");
             sonargraphBuild.appendChild(failSet);
             failSet.setAttribute("failOnEmptyWorkspace", "false");
 
             // write the content into xml file
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(m_file);
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            final Transformer transformer = transformerFactory.newTransformer();
+            final DOMSource source = new DOMSource(doc);
+            final StreamResult result = new StreamResult(m_file);
 
             transformer.transform(source, result);
 
         }
-        catch (ParserConfigurationException pce)
+        catch (final ParserConfigurationException pce)
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to create configuration file '", pce);
         }
-        catch (TransformerException tfe)
+        catch (final TransformerException tfe)
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to create configuration file '", tfe);
         }
     }
 
-    private void setStartupAttributes(Element element, EnumMap<MandatoryParameter, String> params)
+    private void setStartupAttributes(final Element element, final EnumMap<MandatoryParameter, String> params)
     {
-        for (MandatoryParameter parameter : params.keySet())
+        for (final MandatoryParameter parameter : params.keySet())
         {
             final String value = params.get(parameter);
             if (value != null)

@@ -44,25 +44,25 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
 
     private static final long serialVersionUID = 1L;
 
-    public SonargraphBuild(String name, String home)
+    public SonargraphBuild(final String name, final String home)
     {
         super(name, home, Collections.<ToolProperty<?>> emptyList());
     }
 
     @DataBoundConstructor
-    public SonargraphBuild(String name, String home, List<? extends ToolProperty<?>> properties)
+    public SonargraphBuild(final String name, final String home, final List<? extends ToolProperty<?>> properties)
     {
         super(name, home, properties);
     }
 
     @Override
-    public SonargraphBuild forNode(Node node, TaskListener log) throws IOException, InterruptedException
+    public SonargraphBuild forNode(final Node node, final TaskListener log) throws IOException, InterruptedException
     {
         return new SonargraphBuild(getName(), translateFor(node, log));
     }
 
     @Override
-    public SonargraphBuild forEnvironment(EnvVars environment)
+    public SonargraphBuild forEnvironment(final EnvVars environment)
     {
         return new SonargraphBuild(getName(), environment.expand(getHome()));
     }
@@ -83,16 +83,16 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
         }
 
         @Override
-        public void setInstallations(SonargraphBuild... installations)
+        public void setInstallations(final SonargraphBuild... installations)
         {
             super.setInstallations(installations);
             save();
         }
 
-        public SonargraphBuild getSonargraphBuild(String name)
+        public SonargraphBuild getSonargraphBuild(final String name)
         {
             assert name != null && name.length() > 0 : "Parameter 'name' of method 'getSonargraphBuild' must not be empty";
-            for (SonargraphBuild sonargraphBuild : getInstallations())
+            for (final SonargraphBuild sonargraphBuild : getInstallations())
             {
                 if (name.equals(sonargraphBuild.getName()))
                 {
@@ -100,7 +100,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
                 }
             }
             SonargraphLogger.INSTANCE.log(Level.WARNING, "Unknown Sonargraph Build: " + name);
-            for (SonargraphBuild sonargraphBuild : getInstallations())
+            for (final SonargraphBuild sonargraphBuild : getInstallations())
             {
                 SonargraphLogger.INSTANCE.log(Level.WARNING, "Found Sonargraph Build: " + sonargraphBuild.getName());
             }
@@ -108,7 +108,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
         }
 
         @Override
-        protected FormValidation checkHomeDirectory(File home)
+        protected FormValidation checkHomeDirectory(final File home)
         {
             return super.checkHomeDirectory(home);
         }

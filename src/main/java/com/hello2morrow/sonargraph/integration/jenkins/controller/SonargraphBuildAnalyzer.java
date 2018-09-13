@@ -128,7 +128,7 @@ class SonargraphBuildAnalyzer
         return null;
     }
 
-    public void changeBuildResultIfIssuesExist(String issueCategory, Severity minimumSeverity, final String userDefinedAction)
+    public void changeBuildResultIfIssuesExist(final String issueCategory, final Severity minimumSeverity, final String userDefinedAction)
     {
         if (!m_controller.hasSoftwareSystem())
         {
@@ -275,21 +275,21 @@ class SonargraphBuildAnalyzer
     {
         private static final long serialVersionUID = 2405830264590692887L;
 
-        private ISonargraphSystemController m_controller;
+        private final ISonargraphSystemController m_controller;
 
-        public LoadSystemReport(ISonargraphSystemController controller)
+        public LoadSystemReport(final ISonargraphSystemController controller)
         {
             m_controller = controller;
         }
 
         @Override
-        public void checkRoles(RoleChecker checker) throws SecurityException
+        public void checkRoles(final RoleChecker checker) throws SecurityException
         {
             // do nothing 
         }
 
         @Override
-        public Result invoke(File file, VirtualChannel channel) throws IOException, InterruptedException
+        public Result invoke(final File file, final VirtualChannel channel) throws IOException, InterruptedException
         {
             assert file != null : "Parameter 'file' in method 'invoke' must not be null";
             SonargraphLogger.INSTANCE.log(Level.INFO, "Load system report from file " + file.getAbsolutePath());

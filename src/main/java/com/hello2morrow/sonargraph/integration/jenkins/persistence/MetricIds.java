@@ -39,7 +39,7 @@ public class MetricIds implements Serializable
     private static final long serialVersionUID = -5993873338543821075L;
     private final Map<String, MetricId> metricIds = new HashMap<>();
 
-    public void addMetricId(MetricId metricId)
+    public void addMetricId(final MetricId metricId)
     {
         metricIds.put(metricId.getId(), metricId);
     }
@@ -49,7 +49,7 @@ public class MetricIds implements Serializable
         return metricIds;
     }
 
-    public MetricId getMetricId(String metricName)
+    public MetricId getMetricId(final String metricName)
     {
         return metricIds.get(metricName);
     }
@@ -57,17 +57,17 @@ public class MetricIds implements Serializable
     public Set<String> getMetricCategories()
     {
         final Set<String> result = new HashSet<>();
-        for (MetricId metricId : metricIds.values())
+        for (final MetricId metricId : metricIds.values())
         {
             result.addAll(metricId.getCategories());
         }
         return result;
     }
 
-    public Set<MetricId> getMetricIdsForCategory(String metricCategory)
+    public Set<MetricId> getMetricIdsForCategory(final String metricCategory)
     {
         final Set<MetricId> result = new HashSet<>();
-        for (MetricId metricId : metricIds.values())
+        for (final MetricId metricId : metricIds.values())
         {
             if (metricId.getCategories().contains(metricCategory))
             {
@@ -77,18 +77,18 @@ public class MetricIds implements Serializable
         return result;
     }
 
-    public static String toJSON(MetricIds metricIds)
+    public static String toJSON(final MetricIds metricIds)
     {
-        JSONStringer builder = new JSONStringer();
+        final JSONStringer builder = new JSONStringer();
         builder.array();
-        for (MetricId metricId : metricIds.getMetricIds().values())
+        for (final MetricId metricId : metricIds.getMetricIds().values())
         {
             builder.object();
             builder.key("id").value(metricId.getId());
             builder.key("name").value(metricId.getName());
             builder.key("isFloat").value(metricId.isFloat());
             builder.key("categories").array();
-            for (String category : metricId.getCategories())
+            for (final String category : metricId.getCategories())
                 builder.value(category);
             builder.endArray();
             builder.endObject();
@@ -98,15 +98,15 @@ public class MetricIds implements Serializable
     }
 
     @SuppressWarnings("unchecked")
-    public static MetricIds fromJSON(String jsonString)
+    public static MetricIds fromJSON(final String jsonString)
     {
-        MetricIds result = new MetricIds();
-        JSONArray jsonObject = JSONArray.fromObject(jsonString);
-        Collection<?> jsonCollection = JSONArray.toCollection(jsonObject);
-        for (Object next : jsonCollection)
+        final MetricIds result = new MetricIds();
+        final JSONArray jsonObject = JSONArray.fromObject(jsonString);
+        final Collection<?> jsonCollection = JSONArray.toCollection(jsonObject);
+        for (final Object next : jsonCollection)
         {
-            DynaBean dynaBean = (DynaBean) next;
-            MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"),
+            final DynaBean dynaBean = (DynaBean) next;
+            final MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"),
                     (List<String>) dynaBean.get("categories"));
             result.addMetricId(metricId);
         }
@@ -114,10 +114,10 @@ public class MetricIds implements Serializable
         return result;
     }
 
-    public static MetricIds fromExportMetaData(IExportMetaData exportMetaData)
+    public static MetricIds fromExportMetaData(final IExportMetaData exportMetaData)
     {
-        MetricIds result = new MetricIds();
-        for (IMetricId next : exportMetaData.getMetricIdsForLevel(exportMetaData.getMetricLevels().get(IMetricLevel.SYSTEM)))
+        final MetricIds result = new MetricIds();
+        for (final IMetricId next : exportMetaData.getMetricIdsForLevel(exportMetaData.getMetricLevels().get(IMetricLevel.SYSTEM)))
         {
             result.addMetricId(MetricId.from(next));
         }
@@ -134,7 +134,7 @@ public class MetricIds implements Serializable
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
             return true;
@@ -142,7 +142,7 @@ public class MetricIds implements Serializable
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MetricIds other = (MetricIds) obj;
+        final MetricIds other = (MetricIds) obj;
         if (metricIds == null)
         {
             if (other.metricIds != null)

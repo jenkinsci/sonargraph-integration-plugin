@@ -106,7 +106,7 @@ public class SonargraphChartAction implements Action, ProminentProjectAction
             return;
         }
 
-        MetricId metric = metaData.getMetricId(metricName);
+        final MetricId metric = metaData.getMetricId(metricName);
         if (metric == null)
         {
             SonargraphLogger.INSTANCE.log(Level.SEVERE, "Specified metric '" + metricName + "' is not supported.");

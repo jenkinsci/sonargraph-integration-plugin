@@ -34,7 +34,7 @@ enum BuildActionsEnum
     /** Action code. Used for the logic of the build. */
     private String m_actionCode;
 
-    private BuildActionsEnum(String actionName, String actionCode)
+    private BuildActionsEnum(final String actionName, final String actionCode)
     {
         m_actionName = actionName;
         m_actionCode = actionCode;

@@ -19,9 +19,9 @@ package com.hello2morrow.sonargraph.integration.jenkins.model;
 
 public class InvalidDataPoint implements IDataPoint
 {
-    private int m_x;
+    private final int m_x;
 
-    public InvalidDataPoint(int x)
+    public InvalidDataPoint(final int x)
     {
         m_x = x;
     }
@@ -48,7 +48,7 @@ public class InvalidDataPoint implements IDataPoint
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -62,7 +62,7 @@ public class InvalidDataPoint implements IDataPoint
         {
             return false;
         }
-        InvalidDataPoint other = (InvalidDataPoint) obj;
+        final InvalidDataPoint other = (InvalidDataPoint) obj;
         if (m_x != other.m_x)
         {
             return false;

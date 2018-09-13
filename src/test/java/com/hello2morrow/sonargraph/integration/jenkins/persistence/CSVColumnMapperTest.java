@@ -42,8 +42,8 @@ public class CSVColumnMapperTest
     public static void setUp() throws IOException
     {
         final IMetaDataController metaDataController = ControllerAccess.createMetaDataController();
-        File metaDataFile = new File(META_DATA_XML);
-        ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(metaDataFile);
+        final File metaDataFile = new File(META_DATA_XML);
+        final ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(metaDataFile);
         if (result.isSuccess())
         {
             s_metaData = result.getOutcome();

@@ -19,7 +19,7 @@ package com.hello2morrow.sonargraph.integration.jenkins.model;
 
 public class NotExistingDataPoint extends InvalidDataPoint
 {
-    public NotExistingDataPoint(int x)
+    public NotExistingDataPoint(final int x)
     {
         super(x);
     }

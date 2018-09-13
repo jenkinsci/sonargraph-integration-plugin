@@ -38,9 +38,9 @@ public final class ReportHistoryFileManager
 {
 
     /** Path to the folder containing sonargraph report files generated for every build */
-    private FilePath m_sonargraphReportHistoryDir;
+    private final FilePath m_sonargraphReportHistoryDir;
 
-    public ReportHistoryFileManager(FilePath projectRootDir, String reportHistoryBaseDirectoryName, PrintStream logger)
+    public ReportHistoryFileManager(final FilePath projectRootDir, final String reportHistoryBaseDirectoryName, final PrintStream logger)
             throws IOException, InterruptedException
     {
         assert projectRootDir != null : "The path to the folder where architect reports are stored must not be null";
@@ -56,7 +56,7 @@ public final class ReportHistoryFileManager
             {
                 m_sonargraphReportHistoryDir.mkdirs();
             }
-            catch (IOException ex)
+            catch (final IOException ex)
             {
                 SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE,
                         "Failed to create directory '" + m_sonargraphReportHistoryDir.getRemote() + "'", ex);
@@ -69,7 +69,7 @@ public final class ReportHistoryFileManager
         return m_sonargraphReportHistoryDir;
     }
 
-    public FilePath storeGeneratedReportDirectory(FilePath reportDirectory, String reportName, Integer buildNumber, PrintStream logger)
+    public FilePath storeGeneratedReportDirectory(final FilePath reportDirectory, final String reportName, final Integer buildNumber, final PrintStream logger)
             throws IOException, InterruptedException
     {
         assert reportDirectory != null : "Parameter 'reportDirectory' of method 'soterdGeneratedReportDirectory' must not be null";
@@ -78,7 +78,7 @@ public final class ReportHistoryFileManager
 
         if (!m_sonargraphReportHistoryDir.exists())
         {
-            String msg = "Unable to create directory " + m_sonargraphReportHistoryDir.getRemote();
+            final String msg = "Unable to create directory " + m_sonargraphReportHistoryDir.getRemote();
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, msg, null);
             throw new IOException(msg);
         }

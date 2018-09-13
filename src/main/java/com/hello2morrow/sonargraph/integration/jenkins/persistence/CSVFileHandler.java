@@ -142,7 +142,8 @@ public final class CSVFileHandler implements IMetricHistoryProvider
 
     private String[] getHeaderLine()
     {
-        try (final CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR);)
+        try (@SuppressWarnings("deprecation")
+        final CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR);)
         {
             final String[] nextLine = csvReader.readNext();
             return nextLine;
@@ -177,7 +178,8 @@ public final class CSVFileHandler implements IMetricHistoryProvider
             return sonargraphDataset;
         }
 
-        try (CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR))
+        try (@SuppressWarnings("deprecation")
+        CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR))
         {
             String[] nextLine;
             final int column = m_columnMapper.getIndex(metric.getId());

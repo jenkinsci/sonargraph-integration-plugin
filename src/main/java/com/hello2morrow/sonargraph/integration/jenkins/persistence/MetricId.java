@@ -34,21 +34,21 @@ public class MetricId implements Serializable
     private final boolean isFloat;
     private final Set<String> m_categories = new HashSet<>();
 
-    public MetricId(String id, String name, boolean isFloat, String... categories)
+    public MetricId(final String id, final String name, final boolean isFloat, final String... categories)
     {
         this.id = id;
         this.name = name;
         this.isFloat = isFloat;
         if (categories != null && categories.length > 0)
         {
-            for (String category : categories)
+            for (final String category : categories)
             {
                 m_categories.add(category);
             }
         }
     }
 
-    public MetricId(String id, String name, boolean isFloat, List<String> categories)
+    public MetricId(final String id, final String name, final boolean isFloat, final List<String> categories)
     {
         this.id = id;
         this.name = name;
@@ -92,7 +92,7 @@ public class MetricId implements Serializable
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -106,7 +106,7 @@ public class MetricId implements Serializable
         {
             return false;
         }
-        MetricId other = (MetricId) obj;
+        final MetricId other = (MetricId) obj;
         if (m_categories == null)
         {
             if (other.m_categories != null)
@@ -147,10 +147,10 @@ public class MetricId implements Serializable
         return true;
     }
 
-    public static MetricId from(IMetricId metricId)
+    public static MetricId from(final IMetricId metricId)
     {
-        List<String> categories = metricId.getCategories().stream().map(x -> x.getPresentationName()).collect(Collectors.toList());
-        MetricId result = new MetricId(metricId.getName(), metricId.getPresentationName(), metricId.isFloat(), categories);
+        final List<String> categories = metricId.getCategories().stream().map(x -> x.getPresentationName()).collect(Collectors.toList());
+        final MetricId result = new MetricId(metricId.getName(), metricId.getPresentationName(), metricId.isFloat(), categories);
         return result;
     }
 

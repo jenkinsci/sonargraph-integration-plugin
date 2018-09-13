@@ -29,7 +29,7 @@ public class Metric
     }
 
     @DataBoundConstructor
-    public Metric(String metricName, String metricCategory)
+    public Metric(final String metricName, final String metricCategory)
     {
         this.metricName = metricName;
         this.metricCategory = metricCategory;
@@ -40,7 +40,7 @@ public class Metric
         return metricName;
     }
 
-    public void setMetricName(String metricName)
+    public void setMetricName(final String metricName)
     {
         this.metricName = metricName;
     }
@@ -50,7 +50,7 @@ public class Metric
         return metricCategory;
     }
 
-    public void setMetricCategory(String metricCategory)
+    public void setMetricCategory(final String metricCategory)
     {
         this.metricCategory = metricCategory;
     }

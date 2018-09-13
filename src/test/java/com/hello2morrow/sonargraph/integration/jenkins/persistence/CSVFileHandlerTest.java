@@ -111,6 +111,7 @@ public class CSVFileHandlerTest
         final CSVFileHandler handler = new CSVFileHandler(newFile, s_metaData);
         final String shoudBeTheFirstLine = handler.createHeaderLine();
 
+        @SuppressWarnings("deprecation")
         final CSVReader csvReader = new CSVReader(new FileReader(newFile), CSVFileHandler.CSV_SEPARATOR);
         assertArrayEquals(shoudBeTheFirstLine.split(String.valueOf(CSVFileHandler.CSV_SEPARATOR)), csvReader.readNext());
         csvReader.close();
@@ -201,6 +202,7 @@ public class CSVFileHandlerTest
         buildMetrics.put(m_metric5, "200.456");
         final long timestamp = System.currentTimeMillis();
         csvFileHandler.writeMetricValues(1, timestamp, buildMetrics);
+        @SuppressWarnings("deprecation")
         final CSVReader csvReader = new CSVReader(new FileReader(newFile), CSVFileHandler.CSV_SEPARATOR);
         csvReader.readNext(); //Do nothing with the first line
         final String[] line = csvReader.readNext();

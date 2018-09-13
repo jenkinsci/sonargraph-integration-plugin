@@ -38,19 +38,19 @@ public abstract class AbstractHTMLAction implements Action
      * Enables directory browsing for directoryToServe.
      * Needed when showing the report, to be able to also serve referenced image and css files.
      */
-    protected void enableDirectoryBrowserSupport(StaplerRequest req, StaplerResponse rsp, FilePath directoryToServe)
+    protected void enableDirectoryBrowserSupport(final StaplerRequest req, final StaplerResponse rsp, final FilePath directoryToServe)
             throws IOException, ServletException
     {
-        DirectoryBrowserSupport directoryBrowser = new DirectoryBrowserSupport(this, directoryToServe, this.getDisplayName() + "html2", "graph.gif",
+        final DirectoryBrowserSupport directoryBrowser = new DirectoryBrowserSupport(this, directoryToServe, this.getDisplayName() + "html2", "graph.gif",
                 false);
         SonargraphLogger.INSTANCE.log(Level.FINE, "AbstractHTMLAction.enableDirectoryBrowserSupport for directory " + directoryToServe.getRemote());
         directoryBrowser.generateResponse(req, rsp, this);
     }
 
-    protected String readHTMLReport(FilePath pathToReport) throws IOException, InterruptedException
+    protected String readHTMLReport(final FilePath pathToReport) throws IOException, InterruptedException
     {
         SonargraphLogger.INSTANCE.log(Level.INFO, "Reading Sonargraph HTML Report from '" + pathToReport + "'");
-        TextFileReader fileReader = new TextFileReader();
+        final TextFileReader fileReader = new TextFileReader();
         String htmlReport;
 
         if (pathToReport.exists())
