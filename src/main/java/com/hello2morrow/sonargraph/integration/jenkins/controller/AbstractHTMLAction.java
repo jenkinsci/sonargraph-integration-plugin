@@ -50,12 +50,11 @@ public abstract class AbstractHTMLAction implements Action
     protected String readHTMLReport(final FilePath pathToReport) throws IOException, InterruptedException
     {
         SonargraphLogger.INSTANCE.log(Level.INFO, "Reading Sonargraph HTML Report from '" + pathToReport + "'");
-        final TextFileReader fileReader = new TextFileReader();
         String htmlReport;
 
         if (pathToReport.exists())
         {
-            htmlReport = fileReader.readLargeTextFile(pathToReport);
+            htmlReport = TextFileReader.readLargeTextFile(pathToReport);
         }
         else
         {

@@ -37,10 +37,12 @@ import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataContro
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
+import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter.MandatoryParameter;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHistory;
 import com.hello2morrow.sonargraph.integration.jenkins.tool.SonargraphBuild;
 
 import hudson.Extension;
@@ -160,7 +162,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final Collection<Action> actions = new ArrayList<>();
         if (project instanceof Project || (project instanceof TopLevelItem && !(project instanceof FlyweightTask)))
         {
-            final ResultWithOutcome<MetricIds> result = getMetricIds();
+            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
 
             if (result.isSuccess())
             {
@@ -207,7 +209,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         final FilePath sonargraphReportDirectory = new FilePath(build.getWorkspace(), getReportDirectory());
-        final ResultWithOutcome<MetricIds> metaData = getMetricIds();
+        final ResultWithOutcome<MetricIds> metaData = getMetricIds(build.getProject());
         if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), metaData.getOutcome(), listener.getLogger()))
         {
             //only add the actions after the processing has been successful
@@ -703,7 +705,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final AbstractProject<?, ?> project)
         {
             final ListBoxModel items = new ListBoxModel();
-            final ResultWithOutcome<MetricIds> result = getMetricIds();
+            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
             if (result.isSuccess())
             {
                 final MetricIds metaData = result.getOutcome();
@@ -728,7 +730,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             }
             final ListBoxModel items = new ListBoxModel();
 
-            final ResultWithOutcome<MetricIds> result = getMetricIds();
+            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
             if (result.isSuccess())
             {
                 final MetricIds metaData = result.getOutcome();
@@ -944,22 +946,37 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     }
 
-    protected static ResultWithOutcome<MetricIds> getMetricIds()
+    protected static ResultWithOutcome<MetricIds> getMetricIds(AbstractProject<?, ?> project)
     {
-        final ResultWithOutcome<MetricIds> result = new ResultWithOutcome<>("Get stored MetricIds");
+        final ResultWithOutcome<MetricIds> overallResult = new ResultWithOutcome<>("Get stored MetricIds");
+
+        // get metricIds from history
+        final File metricIdsHistoryFile = new File(project.getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
+        IMetricIdsHistoryProvider metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
+        final ResultWithOutcome<MetricIds> historyResult = metricIdsHistory.readMetricIds();
+        if(historyResult.isFailure())
+        {
+            overallResult.addMessagesFrom(historyResult);
+            return overallResult;
+        }
+        
+        // get metricIds from export meta data file
         final IMetaDataController controller = ControllerAccess.createMetaDataController();
         final InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
-        final ResultWithOutcome<IExportMetaData> exportMetaData = controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
+        final ResultWithOutcome<IExportMetaData> exportMetaDataResult = controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
 
-        if (exportMetaData.isSuccess())
+        if (exportMetaDataResult.isFailure())
         {
-            result.setOutcome(MetricIds.fromExportMetaData(exportMetaData.getOutcome()));
+            overallResult.addMessagesFrom(exportMetaDataResult);
+            return overallResult;
         }
-        else
-        {
-            result.addMessagesFrom(exportMetaData);
-        }
-        return result;
+        
+        // combine and return them
+        final MetricIds defaultMetricIds = MetricIds.fromExportMetaData(exportMetaDataResult.getOutcome());
+        final MetricIds historyMetricIds = historyResult.getOutcome();
+        overallResult.setOutcome(defaultMetricIds.addAll(historyMetricIds));
+        
+        return overallResult;
     }
 
     public static boolean validateNotNullAndRegexp(final String value, final String pattern)

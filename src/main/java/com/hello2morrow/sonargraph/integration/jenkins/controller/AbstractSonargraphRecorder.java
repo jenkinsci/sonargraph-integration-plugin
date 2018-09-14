@@ -110,9 +110,10 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         final Result buildResult = sonargraphBuildAnalyzer.getOverallBuildResult();
 
         final File metricHistoryFile = new File(build.getProject().getRootDir(), ConfigParameters.METRIC_HISTORY_CSV_FILE_PATH.getValue());
+        final File metricIdsHistoryFile = new File(build.getProject().getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
         try
         {
-            sonargraphBuildAnalyzer.saveMetricsToCSV(metricHistoryFile, build.getTimestamp().getTimeInMillis(), build.getNumber());
+            sonargraphBuildAnalyzer.saveMetrics(metricHistoryFile, metricIdsHistoryFile, build.getTimestamp().getTimeInMillis(), build.getNumber());
         }
         catch (final IOException ex)
         {

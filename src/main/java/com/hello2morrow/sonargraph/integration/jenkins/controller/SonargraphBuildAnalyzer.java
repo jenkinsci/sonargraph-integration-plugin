@@ -38,9 +38,11 @@ import com.hello2morrow.sonargraph.integration.access.model.IMetricValue;
 import com.hello2morrow.sonargraph.integration.access.model.Severity;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvider;
+import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.CSVFileHandler;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHistory;
 
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
@@ -242,18 +244,24 @@ class SonargraphBuildAnalyzer
     }
 
     /**
-     * Append all metrics from report to sonargraph CSV file.
+     * Append all metric values from report to sonargraph history file.
+     * Append all metricIds from report to sonargraph history file.
      */
-    public void saveMetricsToCSV(final File metricHistoryFile, final long timeOfBuild, final Integer buildNumber) throws IOException
+    public void saveMetrics(final File metricHistoryFile, final File metricIdsHistoryFile, final long timeOfBuild, final Integer buildNumber) throws IOException
     {
         if (!m_controller.hasSoftwareSystem())
         {
             return;
         }
-        final IMetricHistoryProvider fileHandler = new CSVFileHandler(metricHistoryFile, m_exportMetaData);
-        final HashMap<MetricId, String> buildMetricValues = new HashMap<>();
+        
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
 
+        final IMetricIdsHistoryProvider metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
+        metricIdsHistory.addMetricIds(MetricIds.fromIMetricIds(infoProcessor.getMetricIds()));
+        
+        
+        final IMetricHistoryProvider metricHistory = new CSVFileHandler(metricHistoryFile, m_exportMetaData);
+        final HashMap<MetricId, String> buildMetricValues = new HashMap<>();
         for (final IMetricId metric : infoProcessor.getMetricIds())
         {
             final Optional<IMetricValue> systemMetricValue = infoProcessor.getMetricValue(metric.getName());
@@ -263,7 +271,7 @@ class SonargraphBuildAnalyzer
             }
         }
 
-        fileHandler.writeMetricValues(buildNumber, timeOfBuild, buildMetricValues);
+        metricHistory.writeMetricValues(buildNumber, timeOfBuild, buildMetricValues);
     }
 
     public hudson.model.Result getOverallBuildResult()

@@ -26,6 +26,7 @@ public enum ConfigParameters
     JOB_FOLDER("job/"),
     HTML_REPORT_ACTION_URL("sonargraph-integration-html-report"),
     METRIC_HISTORY_CSV_FILE_PATH("sonargraph-integration-metric-history.csv"),
+    METRICIDS_HISTORY_JSON_FILE_PATH("sonargraph-integration-metricid-history.json"),
     CHARTS_FOR_METRICS_CSV_FILE_PATH("sonargraph-integration-charts-for-metrics.csv"),
     SONARGRAPH_HTML_REPORT_FILE_NAME("sonargraph-integration-report"),
     REPORT_HISTORY_FOLDER("sonargraphIntegrationReportHistory"),

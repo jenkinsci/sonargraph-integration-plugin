@@ -24,14 +24,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.apache.commons.beanutils.DynaBean;
 
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.access.model.IMetricLevel;
+import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.util.JSONStringer;
 
 public class MetricIds implements Serializable
@@ -101,16 +104,33 @@ public class MetricIds implements Serializable
     public static MetricIds fromJSON(final String jsonString)
     {
         final MetricIds result = new MetricIds();
-        final JSONArray jsonObject = JSONArray.fromObject(jsonString);
-        final Collection<?> jsonCollection = JSONArray.toCollection(jsonObject);
-        for (final Object next : jsonCollection)
+        try
         {
-            final DynaBean dynaBean = (DynaBean) next;
-            final MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"),
-                    (List<String>) dynaBean.get("categories"));
-            result.addMetricId(metricId);
+            final JSONArray jsonObject = JSONArray.fromObject(jsonString);
+            final Collection<?> jsonCollection = JSONArray.toCollection(jsonObject);
+            for (final Object next : jsonCollection)
+            {
+                final DynaBean dynaBean = (DynaBean) next;
+                final MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"),
+                        (List<String>) dynaBean.get("categories"));
+                result.addMetricId(metricId);
+            }
+        }
+        catch (JSONException je)
+        {
+            SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to read metricIds from json string", je);
         }
 
+        return result;
+    }
+
+    public static MetricIds fromIMetricIds(final List<IMetricId> metricIds)
+    {
+        final MetricIds result = new MetricIds();
+        for (final IMetricId next : metricIds)
+        {
+            result.addMetricId(MetricId.from(next));
+        }
         return result;
     }
 
@@ -151,6 +171,15 @@ public class MetricIds implements Serializable
         else if (!metricIds.equals(other.metricIds))
             return false;
         return true;
+    }
+
+    public MetricIds addAll(MetricIds other)
+    {
+        for (MetricId nextId : other.getMetricIds().values())
+        {
+            addMetricId(nextId);
+        }
+        return this;
     }
 
 }

@@ -39,4 +39,5 @@ public interface IMetricHistoryProvider
     public void writeMetricValues(Integer buildNumber, long timestamp, Map<MetricId, String> metricValues) throws IOException;
 
     public String getStorageName();
+    
 }

@@ -18,14 +18,16 @@
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import hudson.FilePath;
 
-public class TextFileReader
+public final class TextFileReader
 {
-    public String readLargeTextFile(final FilePath largeTextFilePath) throws IOException, InterruptedException
+    public static String readLargeTextFile(final FilePath largeTextFilePath) throws IOException, InterruptedException
     {
         final StringBuilder completeTextFile = new StringBuilder();
         try (BufferedReader bfReader = new BufferedReader(new InputStreamReader(largeTextFilePath.read())))
@@ -37,6 +39,21 @@ public class TextFileReader
             }
         }
 
+        return completeTextFile.toString();
+    }
+    
+    public static String readLargeTextFile(final File largeTextFile) throws IOException
+    {
+        final StringBuilder completeTextFile = new StringBuilder();
+        try (BufferedReader bfReader = new BufferedReader(new FileReader(largeTextFile)))
+        {
+            String currentLine;
+            while ((currentLine = bfReader.readLine()) != null)
+            {
+                completeTextFile.append(currentLine);
+            }
+        }
+        
         return completeTextFile.toString();
     }
 }

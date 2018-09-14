@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.Utility;
-import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.BuildDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IDataPoint;
@@ -62,12 +61,6 @@ public final class CSVFileHandler implements IMetricHistoryProvider
     private final File m_file;
     private final MetricIds m_metaData;
     private final CSVColumnMapper m_columnMapper;
-
-    public CSVFileHandler(final File csvFile, final IExportMetaData exportMetaData)
-    {
-        this(csvFile, MetricIds.fromExportMetaData(exportMetaData));
-
-    }
 
     public CSVFileHandler(final File csvFile, final MetricIds metaData)
     {
