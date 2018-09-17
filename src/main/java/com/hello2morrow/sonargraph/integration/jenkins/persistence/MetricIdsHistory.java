@@ -37,15 +37,17 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
     public MetricIdsHistory(final File historyFile)
     {
         this.file = historyFile;
-        if (!file.exists())
+        if (!this.file.exists())
         {
             try
             {
-                file.createNewFile();
+                SonargraphLogger.INSTANCE.log(Level.INFO, "Create new empty MetricIds JSON file {0}", this.file.getAbsolutePath());
+                this.file.createNewFile();
+                storeMetricIds(new MetricIds());
             }
             catch (final IOException ex)
             {
-                SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to create MetricIds JSON file '" + file.getAbsolutePath(), ex);
+                SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to create new MetricIds JSON file " + this.file.getAbsolutePath(), ex);
             }
         }
     }
@@ -57,6 +59,7 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
         String jsonString;
         try
         {
+            SonargraphLogger.INSTANCE.log(Level.INFO, "Read metricIds file {0}", this.file.getAbsolutePath());
             jsonString = TextFileReader.readLargeTextFile(this.file);
             result.setOutcome(MetricIds.fromJSON(jsonString));
         }
@@ -69,7 +72,7 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
     }
 
     @Override
-    public void addMetricIds(final MetricIds metricIds)
+    public MetricIds addMetricIds(final MetricIds metricIds)
     {
         final ResultWithOutcome<MetricIds> existing = readMetricIds();
         if (existing.isSuccess())
@@ -79,15 +82,23 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
             newMetricIds.addAll(existingMetricIds);
             newMetricIds.addAll(metricIds);
             if (!existingMetricIds.equals(newMetricIds))
-            {   
+            {
+                SonargraphLogger.INSTANCE.log(Level.INFO, "Override metricIds file {0}", this.file.getAbsolutePath());
                 storeMetricIds(newMetricIds);
             }
+            else
+            {
+                SonargraphLogger.INSTANCE.log(Level.INFO, "Add metricIds had no effect on file {0}", this.file.getAbsolutePath());
+            }
+            return newMetricIds;
         }
-
+        return metricIds;
     }
 
     private void storeMetricIds(final MetricIds metricIds)
     {
+        SonargraphLogger.INSTANCE.log(Level.INFO, "Store {0} metricIds to file {1}",
+                new Object[] { metricIds.getMetricIds().size(), this.file.getAbsolutePath() });
         final String jsonString = MetricIds.toJSON(metricIds);
         try (PrintWriter out = new PrintWriter(file, "UTF-8"))
         {

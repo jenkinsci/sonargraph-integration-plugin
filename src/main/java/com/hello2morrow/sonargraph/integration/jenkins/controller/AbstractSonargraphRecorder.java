@@ -24,7 +24,6 @@ import java.util.logging.Level;
 
 import com.hello2morrow.sonargraph.integration.access.model.Severity;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.PluginVersionReader;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ReportHistoryFileManager;
 
@@ -68,7 +67,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     }
 
     protected boolean processSonargraphReport(final AbstractBuild<?, ?> build, final FilePath sonargraphReportDirectory, final String reportFileName,
-            final MetricIds exportMetaData, final PrintStream logger) throws IOException, InterruptedException
+            final PrintStream logger) throws IOException, InterruptedException
     {
         assert build != null : "Parameter 'build' of method 'processSonargraphReport' must not be null";
         assert sonargraphReportDirectory != null : "Parameter 'sonargraphReportDirectory' of method 'processSonargraphReport' must not be null";
@@ -97,7 +96,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
             return false;
         }
 
-        final SonargraphBuildAnalyzer sonargraphBuildAnalyzer = new SonargraphBuildAnalyzer(reportFile, exportMetaData, logger);
+        final SonargraphBuildAnalyzer sonargraphBuildAnalyzer = new SonargraphBuildAnalyzer(reportFile, logger);
 
         sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureViolation", Severity.NONE, architectureViolationsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfMetricValueNotZero("CoreUnassignedComponents", unassignedTypesAction);

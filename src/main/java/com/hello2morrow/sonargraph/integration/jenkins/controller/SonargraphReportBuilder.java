@@ -209,8 +209,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         final FilePath sonargraphReportDirectory = new FilePath(build.getWorkspace(), getReportDirectory());
-        final ResultWithOutcome<MetricIds> metaData = getMetricIds(build.getProject());
-        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), metaData.getOutcome(), listener.getLogger()))
+        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), listener.getLogger()))
         {
             //only add the actions after the processing has been successful
             addActions(build);
@@ -954,12 +953,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final File metricIdsHistoryFile = new File(project.getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
         IMetricIdsHistoryProvider metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
         final ResultWithOutcome<MetricIds> historyResult = metricIdsHistory.readMetricIds();
-        if(historyResult.isFailure())
+        if (historyResult.isFailure())
         {
             overallResult.addMessagesFrom(historyResult);
             return overallResult;
         }
-        
+
         // get metricIds from export meta data file
         final IMetaDataController controller = ControllerAccess.createMetaDataController();
         final InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
@@ -970,12 +969,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             overallResult.addMessagesFrom(exportMetaDataResult);
             return overallResult;
         }
-        
+
         // combine and return them
         final MetricIds defaultMetricIds = MetricIds.fromExportMetaData(exportMetaDataResult.getOutcome());
         final MetricIds historyMetricIds = historyResult.getOutcome();
         overallResult.setOutcome(defaultMetricIds.addAll(historyMetricIds));
-        
+
         return overallResult;
     }
 

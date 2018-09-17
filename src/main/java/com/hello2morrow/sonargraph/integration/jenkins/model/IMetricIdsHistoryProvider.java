@@ -24,7 +24,7 @@ public interface IMetricIdsHistoryProvider
 {
     ResultWithOutcome<MetricIds> readMetricIds();
     
-    void addMetricIds(MetricIds metricIds);
+    MetricIds addMetricIds(MetricIds metricIds);
 
     String getStorageName();
 }

@@ -55,8 +55,6 @@ import hudson.remoting.VirtualChannel;
  */
 class SonargraphBuildAnalyzer
 {
-    private final MetricIds m_exportMetaData;
-
     /**
      * HashMap containing a code for the build result and a Result object for
      * each code.
@@ -76,11 +74,10 @@ class SonargraphBuildAnalyzer
      * @throws InterruptedException 
      * @throws IOException 
      */
-    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final MetricIds metricMetaData, final OutputStream logger)
+    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final OutputStream logger)
             throws IOException, InterruptedException
     {
         assert sonargraphReportPath != null : "The path for the Sonargraph architect report must not be null";
-        assert metricMetaData != null : "Parameter 'metricMetaData' of method 'SonargraphBuildAnalyzer' must not be null";
 
         assert logger != null : "Parameter 'logger' of method 'SonargraphBuildAnalyzer' mu st not be null";
         m_logger = logger;
@@ -92,8 +89,6 @@ class SonargraphBuildAnalyzer
             SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.SEVERE,
                     "Failed to load report from '" + sonargraphReportPath + "': " + operationResult.toString(), null);
         }
-
-        m_exportMetaData = metricMetaData;
 
         m_buildResults.put(BuildActionsEnum.UNSTABLE.getActionCode(), hudson.model.Result.UNSTABLE);
         m_buildResults.put(BuildActionsEnum.FAILED.getActionCode(), hudson.model.Result.FAILURE);
@@ -257,10 +252,10 @@ class SonargraphBuildAnalyzer
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
 
         final IMetricIdsHistoryProvider metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
-        metricIdsHistory.addMetricIds(MetricIds.fromIMetricIds(infoProcessor.getMetricIds()));
+        final MetricIds metricIds = metricIdsHistory.addMetricIds(MetricIds.fromIMetricIds(infoProcessor.getMetricIds()));
         
         
-        final IMetricHistoryProvider metricHistory = new CSVFileHandler(metricHistoryFile, m_exportMetaData);
+        final IMetricHistoryProvider metricHistory = new CSVFileHandler(metricHistoryFile, metricIds);
         final HashMap<MetricId, String> buildMetricValues = new HashMap<>();
         for (final IMetricId metric : infoProcessor.getMetricIds())
         {
