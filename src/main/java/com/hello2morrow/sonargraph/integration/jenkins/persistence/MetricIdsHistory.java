@@ -20,6 +20,7 @@ package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
@@ -31,7 +32,9 @@ import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryPr
 
 public class MetricIdsHistory implements IMetricIdsHistoryProvider
 {
-
+    public static final String ADD_METRIC_IDS_HAD_NO_EFFECT_ON_FILE = "Add metricIds had no effect on file ";
+    public static final String OVERRIDE_METRIC_IDS_FILE = "Override metricIds file ";
+    
     private final File file;
 
     public MetricIdsHistory(final File historyFile)
@@ -72,7 +75,7 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
     }
 
     @Override
-    public MetricIds addMetricIds(final MetricIds metricIds)
+    public MetricIds addMetricIds(final MetricIds metricIds, PrintStream logger)
     {
         final ResultWithOutcome<MetricIds> existing = readMetricIds();
         if (existing.isSuccess())
@@ -83,12 +86,12 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
             newMetricIds.addAll(metricIds);
             if (!existingMetricIds.equals(newMetricIds))
             {
-                SonargraphLogger.INSTANCE.log(Level.INFO, "Override metricIds file {0}", this.file.getAbsolutePath());
+                SonargraphLogger.logToConsoleOutput(logger, Level.INFO, OVERRIDE_METRIC_IDS_FILE + this.file.getAbsolutePath(), null);
                 storeMetricIds(newMetricIds);
             }
             else
             {
-                SonargraphLogger.INSTANCE.log(Level.INFO, "Add metricIds had no effect on file {0}", this.file.getAbsolutePath());
+                SonargraphLogger.logToConsoleOutput(logger, Level.INFO, ADD_METRIC_IDS_HAD_NO_EFFECT_ON_FILE + this.file.getAbsolutePath(), null);
             }
             return newMetricIds;
         }

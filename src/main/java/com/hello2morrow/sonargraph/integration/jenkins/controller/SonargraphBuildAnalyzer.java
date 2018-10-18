@@ -19,7 +19,6 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Optional;
@@ -64,7 +63,7 @@ class SonargraphBuildAnalyzer
     /** Final result of the build process after being affected by the metrics analysis.s */
     private hudson.model.Result m_overallBuildResult;
 
-    private OutputStream m_logger = null;
+    private PrintStream m_logger = null;
     private final ISonargraphSystemController m_controller = ControllerAccess.createController();
 
     /**
@@ -74,7 +73,7 @@ class SonargraphBuildAnalyzer
      * @throws InterruptedException 
      * @throws IOException 
      */
-    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final OutputStream logger)
+    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final PrintStream logger)
             throws IOException, InterruptedException
     {
         assert sonargraphReportPath != null : "The path for the Sonargraph architect report must not be null";
@@ -86,7 +85,7 @@ class SonargraphBuildAnalyzer
 
         if (operationResult.isFailure())
         {
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.SEVERE,
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.SEVERE,
                     "Failed to load report from '" + sonargraphReportPath + "': " + operationResult.toString(), null);
         }
 
@@ -244,15 +243,17 @@ class SonargraphBuildAnalyzer
      */
     public void saveMetrics(final File metricHistoryFile, final File metricIdsHistoryFile, final long timeOfBuild, final Integer buildNumber) throws IOException
     {
+        SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO, "Save metrics to history", null);
         if (!m_controller.hasSoftwareSystem())
         {
+            SonargraphLogger.INSTANCE.log(Level.WARNING, "Software System expected");
             return;
         }
         
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
 
         final IMetricIdsHistoryProvider metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
-        final MetricIds metricIds = metricIdsHistory.addMetricIds(MetricIds.fromIMetricIds(infoProcessor.getMetricIds()));
+        final MetricIds metricIds = metricIdsHistory.addMetricIds(MetricIds.fromIMetricIds(infoProcessor.getMetricIds()), m_logger);
         
         
         final IMetricHistoryProvider metricHistory = new CSVFileHandler(metricHistoryFile, metricIds);
