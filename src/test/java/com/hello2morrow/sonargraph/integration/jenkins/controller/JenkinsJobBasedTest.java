@@ -82,6 +82,7 @@ public abstract class JenkinsJobBasedTest
         final boolean languageJava = false;
         final boolean languageCSharp = false;
         final boolean languageCPlusPlus = false;
+        final boolean languagePython = false;
         final String sonargraphBuildJDK = "";
         final String sonargraphBuildVersion = "newest";
         final String activationCode = System.getProperty("sonargraph.activationcode.test", "");
@@ -98,7 +99,7 @@ public abstract class JenkinsJobBasedTest
         return new SonargraphReportBuilder(metrics, metaDataFile, systemDirectory, qualityModelFile, virtualModel, reportPath, reportGeneration,
                 chartConfiguration, architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction,
                 architectureWarningsAction, workspaceWarningsAction, workItemsAction, emptyWorkspaceAction, languageJava, languageCSharp,
-                languageCPlusPlus, sonargraphBuildJDK, sonargraphBuildVersion, activationCode, licenseFile, workspaceProfile, snapshotDirectory,
+                languageCPlusPlus, languagePython, sonargraphBuildJDK, sonargraphBuildVersion, activationCode, licenseFile, workspaceProfile, snapshotDirectory,
                 snapshotFileName, logLevel, logFile, elementCountToSplitHtmlReport, maxElementCountForHtmlDetailsPage, splitByModule);
     }
 }

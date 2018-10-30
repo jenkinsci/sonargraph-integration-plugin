@@ -27,11 +27,11 @@ public class MetricIdsTest
     public void testMetricIdsToJson()
     {
         final MetricIds metricIds = new MetricIds();
-        final MetricId first = new MetricId("first", "First Metric Id", false);
+        final MetricId first = new MetricId("first", "core", "First Metric Id", false);
         metricIds.addMetricId(first);
-        final MetricId second = new MetricId("second", "Second Metric Id", false, "Cycle");
+        final MetricId second = new MetricId("second", "core", "Second Metric Id", false, "Cycle");
         metricIds.addMetricId(second);
-        final MetricId third = new MetricId("third", "Third Metric Id", false, "Cycle", "Size", "Robert C. Martin");
+        final MetricId third = new MetricId("third", "core", "Third Metric Id", false, "Cycle", "Size", "Robert C. Martin");
         metricIds.addMetricId(third);
         final String jsonString = MetricIds.toJSON(metricIds);
         final MetricIds fromString = MetricIds.fromJSON(jsonString);

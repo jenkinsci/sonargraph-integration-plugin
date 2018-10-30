@@ -19,6 +19,7 @@ package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -49,7 +50,22 @@ public class MetricIds implements Serializable
 
     public Map<String, MetricId> getMetricIds()
     {
-        return metricIds;
+        return Collections.unmodifiableMap(metricIds);
+    }
+    
+    public Map<String, MetricId> getMetricIds(String language)
+    {
+        final Map<String, MetricId> result = new HashMap<>();
+        for(String next : metricIds.keySet())
+        {
+            final MetricId nextMetric = metricIds.get(next);
+            final String nextProviderId = nextMetric.getProviderId();
+            if(nextProviderId.equals(language) || nextProviderId.equals("Core") || nextProviderId.startsWith("./"))
+            {
+                result.put(next, nextMetric);
+            }
+        }
+        return result;
     }
 
     public MetricId getMetricId(final String metricName)
@@ -111,7 +127,7 @@ public class MetricIds implements Serializable
             for (final Object next : jsonCollection)
             {
                 final DynaBean dynaBean = (DynaBean) next;
-                final MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"),
+                final MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("providerId"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"),
                         (List<String>) dynaBean.get("categories"));
                 result.addMetricId(metricId);
             }

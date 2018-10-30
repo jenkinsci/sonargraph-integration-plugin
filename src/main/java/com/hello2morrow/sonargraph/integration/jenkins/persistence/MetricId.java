@@ -30,13 +30,15 @@ public class MetricId implements Serializable
     private static final long serialVersionUID = 4950947267793381336L;
 
     private final String id;
+    private final String providerId;
     private final String name;
     private final boolean isFloat;
     private final Set<String> m_categories = new HashSet<>();
 
-    public MetricId(final String id, final String name, final boolean isFloat, final String... categories)
+    public MetricId(final String id, final String providerId, final String name, final boolean isFloat, final String... categories)
     {
         this.id = id;
+        this.providerId = id;
         this.name = name;
         this.isFloat = isFloat;
         if (categories != null && categories.length > 0)
@@ -48,9 +50,10 @@ public class MetricId implements Serializable
         }
     }
 
-    public MetricId(final String id, final String name, final boolean isFloat, final List<String> categories)
+    public MetricId(final String id, final String providerId, final String name, final boolean isFloat, final List<String> categories)
     {
         this.id = id;
+        this.providerId = id;
         this.name = name;
         this.isFloat = isFloat;
         if (categories != null)
@@ -74,6 +77,11 @@ public class MetricId implements Serializable
         return id;
     }
 
+    public String getProviderId()
+    {
+        return providerId;
+    }
+    
     public boolean isFloat()
     {
         return isFloat;
@@ -150,7 +158,7 @@ public class MetricId implements Serializable
     public static MetricId from(final IMetricId metricId)
     {
         final List<String> categories = metricId.getCategories().stream().map(x -> x.getPresentationName()).collect(Collectors.toList());
-        final MetricId result = new MetricId(metricId.getName(), metricId.getPresentationName(), metricId.isFloat(), categories);
+        final MetricId result = new MetricId(metricId.getName(), metricId.getProvider().getName(), metricId.getPresentationName(), metricId.isFloat(), categories);
         return result;
     }
 

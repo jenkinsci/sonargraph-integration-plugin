@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -93,6 +94,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     private final boolean languageJava;
     private final boolean languageCSharp;
     private final boolean languageCPlusPlus;
+    private final boolean languagePython;
 
     private final String sonargraphBuildJDK;
     private final String sonargraphBuildVersion;
@@ -118,10 +120,10 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             final String architectureViolationsAction, final String unassignedTypesAction, final String cyclicElementsAction,
             final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
             final String workItemsAction, final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp,
-            final boolean languageCPlusPlus, final String sonargraphBuildJDK, final String sonargraphBuildVersion, final String activationCode,
-            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName,
-            final String logLevel, final String logFile, final String elementCountToSplitHtmlReport, final String maxElementCountForHtmlDetailsPage,
-            final boolean splitByModule)
+            final boolean languageCPlusPlus, final boolean languagePython, final String sonargraphBuildJDK, final String sonargraphBuildVersion,
+            final String activationCode, final String licenseFile, final String workspaceProfile, final String snapshotDirectory,
+            final String snapshotFileName, final String logLevel, final String logFile, final String elementCountToSplitHtmlReport,
+            final String maxElementCountForHtmlDetailsPage, final boolean splitByModule)
     {
         super(architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction, architectureWarningsAction,
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
@@ -137,6 +139,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         this.languageJava = languageJava;
         this.languageCSharp = languageCSharp;
         this.languageCPlusPlus = languageCPlusPlus;
+        this.languagePython = languagePython;
         this.sonargraphBuildJDK = sonargraphBuildJDK;
         this.sonargraphBuildVersion = sonargraphBuildVersion;
         this.activationCode = activationCode;
@@ -166,16 +169,30 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
             if (result.isSuccess())
             {
-                List<String> metricList;
+                final List<String> metricList= new ArrayList<>();
                 final MetricIds exportMetaData = result.getOutcome();
                 if (isAllCharts())
                 {
-                    metricList = new ArrayList<>();
                     metricList.addAll(exportMetaData.getMetricIds().keySet());
+                }
+                else if(isJavaCharts())
+                {
+                    metricList.addAll(exportMetaData.getMetricIds("Java").keySet());
+                }
+                else if(isCPlusPlusCharts())
+                {
+                    metricList.addAll(exportMetaData.getMetricIds("CPlusPlus").keySet());
+                }
+                else if(isCSharpCharts())
+                {
+                    metricList.addAll(exportMetaData.getMetricIds("CSharp").keySet());
+                }
+                else if(isPythonCharts())
+                {
+                    metricList.addAll(exportMetaData.getMetricIds("Python").keySet());
                 }
                 else
                 {
-                    metricList = new ArrayList<>();
                     if (metrics != null)
                     {
                         for (final Metric metric : metrics)
@@ -315,7 +332,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final EnumMap<MandatoryParameter, String> parameters = new EnumMap<>(MandatoryParameter.class);
         parameters.put(MandatoryParameter.ACTIVATION_CODE, getActivationCode());
         parameters.put(MandatoryParameter.INSTALLATION_DIRECTORY, sonargraphBuild.getHome());
-        parameters.put(MandatoryParameter.LANGUAGES, getLanguages(languageJava, languageCSharp, languageCPlusPlus));
+        parameters.put(MandatoryParameter.LANGUAGES, getLanguages(languageJava, languageCPlusPlus, languageCSharp, languagePython));
         parameters.put(MandatoryParameter.SYSTEM_DIRECTORY, getSystemDirectory());
         parameters.put(MandatoryParameter.REPORT_DIRECTORY, getReportDirectory());
         parameters.put(MandatoryParameter.REPORT_FILENAME, getReportFileName());
@@ -436,37 +453,38 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         return languageCPlusPlus;
     }
-
-    protected static String getLanguages(final boolean languageJava, final boolean languageCSharp, final boolean languageCPlusPlus)
+    
+    public boolean getLanguagePython()
     {
-        if (languageJava && !languageCSharp && !languageCPlusPlus)
+        return languagePython;
+    }
+
+    /**
+     * Returns comma separated list of languages in 'Sonargraph historical' order.
+     * @return
+     */
+    protected static String getLanguages(final boolean languageJava, final boolean languageCPlusPlus, final boolean languageCSharp,
+            final boolean languagePython)
+    {
+        final boolean allLanguages = !(languageJava || languageCPlusPlus  || languageCSharp || languagePython);
+        final List<String> languages = new ArrayList<>();
+        if (allLanguages || languageJava)
         {
-            return "Java";
+            languages.add("Java");
         }
-        else if (!languageJava && languageCSharp && !languageCPlusPlus)
+        if (allLanguages || languageCPlusPlus)
         {
-            return "CSharp";
+            languages.add("CPlusPlus");
         }
-        else if (!languageJava && !languageCSharp && languageCPlusPlus)
+        if (allLanguages || languageCSharp)
         {
-            return "CPlusPlus";
+            languages.add("CSharp");
         }
-        else if (languageJava && languageCSharp && !languageCPlusPlus)
+        if (allLanguages || languagePython)
         {
-            return "Java,CSharp";
+            languages.add("Python");
         }
-        else if (languageJava && !languageCSharp && languageCPlusPlus) // NOSONAR false positive
-        {
-            return "Java,CPlusPlus";
-        }
-        else if (!languageJava && languageCSharp && languageCPlusPlus) // NOSONAR false positive
-        {
-            return "CSharp,CPlusPlus";
-        }
-        else
-        {
-            return "Java,CSharp,CPlusPlus";
-        }
+        return languages.stream().collect(Collectors.joining(","));
     }
 
     public String getSonargraphBuildJDK()
@@ -596,9 +614,29 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return "allCharts".equals(getChartConfiguration());
     }
 
+    public boolean isJavaCharts()
+    {
+        return "javaCharts".equals(getChartConfiguration());
+    }
+    
+    public boolean isCPlusPlusCharts()
+    {
+        return "cplusplusCharts".equals(getChartConfiguration());
+    }
+    
+    public boolean isCSharpCharts()
+    {
+        return "csharpCharts".equals(getChartConfiguration());
+    }
+    
+    public boolean isPythonCharts()
+    {
+        return "pythonCharts".equals(getChartConfiguration());
+    }
+    
     public boolean isSelectedCharts()
     {
-        return !isAllCharts();
+        return "selectedCharts".equals(getChartConfiguration());
     }
 
     public List<Metric> getMetrics()

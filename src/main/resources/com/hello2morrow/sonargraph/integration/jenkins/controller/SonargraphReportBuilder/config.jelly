@@ -57,6 +57,9 @@
               <f:entry title="C++" field="languageCPlusPlus">
                 <f:checkbox />
               </f:entry>
+              <f:entry title="Python" field="languagePython">
+                <f:checkbox />
+              </f:entry>
             </f:block>
             
             <f:section title="Split Report">
@@ -99,8 +102,20 @@
   </f:section>
 
   <f:section title="Chart Configuration">
-    <f:radioBlock name="chartConfiguration" value="allCharts" title="All charts taken from Meta Data File"
+    <f:radioBlock name="chartConfiguration" value="allCharts" title="All charts"
       checked="${(instance == null) ? 'true': instance.allCharts}" inline="true" help="/plugin/sonargraph-integration/html/help-allCharts.html">
+    </f:radioBlock>
+    <f:radioBlock name="chartConfiguration" value="javaCharts" title="All Java charts"
+      checked="${instance.javaCharts}" inline="true" help="/plugin/sonargraph-integration/html/help-javaCharts.html">
+    </f:radioBlock>
+    <f:radioBlock name="chartConfiguration" value="cplusplusCharts" title="All C/C++ charts"
+      checked="${instance.cplusplusCharts}" inline="true" help="/plugin/sonargraph-integration/html/help-cplusplusCharts.html">
+    </f:radioBlock>
+    <f:radioBlock name="chartConfiguration" value="csharpCharts" title="All C# charts"
+      checked="${instance.csharpCharts}" inline="true" help="/plugin/sonargraph-integration/html/help-csharpCharts.html">
+    </f:radioBlock>
+    <f:radioBlock name="chartConfiguration" value="pythonCharts" title="All Python charts"
+      checked="${instance.pythonCharts}" inline="true" help="/plugin/sonargraph-integration/html/help-pythonCharts.html">
     </f:radioBlock>
     <f:radioBlock name="chartConfiguration" value="selectedCharts" title="Select Charts" checked="${instance.selectedCharts}"
       inline="true" help="/plugin/sonargraph-integration/html/help-selectedCharts.html">

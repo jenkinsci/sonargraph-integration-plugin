@@ -27,13 +27,18 @@ public class SonargraphReportBuilderTest
     @Test
     public void testGetLanguages()
     {
-        assertEquals("No language means all languages", "Java,CSharp,CPlusPlus", SonargraphReportBuilder.getLanguages(false, false, false));
-        assertEquals("All languages", "Java,CSharp,CPlusPlus", SonargraphReportBuilder.getLanguages(true, true, true));
-        assertEquals("Java and CSharp", "Java,CSharp", SonargraphReportBuilder.getLanguages(true, true, false));
-        assertEquals("Java and CPlusPlus", "Java,CPlusPlus", SonargraphReportBuilder.getLanguages(true, false, true));
-        assertEquals("CSharp and CPlusPlus", "CSharp,CPlusPlus", SonargraphReportBuilder.getLanguages(false, true, true));
-        assertEquals("Java only", "Java", SonargraphReportBuilder.getLanguages(true, false, false));
-        assertEquals("CSharp only", "CSharp", SonargraphReportBuilder.getLanguages(false, true, false));
-        assertEquals("CPlusPlus only", "CPlusPlus", SonargraphReportBuilder.getLanguages(false, false, true));
+        assertEquals("No language means all languages", "Java,CPlusPlus,CSharp,Python",
+                SonargraphReportBuilder.getLanguages(false, false, false, false));
+        assertEquals("All languages", "Java,CPlusPlus,CSharp,Python", SonargraphReportBuilder.getLanguages(true, true, true, true));
+        assertEquals("Java and CSharp", "Java,CSharp", SonargraphReportBuilder.getLanguages(true, false, true, false));
+        assertEquals("Java and CPlusPlus", "Java,CPlusPlus", SonargraphReportBuilder.getLanguages(true, true, false, false));
+        assertEquals("Java and Python", "Java,Python", SonargraphReportBuilder.getLanguages(true, false, false, true));
+        assertEquals("CPlusPlus and CSharp", "CPlusPlus,CSharp", SonargraphReportBuilder.getLanguages(false, true, true, false));
+        assertEquals("CPlusPlus and Python", "CPlusPlus,Python", SonargraphReportBuilder.getLanguages(false, true, false, true));
+        assertEquals("CSharp and Python", "CSharp,Python", SonargraphReportBuilder.getLanguages(false, false, true, true));
+        assertEquals("Java only", "Java", SonargraphReportBuilder.getLanguages(true, false, false, false));
+        assertEquals("CSharp only", "CSharp", SonargraphReportBuilder.getLanguages(false, false, true, false));
+        assertEquals("CPlusPlus only", "CPlusPlus", SonargraphReportBuilder.getLanguages(false, true, false, false));
+        assertEquals("Python only", "Python", SonargraphReportBuilder.getLanguages(false, false, false, true));
     }
 }
