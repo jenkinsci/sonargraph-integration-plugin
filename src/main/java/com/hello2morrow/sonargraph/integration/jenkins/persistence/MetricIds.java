@@ -104,6 +104,7 @@ public class MetricIds implements Serializable
         {
             builder.object();
             builder.key("id").value(metricId.getId());
+            builder.key("providerId").value(metricId.getProviderId());
             builder.key("name").value(metricId.getName());
             builder.key("isFloat").value(metricId.isFloat());
             builder.key("categories").array();

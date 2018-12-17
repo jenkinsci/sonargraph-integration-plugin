@@ -38,7 +38,7 @@ public class MetricId implements Serializable
     public MetricId(final String id, final String providerId, final String name, final boolean isFloat, final String... categories)
     {
         this.id = id;
-        this.providerId = id;
+        this.providerId = providerId;
         this.name = name;
         this.isFloat = isFloat;
         if (categories != null && categories.length > 0)
@@ -53,7 +53,7 @@ public class MetricId implements Serializable
     public MetricId(final String id, final String providerId, final String name, final boolean isFloat, final List<String> categories)
     {
         this.id = id;
-        this.providerId = id;
+        this.providerId = providerId;
         this.name = name;
         this.isFloat = isFloat;
         if (categories != null)
