@@ -179,11 +179,11 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 {
                     metricList.addAll(exportMetaData.getMetricIds("Java").keySet());
                 }
-                else if(isCPlusPlusCharts())
+                else if(isCplusplusCharts())
                 {
                     metricList.addAll(exportMetaData.getMetricIds("CPlusPlus").keySet());
                 }
-                else if(isCSharpCharts())
+                else if(isCsharpCharts())
                 {
                     metricList.addAll(exportMetaData.getMetricIds("CSharp").keySet());
                 }
@@ -616,15 +616,16 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     public boolean isJavaCharts()
     {
+        SonargraphLogger.INSTANCE.log(Level.INFO, "isJavaCharts: " + getChartConfiguration());
         return "javaCharts".equals(getChartConfiguration());
     }
     
-    public boolean isCPlusPlusCharts()
+    public boolean isCplusplusCharts()
     {
         return "cplusplusCharts".equals(getChartConfiguration());
     }
     
-    public boolean isCSharpCharts()
+    public boolean isCsharpCharts()
     {
         return "csharpCharts".equals(getChartConfiguration());
     }
