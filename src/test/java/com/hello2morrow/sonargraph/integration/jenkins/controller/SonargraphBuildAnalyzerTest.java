@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2016 hello2morrow GmbH
- * mailto: info AT hello2morrow DOT com
+ * Copyright (C) 2015-2018 hello2morrow GmbH
+ * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions
- * and limitations under the License.
- *******************************************************************************/
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import static org.junit.Assert.assertEquals;
@@ -47,7 +47,6 @@ public class SonargraphBuildAnalyzerTest
     private static final String DUMMY_LOG_FILE_NAME = "./src/test/resources/dummy.log";
     private File m_dummyLogFile;
     private PrintStream m_logger;
-    private IExportMetaData m_metricMetaData;
 
     @Before
     public void setUp() throws IOException
@@ -55,7 +54,6 @@ public class SonargraphBuildAnalyzerTest
         final IMetaDataController metaDataController = ControllerAccess.createMetaDataController();
         final ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(new File(METRIC_META_DATA_FILE_NAME));
         assertTrue(result.toString(), result.isSuccess());
-        m_metricMetaData = result.getOutcome();
 
         m_dummyLogFile = new File(DUMMY_LOG_FILE_NAME);
         if (!m_dummyLogFile.exists())
@@ -66,7 +64,7 @@ public class SonargraphBuildAnalyzerTest
     }
 
     @After
-    public void tearDown() throws IOException
+    public void tearDown()
     {
         m_logger.close();
         if ((m_dummyLogFile != null) & m_dummyLogFile.exists())
@@ -79,7 +77,7 @@ public class SonargraphBuildAnalyzerTest
     public void testChangeBuildResultIfViolationTresholdsExceeded() throws IOException, InterruptedException
     {
         Result result = null;
-        final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME), m_metricMetaData,
+        final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME),
                 m_logger);
 
         //Actual number of unresolved architecture violations is 2
@@ -103,7 +101,7 @@ public class SonargraphBuildAnalyzerTest
     @Test
     public void testChangeBuildResultIfMetricValueNotZero() throws IOException, InterruptedException
     {
-        final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME), m_metricMetaData,
+        final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME),
                 m_logger);
         analyzer.changeBuildResultIfMetricValueNotZero(ARCHITECTURE_VIOLATIONS, BuildActionsEnum.NOTHING.getActionCode());
         assertNull(analyzer.getOverallBuildResult());
@@ -121,7 +119,7 @@ public class SonargraphBuildAnalyzerTest
     @Test
     public void testChangeBuildResultIfMetricValueIsZero() throws IOException, InterruptedException
     {
-        final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME), m_metricMetaData,
+        final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME),
                 m_logger);
 
         analyzer.changeBuildResultIfMetricValueIsZero("NumberOfViolations", BuildActionsEnum.FAILED.getActionCode());

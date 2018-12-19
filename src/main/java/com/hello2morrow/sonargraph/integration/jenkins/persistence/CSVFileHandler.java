@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2016 hello2morrow GmbH
- * mailto: info AT hello2morrow DOT com
+ * Copyright (C) 2015-2018 hello2morrow GmbH
+ * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions
- * and limitations under the License.
- *******************************************************************************/
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
 import java.io.BufferedReader;
@@ -37,8 +37,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.Utility;
-import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.BuildDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IDataPoint;
@@ -51,20 +49,20 @@ import com.opencsv.CSVReader;
  * Handles operations on a CSV file.
  * @author esteban
  */
-public class CSVFileHandler implements IMetricHistoryProvider
+public final class CSVFileHandler implements IMetricHistoryProvider
 {
     public static final char CSV_SEPARATOR = ';';
-    
+
     private static final String BUILDNUMBER_COLUMN_NAME = "buildnumber";
     private static final String TIMESTAMP_COLUMN_NAME = "timestamp";
 
     private static final String NOT_EXISTING_VALUE = "-";
 
     private final File m_file;
-    private final IExportMetaData m_metaData;
+    private final MetricIds m_metaData;
     private final CSVColumnMapper m_columnMapper;
 
-    public CSVFileHandler(final File csvFile, final IExportMetaData metaData)
+    public CSVFileHandler(final File csvFile, final MetricIds metaData)
     {
         m_file = csvFile;
         m_metaData = metaData;
@@ -137,8 +135,8 @@ public class CSVFileHandler implements IMetricHistoryProvider
 
     private String[] getHeaderLine()
     {
-
-        try (final CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR);)
+        try (@SuppressWarnings("deprecation")
+        final CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR);)
         {
             final String[] nextLine = csvReader.readNext();
             return nextLine;
@@ -164,7 +162,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
     }
 
     @Override
-    public List<IDataPoint> readMetricValues(final IMetricId metric) throws IOException
+    public List<IDataPoint> readMetricValues(final MetricId metric) throws IOException
     {
         final List<IDataPoint> sonargraphDataset = new ArrayList<>();
 
@@ -173,10 +171,11 @@ public class CSVFileHandler implements IMetricHistoryProvider
             return sonargraphDataset;
         }
 
-        try (CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR))
+        try (@SuppressWarnings("deprecation")
+        CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR))
         {
             String[] nextLine;
-            final int column = m_columnMapper.getIndex(metric.getName());
+            final int column = m_columnMapper.getIndex(metric.getId());
             csvReader.readNext(); //We do nothing with the header line.
             while ((nextLine = csvReader.readNext()) != null)
             {
@@ -197,7 +196,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
         return sonargraphDataset;
     }
 
-    protected void processLine(final String[] nextLine, final int column, final List<IDataPoint> sonargraphDataset, final IMetricId metric,
+    protected void processLine(final String[] nextLine, final int column, final List<IDataPoint> sonargraphDataset, final MetricId metric,
             final NumberFormat numberFormat)
     {
         int buildNumber;
@@ -238,7 +237,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
             if (valueString.equals(NOT_EXISTING_VALUE))
             {
                 SonargraphLogger.INSTANCE.log(Level.FINE, "Skipping value for metric '" + metric.getName() + "' for build number '"
-                        + buildNumberString + "'; it did not exist in Sonargraph XML report.");
+                        + buildNumberString + "' and column '" + column + "'; it did not exist in Sonargraph XML report.");
                 sonargraphDataset.add(new NotExistingDataPoint(buildNumber));
                 return;
             }
@@ -270,7 +269,7 @@ public class CSVFileHandler implements IMetricHistoryProvider
     }
 
     @Override
-    public void writeMetricValues(final Integer buildnumber, final long timestamp, final Map<IMetricId, String> metricValues) throws IOException
+    public void writeMetricValues(final Integer buildnumber, final long timestamp, final Map<MetricId, String> metricValues) throws IOException
     {
         final FileWriter fileWriter = new FileWriter(m_file, true);
         final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
@@ -301,5 +300,4 @@ public class CSVFileHandler implements IMetricHistoryProvider
     {
         return m_file.getAbsolutePath();
     }
-
 }

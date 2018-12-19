@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2016 hello2morrow GmbH
- * mailto: info AT hello2morrow DOT com
+ * Copyright (C) 2015-2018 hello2morrow GmbH
+ * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions
- * and limitations under the License.
- *******************************************************************************/
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import java.io.File;
@@ -24,10 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -38,12 +37,13 @@ import com.hello2morrow.sonargraph.integration.access.controller.ControllerAcces
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricCategory;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
-import com.hello2morrow.sonargraph.integration.access.model.IMetricLevel;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
+import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter.MandatoryParameter;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHistory;
 import com.hello2morrow.sonargraph.integration.jenkins.tool.SonargraphBuild;
 
 import hudson.Extension;
@@ -82,6 +82,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     public static final int MAX_PORT_NUMBER = 65535;
 
+    private static IMetricIdsHistoryProvider s_metricIdsHistory;
+
     private final String systemDirectory;
     private final String qualityModelFile;
     private final String virtualModel;
@@ -94,6 +96,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     private final boolean languageJava;
     private final boolean languageCSharp;
     private final boolean languageCPlusPlus;
+    private final boolean languagePython;
 
     private final String sonargraphBuildJDK;
     private final String sonargraphBuildVersion;
@@ -119,10 +122,10 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             final String architectureViolationsAction, final String unassignedTypesAction, final String cyclicElementsAction,
             final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
             final String workItemsAction, final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp,
-            final boolean languageCPlusPlus, final String sonargraphBuildJDK, final String sonargraphBuildVersion, final String activationCode,
-            final String licenseFile, final String workspaceProfile, final String snapshotDirectory, final String snapshotFileName,
-            final String logLevel, final String logFile, final String elementCountToSplitHtmlReport, final String maxElementCountForHtmlDetailsPage,
-            final boolean splitByModule)
+            final boolean languageCPlusPlus, final boolean languagePython, final String sonargraphBuildJDK, final String sonargraphBuildVersion,
+            final String activationCode, final String licenseFile, final String workspaceProfile, final String snapshotDirectory,
+            final String snapshotFileName, final String logLevel, final String logFile, final String elementCountToSplitHtmlReport,
+            final String maxElementCountForHtmlDetailsPage, final boolean splitByModule)
     {
         super(architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction, architectureWarningsAction,
                 workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
@@ -138,6 +141,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         this.languageJava = languageJava;
         this.languageCSharp = languageCSharp;
         this.languageCPlusPlus = languageCPlusPlus;
+        this.languagePython = languagePython;
         this.sonargraphBuildJDK = sonargraphBuildJDK;
         this.sonargraphBuildVersion = sonargraphBuildVersion;
         this.activationCode = activationCode;
@@ -163,46 +167,47 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final Collection<Action> actions = new ArrayList<>();
         if (project instanceof Project || (project instanceof TopLevelItem && !(project instanceof FlyweightTask)))
         {
-            try
-            {
-                final FilePath someWorkspace = project.getSomeWorkspace();
-                ResultWithOutcome<IExportMetaData> result = getMetaData(someWorkspace, getMetaDataFile());
+            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
 
-                if (result.isSuccess())
+            if (result.isSuccess())
+            {
+                final List<String> metricList = new ArrayList<>();
+                final MetricIds exportMetaData = result.getOutcome();
+                if (isAllCharts())
                 {
-                    List<String> metricList;
-                    final IExportMetaData exportMetaData = result.getOutcome();
-                    if (isAllCharts())
-                    {
-                        IMetricLevel systemLevel = exportMetaData.getMetricLevels().get("System");
-                        List<IMetricId> allSystemMetrics = exportMetaData.getMetricIdsForLevel(systemLevel);
-                        metricList = new ArrayList<>(allSystemMetrics.size());
-                        for (IMetricId metricId : allSystemMetrics)
-                        {
-                            metricList.add(metricId.getName());
-                        }
-                    }
-                    else
-                    {
-                        metricList = new ArrayList<>();
-                        if (metrics != null)
-                        {
-                            for (Metric metric : metrics)
-                            {
-                                metricList.add(metric.getMetricName());
-                            }
-                        }
-                    }
-                    actions.add(new SonargraphChartAction(project, metricList, exportMetaData));
+                    metricList.addAll(exportMetaData.getMetricIds().keySet());
+                }
+                else if (isJavaCharts())
+                {
+                    metricList.addAll(exportMetaData.getMetricIds("JavaLanguageProvider").keySet());
+                }
+                else if (isCplusplusCharts())
+                {
+                    metricList.addAll(exportMetaData.getMetricIds("CPlusPlusLanguageProvider").keySet());
+                }
+                else if (isCsharpCharts())
+                {
+                    metricList.addAll(exportMetaData.getMetricIds("CSharpLanguageProvider").keySet());
+                }
+                else if (isPythonCharts())
+                {
+                    metricList.addAll(exportMetaData.getMetricIds("PythonLanguageProvider").keySet());
                 }
                 else
                 {
-                    SonargraphLogger.INSTANCE.log(Level.SEVERE, "Cannot add SonargraphChartAction, no Meta Data found.");
+                    if (metrics != null)
+                    {
+                        for (final Metric metric : metrics)
+                        {
+                            metricList.add(metric.getMetricName());
+                        }
+                    }
                 }
+                actions.add(new SonargraphChartAction(project, metricList, exportMetaData));
             }
-            catch (IOException | InterruptedException e)
+            else
             {
-                SonargraphLogger.INSTANCE.log(Level.SEVERE, "Cannot add SonargraphChartAction", e);
+                SonargraphLogger.INSTANCE.log(Level.SEVERE, "Cannot add SonargraphChartAction, no Meta Data found.");
             }
             actions.add(new SonargraphHTMLReportAction(project, this));
         }
@@ -223,8 +228,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         final FilePath sonargraphReportDirectory = new FilePath(build.getWorkspace(), getReportDirectory());
-        final ResultWithOutcome<IExportMetaData> metaData = getMetaData(build.getProject().getSomeWorkspace(), getMetaDataFile());
-        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), metaData.getOutcome(), listener.getLogger()))
+        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), listener.getLogger()))
         {
             //only add the actions after the processing has been successful
             addActions(build);
@@ -253,24 +257,39 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final String jdkName = getSonargraphBuildJDK();
         if (jdkName == null || jdkName.isEmpty())
         {
+            // no JDK  defined for SonargraphBuild, try to get the one Jenkins was started with
             final List<JDK> allJDKs = jenkins.getJDKs();
-            if (allJDKs.size() != 1)
+            if (allJDKs.size() == 0)
             {
-                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Please configure a JDK for Sonargraph Build.", null);
-                return false;
+                jdk = new JDK("default", System.getProperty("java.home"));
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.WARNING,
+                        "Must try to use JDK Jenkins is running with for Sonargraph Build.", null);
+            }
+            else if (allJDKs.size() == 1)
+            {
+                jdk = allJDKs.get(0);
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
+                        "Using default JDK '" + jdk.getName() + "' for Sonargraph Build.", null);
             }
             else
             {
                 jdk = allJDKs.get(0);
+                SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.WARNING,
+                        "There are multiple JDKs, please configure one of them. Using JDK '" + jdk.getName()
+                                + "' (the first one) for Sonargraph Build.",
+                        null);
             }
         }
         else
         {
             jdk = jenkins.getJDK(jdkName);
+            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Using configured JDK '" + jdkName + "' for Sonargraph Build.",
+                    null);
         }
         if (jdk == null)
         {
-            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown JDK configured for Sonargraph Build.", null);
+            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown JDK '" + jdkName + "' configured for Sonargraph Build.",
+                    null);
             return false;
         }
         jdk = jdk.forNode(build.getBuiltOn(), listener);
@@ -279,7 +298,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final FilePath javaExe = new FilePath(javaBinDir, (File.separatorChar == '\\') ? "java.exe" : "java");
 
         SonargraphBuild sonargraphBuild;
-        SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
+        final SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
 
         final String version = getSonargraphBuildVersion();
         if (version == null || version.isEmpty())
@@ -315,7 +334,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final EnumMap<MandatoryParameter, String> parameters = new EnumMap<>(MandatoryParameter.class);
         parameters.put(MandatoryParameter.ACTIVATION_CODE, getActivationCode());
         parameters.put(MandatoryParameter.INSTALLATION_DIRECTORY, sonargraphBuild.getHome());
-        parameters.put(MandatoryParameter.LANGUAGES, getLanguages(languageJava, languageCSharp, languageCPlusPlus));
+        parameters.put(MandatoryParameter.LANGUAGES, getLanguages(languageJava, languageCPlusPlus, languageCSharp, languagePython));
         parameters.put(MandatoryParameter.SYSTEM_DIRECTORY, getSystemDirectory());
         parameters.put(MandatoryParameter.REPORT_DIRECTORY, getReportDirectory());
         parameters.put(MandatoryParameter.REPORT_FILENAME, getReportFileName());
@@ -366,8 +385,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         // separator taken from launcher, to also work on slaves
         final String classpathSeparator = launcher.isUnix() ? ":" : ";";
 
-        final String sonargraphBuildCommand = handleBlanksForConsoleCommand(javaExe.getRemote()) + " -ea -cp " + handleBlanksForConsoleCommand(clientJar.getRemote()) + classpathSeparator + handleBlanksForConsoleCommand(osgiJar.getRemote())
-                + " " + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFileSlave.getRemote();
+        final String sonargraphBuildCommand = handleBlanksForConsoleCommand(javaExe.getRemote()) + " -ea -cp "
+                + handleBlanksForConsoleCommand(clientJar.getRemote()) + classpathSeparator + handleBlanksForConsoleCommand(osgiJar.getRemote()) + " "
+                + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFileSlave.getRemote();
 
         ProcStarter procStarter = launcher.new ProcStarter();
         procStarter.cmdAsSingleString(sonargraphBuildCommand);
@@ -389,9 +409,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return true;
     }
 
-    private String handleBlanksForConsoleCommand(String partOfCommand)
+    private String handleBlanksForConsoleCommand(final String partOfCommand)
     {
-        if(partOfCommand.contains(" "))
+        if (partOfCommand.contains(" "))
         {
             return "\"" + partOfCommand + "\"";
         }
@@ -436,36 +456,37 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return languageCPlusPlus;
     }
 
-    protected static String getLanguages(boolean languageJava, boolean languageCSharp, boolean languageCPlusPlus)
+    public boolean getLanguagePython()
     {
-        if (languageJava && !languageCSharp && !languageCPlusPlus)
+        return languagePython;
+    }
+
+    /**
+     * Returns comma separated list of languages in 'Sonargraph historical' order.
+     * @return
+     */
+    protected static String getLanguages(final boolean languageJava, final boolean languageCPlusPlus, final boolean languageCSharp,
+            final boolean languagePython)
+    {
+        final boolean allLanguages = !(languageJava || languageCPlusPlus || languageCSharp || languagePython);
+        final List<String> languages = new ArrayList<>();
+        if (allLanguages || languageJava)
         {
-            return "Java";
+            languages.add("Java");
         }
-        else if (!languageJava && languageCSharp && !languageCPlusPlus)
+        if (allLanguages || languageCPlusPlus)
         {
-            return "CSharp";
+            languages.add("CPlusPlus");
         }
-        else if (!languageJava && !languageCSharp && languageCPlusPlus)
+        if (allLanguages || languageCSharp)
         {
-            return "CPlusPlus";
+            languages.add("CSharp");
         }
-        else if (languageJava && languageCSharp && !languageCPlusPlus)
+        if (allLanguages || languagePython)
         {
-            return "Java,CSharp";
+            languages.add("Python");
         }
-        else if (languageJava && !languageCSharp && languageCPlusPlus) // NOSONAR false positive
-        {
-            return "Java,CPlusPlus";
-        }
-        else if (!languageJava && languageCSharp && languageCPlusPlus) // NOSONAR false positive
-        {
-            return "CSharp,CPlusPlus";
-        }
-        else
-        {
-            return "Java,CSharp,CPlusPlus";
-        }
+        return languages.stream().collect(Collectors.joining(","));
     }
 
     public String getSonargraphBuildJDK()
@@ -595,9 +616,29 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return "allCharts".equals(getChartConfiguration());
     }
 
+    public boolean isJavaCharts()
+    {
+        return "javaCharts".equals(getChartConfiguration());
+    }
+
+    public boolean isCplusplusCharts()
+    {
+        return "cplusplusCharts".equals(getChartConfiguration());
+    }
+
+    public boolean isCsharpCharts()
+    {
+        return "csharpCharts".equals(getChartConfiguration());
+    }
+
+    public boolean isPythonCharts()
+    {
+        return "pythonCharts".equals(getChartConfiguration());
+    }
+
     public boolean isSelectedCharts()
     {
-        return !isAllCharts();
+        return "selectedCharts".equals(getChartConfiguration());
     }
 
     public List<Metric> getMetrics()
@@ -638,20 +679,20 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return licenseServerPort;
         }
 
-        public void setLicenseServerHost(String licenseServerHost)
+        public void setLicenseServerHost(final String licenseServerHost)
         {
             this.licenseServerHost = licenseServerHost;
             SonargraphLogger.INSTANCE.log(Level.INFO, "License Server Host is " + licenseServerHost);
         }
 
-        public void setLicenseServerPort(String licenseServerPort)
+        public void setLicenseServerPort(final String licenseServerPort)
         {
             this.licenseServerPort = licenseServerPort;
             SonargraphLogger.INSTANCE.log(Level.INFO, "License Server Port is " + licenseServerPort);
         }
 
         @Override
-        public boolean configure(StaplerRequest req, JSONObject json) throws FormException
+        public boolean configure(final StaplerRequest req, JSONObject json) throws FormException
         {
             json = json.getJSONObject("sonargraph");
             setLicenseServerHost(json.getString("licenseServerHost"));
@@ -674,7 +715,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             {
                 return items;
             }
-            for (JDK jdk : jenkins.getJDKs())
+            for (final JDK jdk : jenkins.getJDKs())
             {
                 items.add(jdk.getName(), jdk.getName());
             }
@@ -691,8 +732,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             {
                 return items;
             }
-            SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
-            for (SonargraphBuild sonargraphBuild : descriptor.getInstallations())
+            final SonargraphBuild.DescriptorImpl descriptor = jenkins.getDescriptorByType(SonargraphBuild.DescriptorImpl.class);
+            for (final SonargraphBuild sonargraphBuild : descriptor.getInstallations())
             {
                 items.add(sonargraphBuild.getName(), sonargraphBuild.getName());
             }
@@ -700,53 +741,38 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         public ListBoxModel doFillMetricCategoryItems(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter("metaDataFile")
-        @RelativePath("..")
-        final String metaDataFile) throws IOException, InterruptedException
+        final AbstractProject<?, ?> project)
         {
             final ListBoxModel items = new ListBoxModel();
-            final FilePath ws = project.getSomeWorkspace();
-            final ResultWithOutcome<IExportMetaData> result = getMetaData(ws, metaDataFile);
+            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
             if (result.isSuccess())
             {
-                final IExportMetaData metaData = result.getOutcome();
-                List<IMetricId> systemMetrics = metaData.getMetricIdsForLevel(metaData.getMetricLevels().get("System"));
-                Set<IMetricCategory> categories = new HashSet<>();
-
-                for (IMetricId metricId : systemMetrics)
-                {
-                    categories.addAll(metricId.getCategories());
-                }
-
-                categories.stream().sorted(new IMetricCategory.MetricCategoryComparator())
-                        .forEachOrdered(category -> items.add(category.getPresentationName(), category.getName()));
+                final MetricIds metaData = result.getOutcome();
+                metaData.getMetricCategories().stream().sorted().forEachOrdered(category -> items.add(category, category));
             }
 
             return items;
         }
 
         public ListBoxModel doFillMetricNameItems(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String metricCategory, @QueryParameter("metaDataFile")
+        final AbstractProject<?, ?> project, @QueryParameter String metricCategory, @QueryParameter("metaDataFile")
         @RelativePath("..")
-        final String metaDataFile) throws IOException, InterruptedException
+        final String metaDataFile)
         {
+            if (metricCategory == null || metricCategory.isEmpty())
+            {
+                SonargraphLogger.INSTANCE.log(Level.WARNING, "metric category is unset, assume 'Architecture'");
+                metricCategory = "Architecture";
+            }
             final ListBoxModel items = new ListBoxModel();
-            final FilePath ws = project.getSomeWorkspace();
-            final ResultWithOutcome<IExportMetaData> result = getMetaData(ws, metaDataFile);
+
+            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
             if (result.isSuccess())
             {
-                final IExportMetaData metaData = result.getOutcome();
-                final IMetricCategory category = metaData.getMetricCategories().get(metricCategory);
-                if (category != null)
+                final MetricIds metaData = result.getOutcome();
+                for (final MetricId metric : metaData.getMetricIdsForCategory(metricCategory))
                 {
-                    for (final IMetricId metric : metaData.getMetricIdsForLevel(metaData.getMetricLevels().get("System")))
-                    {
-                        if (metric.getCategories().contains(category))
-                        {
-                            items.add(metric.getPresentationName(), metric.getName());
-                        }
-                    }
+                    items.add(metric.getName(), metric.getId());
                 }
             }
             return items;
@@ -759,12 +785,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         public FormValidation doCheckLicenseFile(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException, InterruptedException
+        final String value)
         {
             return checkAbsoluteFile(value, "license");
         }
 
-        public FormValidation doCheckElementCountToSplitHtmlReport(@QueryParameter String value)
+        public FormValidation doCheckElementCountToSplitHtmlReport(@QueryParameter
+        final String value)
         {
             if (value == null || value.isEmpty())
                 return FormValidation.ok();
@@ -772,12 +799,14 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return checkSplitIntegerParameter(value);
         }
 
-        public FormValidation doCheckMaxElementCountForHtmlDetailsPage(@QueryParameter String value)
+        public FormValidation doCheckMaxElementCountForHtmlDetailsPage(@QueryParameter
+        final String value)
         {
             return checkSplitIntegerParameter(value);
         }
 
-        public FormValidation doCheckLicenseServerPort(@QueryParameter String value)
+        public FormValidation doCheckLicenseServerPort(@QueryParameter
+        final String value)
         {
             if (value == null || value.isEmpty())
             {
@@ -792,7 +821,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                     return FormValidation.ok();
                 }
             }
-            catch (NumberFormatException nfe)
+            catch (final NumberFormatException nfe)
             {
                 // do nothing
             }
@@ -801,7 +830,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         public FormValidation doCheckLogFile(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException, InterruptedException
+        final String value) throws IOException
         {
             final FilePath ws = project.getSomeWorkspace();
             if (ws == null)
@@ -821,7 +850,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         public FormValidation doCheckQualityModelFile(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException, InterruptedException
+        final String value) throws IOException
         {
             if (DEFAULT_QUALITY_MODELS.contains(value))
             {
@@ -832,7 +861,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         public FormValidation doCheckReportPath(@AncestorInPath
         final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException, InterruptedException
+        final String value) throws IOException
         {
             if (value != null && !value.isEmpty())
             {
@@ -850,48 +879,30 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return checkFileInWorkspace(project, value + ".xml", null);
         }
 
-        public FormValidation doCheckMetaDataFile(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException, InterruptedException
-        {
-            final FormValidation validation = checkFileInWorkspace(project, value, "xml");
-            if (validation.kind != FormValidation.Kind.OK)
-            {
-                return validation;
-            }
-            final ResultWithOutcome<IExportMetaData> result = getMetaData(project.getSomeWorkspace(), value);
-            if (!result.isSuccess())
-            {
-                return FormValidation.error(result.toString());
-            }
-            return FormValidation.ok();
-        }
-
         /**
          * Split integer parameters must be >= -1.
          * 
          * @param value the value to check.
          * @return FormValidation.ok when value is a valid split integer value, FormValidation.error otherwise.
          */
-        private FormValidation checkSplitIntegerParameter(String value)
+        private FormValidation checkSplitIntegerParameter(final String value)
         {
             try
             {
-                int parsed = Integer.parseInt(value);
+                final int parsed = Integer.parseInt(value);
                 if (parsed >= -1)
                 {
                     return FormValidation.ok();
                 }
             }
-            catch (NumberFormatException nfe)
+            catch (final NumberFormatException nfe)
             {
                 // do nothing
             }
             return FormValidation.error("Please enter either '-1' (never split), or '0' (use default), or a positive integer value.");
         }
 
-        private FormValidation checkFileInWorkspace(final AbstractProject<?, ?> project, final String file, final String extension)
-                throws IOException, InterruptedException
+        private FormValidation checkFileInWorkspace(final AbstractProject<?, ?> project, final String file, final String extension) throws IOException
         {
             if (file != null && !file.isEmpty())
             {
@@ -905,7 +916,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                 {
                     return FormValidation.error("Please run build at least once to get a workspace.");
                 }
-                FormValidation validateRelativePath = ws.validateRelativePath(file, true, true);
+                final FormValidation validateRelativePath = ws.validateRelativePath(file, true, true);
                 if (validateRelativePath.kind != FormValidation.Kind.OK)
                 {
                     return validateRelativePath;
@@ -914,7 +925,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return FormValidation.ok();
         }
 
-        private FormValidation checkAbsoluteFile(final String file, final String extension) throws IOException, InterruptedException
+        private FormValidation checkAbsoluteFile(final String file, final String extension)
         {
             if (file != null && !file.isEmpty())
             {
@@ -923,7 +934,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                     return FormValidation.error("Please enter a valid filename. Extension must be '" + extension + "'.");
                 }
 
-                File f = new File(file);
+                final File f = new File(file);
                 if (!f.exists())
                 {
                     return FormValidation.error("Please enter an existing file.");
@@ -963,42 +974,49 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         public ListBoxModel doFillLogLevelItems()
         {
-            ListBoxModel items = new ListBoxModel();
+            final ListBoxModel items = new ListBoxModel();
             LOG_LEVELS.forEach(level -> items.add(level));
             return items;
         }
 
     }
 
-    protected static ResultWithOutcome<IExportMetaData> getDefaultMetaData() throws IOException, InterruptedException
+    protected static ResultWithOutcome<MetricIds> getMetricIds(AbstractProject<?, ?> project)
     {
-        final IMetaDataController controller = ControllerAccess.createMetaDataController();
-        InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
-        return controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
-    }
+        final ResultWithOutcome<MetricIds> overallResult = new ResultWithOutcome<>("Get stored MetricIds");
 
-    protected static ResultWithOutcome<IExportMetaData> getMetaData(final FilePath ws, String metaDataFile)
-            throws IOException, InterruptedException
-    {
-        if (ws == null || metaDataFile == null || metaDataFile.isEmpty())
+        // get metricIds from history
+        if (s_metricIdsHistory == null)
         {
-            SonargraphLogger.INSTANCE.log(Level.FINE, "Parameter metaDataFile not set, using default metaData");
-            return getDefaultMetaData();
+            final File metricIdsHistoryFile = new File(project.getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
+            s_metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
+        }
+        final ResultWithOutcome<MetricIds> historyResult = s_metricIdsHistory.readMetricIds();
+        if (historyResult.isFailure())
+        {
+            overallResult.addMessagesFrom(historyResult);
+            return overallResult;
         }
 
-        FilePath exportMetaDataFile = new FilePath(ws, metaDataFile);
-        if (!exportMetaDataFile.exists() || exportMetaDataFile.isDirectory())
+        // get metricIds from export meta data file
+        final IMetaDataController controller = ControllerAccess.createMetaDataController();
+        final InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
+        final ResultWithOutcome<IExportMetaData> exportMetaDataResult = controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
+
+        if (exportMetaDataResult.isFailure())
         {
-            SonargraphLogger.INSTANCE.log(Level.WARNING, "Parameter metaDataFile set, but file does not exist, or is a directory");
-            return getDefaultMetaData();
+            overallResult.addMessagesFrom(exportMetaDataResult);
+            return overallResult;
         }
 
-        final IMetaDataController controller = ControllerAccess.createMetaDataController();
-        ResultWithOutcome<IExportMetaData> result = controller.loadExportMetaData(exportMetaDataFile.read(),
-                exportMetaDataFile.toURI().toString());
-        return result;
+        // combine and return them
+        final MetricIds defaultMetricIds = MetricIds.fromExportMetaData(exportMetaDataResult.getOutcome());
+        final MetricIds historyMetricIds = historyResult.getOutcome();
+        overallResult.setOutcome(defaultMetricIds.addAll(historyMetricIds));
+
+        return overallResult;
     }
-    
+
     public static boolean validateNotNullAndRegexp(final String value, final String pattern)
     {
         if (value == null)

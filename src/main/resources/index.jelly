@@ -3,5 +3,5 @@
   This view is used to render the installed plugins page.
 -->
 <div>
-  This plugin integrates <a href="https://www.hello2morrow.com/products/sonargraph">Sonargraph</a> functionality into Jenkins
+  This plugin integrates <a href="https://www.hello2morrow.com/products/sonargraph">Sonargraph</a> functionality into Jenkins, for Sonargraph versions 8 and 9
 </div>

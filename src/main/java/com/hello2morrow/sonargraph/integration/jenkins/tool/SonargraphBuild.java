@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2016 hello2morrow GmbH
- * mailto: info AT hello2morrow DOT com
+ * Copyright (C) 2015-2018 hello2morrow GmbH
+ * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions
- * and limitations under the License.
- *******************************************************************************/
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hello2morrow.sonargraph.integration.jenkins.tool;
 
 import java.io.File;
@@ -44,25 +44,25 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
 
     private static final long serialVersionUID = 1L;
 
-    public SonargraphBuild(String name, String home)
+    public SonargraphBuild(final String name, final String home)
     {
         super(name, home, Collections.<ToolProperty<?>> emptyList());
     }
 
     @DataBoundConstructor
-    public SonargraphBuild(String name, String home, List<? extends ToolProperty<?>> properties)
+    public SonargraphBuild(final String name, final String home, final List<? extends ToolProperty<?>> properties)
     {
         super(name, home, properties);
     }
 
     @Override
-    public SonargraphBuild forNode(Node node, TaskListener log) throws IOException, InterruptedException
+    public SonargraphBuild forNode(final Node node, final TaskListener log) throws IOException, InterruptedException
     {
         return new SonargraphBuild(getName(), translateFor(node, log));
     }
 
     @Override
-    public SonargraphBuild forEnvironment(EnvVars environment)
+    public SonargraphBuild forEnvironment(final EnvVars environment)
     {
         return new SonargraphBuild(getName(), environment.expand(getHome()));
     }
@@ -83,16 +83,16 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
         }
 
         @Override
-        public void setInstallations(SonargraphBuild... installations)
+        public void setInstallations(final SonargraphBuild... installations)
         {
             super.setInstallations(installations);
             save();
         }
 
-        public SonargraphBuild getSonargraphBuild(String name)
+        public SonargraphBuild getSonargraphBuild(final String name)
         {
             assert name != null && name.length() > 0 : "Parameter 'name' of method 'getSonargraphBuild' must not be empty";
-            for (SonargraphBuild sonargraphBuild : getInstallations())
+            for (final SonargraphBuild sonargraphBuild : getInstallations())
             {
                 if (name.equals(sonargraphBuild.getName()))
                 {
@@ -100,7 +100,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
                 }
             }
             SonargraphLogger.INSTANCE.log(Level.WARNING, "Unknown Sonargraph Build: " + name);
-            for (SonargraphBuild sonargraphBuild : getInstallations())
+            for (final SonargraphBuild sonargraphBuild : getInstallations())
             {
                 SonargraphLogger.INSTANCE.log(Level.WARNING, "Found Sonargraph Build: " + sonargraphBuild.getName());
             }
@@ -108,9 +108,8 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
         }
 
         @Override
-        protected FormValidation checkHomeDirectory(File home)
+        protected FormValidation checkHomeDirectory(final File home)
         {
-            // TODO Auto-generated method stub
             return super.checkHomeDirectory(home);
         }
 

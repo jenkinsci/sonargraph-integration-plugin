@@ -1,7 +1,7 @@
-/*******************************************************************************
+/*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2016 hello2morrow GmbH
- * mailto: info AT hello2morrow DOT com
+ * Copyright (C) 2015-2018 hello2morrow GmbH
+ * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,28 +12,27 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions
- * and limitations under the License.
- *******************************************************************************/
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
-
-import hudson.FilePath;
-import hudson.model.BuildListener;
-import hudson.model.Result;
-import hudson.model.AbstractBuild;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Recorder;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
-import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
-import com.hello2morrow.sonargraph.integration.access.model.IIssueCategory;
+import com.hello2morrow.sonargraph.integration.access.model.Severity;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.PluginVersionReader;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ReportHistoryFileManager;
+
+import hudson.FilePath;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
+import hudson.model.Result;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Recorder;
 
 public abstract class AbstractSonargraphRecorder extends Recorder
 {
@@ -68,19 +67,19 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     }
 
     protected boolean processSonargraphReport(final AbstractBuild<?, ?> build, final FilePath sonargraphReportDirectory, final String reportFileName,
-            final IExportMetaData exportMetaData, final PrintStream logger) throws IOException, InterruptedException
+            final PrintStream logger) throws IOException, InterruptedException
     {
         assert build != null : "Parameter 'build' of method 'processSonargraphReport' must not be null";
         assert sonargraphReportDirectory != null : "Parameter 'sonargraphReportDirectory' of method 'processSonargraphReport' must not be null";
 
         final FilePath projectRootDir = new FilePath(build.getProject().getRootDir());
-        final ReportHistoryFileManager reportHistoryManager = new ReportHistoryFileManager(projectRootDir, 
+        final ReportHistoryFileManager reportHistoryManager = new ReportHistoryFileManager(projectRootDir,
                 ConfigParameters.REPORT_HISTORY_FOLDER.getValue(), logger);
-        
+
         FilePath reportFile = null;
         try
         {
-            reportFile = reportHistoryManager.storeGeneratedReportDirectory(sonargraphReportDirectory, reportFileName,  build.getNumber(), logger);
+            reportFile = reportHistoryManager.storeGeneratedReportDirectory(sonargraphReportDirectory, reportFileName, build.getNumber(), logger);
         }
         catch (final IOException ex)
         {
@@ -92,29 +91,28 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Sonargraph analysis cannot be executed as Sonargraph report does not exist.",
                     null);
-            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Report file \"" + reportFile + "\" does not exist.",
-                    null);
+            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Report file \"" + reportFile + "\" does not exist.", null);
             build.setResult(Result.FAILURE);
             return false;
         }
 
-        final SonargraphBuildAnalyzer sonargraphBuildAnalyzer = new SonargraphBuildAnalyzer(reportFile, exportMetaData, logger);
+        final SonargraphBuildAnalyzer sonargraphBuildAnalyzer = new SonargraphBuildAnalyzer(reportFile, logger);
 
-        //FIXME [IK, AH] Metric constants need to be changed. Put in integration.access project?
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.ARCHITECTURE_VIOLATION, architectureViolationsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureViolation", Severity.NONE, architectureViolationsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfMetricValueNotZero("CoreUnassignedComponents", unassignedTypesAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.CYCLE_GROUP, cyclicElementsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.THRESHOLD_VIOLATION, thresholdViolationsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.ARCHITECTURE_CONSISTENCY, architectureWarningsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.WORKSPACE, workspaceWarningsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist(IIssueCategory.StandardName.TODO, workItemsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("CycleGroup", Severity.ERROR, cyclicElementsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ThresholdViolation", Severity.NONE, thresholdViolationsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureConsistency", Severity.NONE, architectureWarningsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Workspace", Severity.NONE, workspaceWarningsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Todo", Severity.NONE, workItemsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfMetricValueIsZero("CoreComponents", emptyWorkspaceAction);
         final Result buildResult = sonargraphBuildAnalyzer.getOverallBuildResult();
 
         final File metricHistoryFile = new File(build.getProject().getRootDir(), ConfigParameters.METRIC_HISTORY_CSV_FILE_PATH.getValue());
+        final File metricIdsHistoryFile = new File(build.getProject().getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
         try
         {
-            sonargraphBuildAnalyzer.saveMetricsToCSV(metricHistoryFile, build.getTimestamp().getTimeInMillis(), build.getNumber());
+            sonargraphBuildAnalyzer.saveMetrics(metricHistoryFile, metricIdsHistoryFile, build.getTimestamp().getTimeInMillis(), build.getNumber());
         }
         catch (final IOException ex)
         {

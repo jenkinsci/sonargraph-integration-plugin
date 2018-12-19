@@ -17,10 +17,16 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.model;
 
-public interface IDataPoint
+import java.io.PrintStream;
+
+import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
+
+public interface IMetricIdsHistoryProvider
 {
-    public abstract int getX();
+    ResultWithOutcome<MetricIds> readMetricIds();
+    
+    MetricIds addMetricIds(MetricIds metricIds, PrintStream logger);
 
-    public abstract double getY();
-
+    String getStorageName();
 }

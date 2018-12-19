@@ -16,10 +16,10 @@
 	      			<j:forEach var="value" items="${it.chartsForMetrics}">
 	        			<tr>
 		      				<td>
-		      					<img src="getPlot?metric=${value}&amp;type=shortterm" alt="Chart for metric 'Structural Debt Index'" width="${it.defaultGraphicWidth}" height="${it.defaultGraphicHeight}"/>
+		      					<img src="getPlot?metric=${value}&amp;type=shortterm" alt="Chart for metric '${value}'" width="${it.defaultGraphicWidth}" height="${it.defaultGraphicHeight}"/>
 		      				</td>
 		      				<td>
-		      				    <img src="getPlot?metric=${value}&amp;type=longterm" alt="Chart for long term trend of metric 'Structural Debt Index'" width="${it.defaultGraphicWidth}" height="${it.defaultGraphicHeight}"/>
+		      				    <img src="getPlot?metric=${value}&amp;type=longterm" alt="Chart for long term trend of metric '${value}'" width="${it.defaultGraphicWidth}" height="${it.defaultGraphicHeight}"/>
 		      				</td>
 	                	</tr>    
 	    			</j:forEach>
@@ -27,8 +27,8 @@
     		</j:if>
     		<j:if test="${it.chartsForMetrics.size() == 0}">
     			<h2 style="text-align:left;font-size:16px;font-weight:bold;color:#C0C0C0">
-    				Sonargraph is now configured to not display any chart. To change this, go to Sonargraph's post-build step and modify the 
-    				charts configuration under 'Advanced Settings...'.
+    				Sonargraph is configured to not display any chart. To change this, go to Sonargraph's post-build action and modify the 
+    				charts configuration below 'Chart Configuration'.
     			</h2>
     		</j:if>
       	</l:main-panel>
