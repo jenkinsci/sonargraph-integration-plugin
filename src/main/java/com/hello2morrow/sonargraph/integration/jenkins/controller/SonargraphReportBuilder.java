@@ -82,6 +82,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     public static final int MAX_PORT_NUMBER = 65535;
 
+    private static IMetricIdsHistoryProvider s_metricIdsHistory;
+
     private final String systemDirectory;
     private final String qualityModelFile;
     private final String virtualModel;
@@ -169,27 +171,27 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
             if (result.isSuccess())
             {
-                final List<String> metricList= new ArrayList<>();
+                final List<String> metricList = new ArrayList<>();
                 final MetricIds exportMetaData = result.getOutcome();
                 if (isAllCharts())
                 {
                     metricList.addAll(exportMetaData.getMetricIds().keySet());
                 }
-                else if(isJavaCharts())
+                else if (isJavaCharts())
                 {
-                    metricList.addAll(exportMetaData.getMetricIds("Java").keySet());
+                    metricList.addAll(exportMetaData.getMetricIds("JavaLanguageProvider").keySet());
                 }
-                else if(isCplusplusCharts())
+                else if (isCplusplusCharts())
                 {
-                    metricList.addAll(exportMetaData.getMetricIds("CPlusPlus").keySet());
+                    metricList.addAll(exportMetaData.getMetricIds("CPlusPlusLanguageProvider").keySet());
                 }
-                else if(isCsharpCharts())
+                else if (isCsharpCharts())
                 {
-                    metricList.addAll(exportMetaData.getMetricIds("CSharp").keySet());
+                    metricList.addAll(exportMetaData.getMetricIds("CSharpLanguageProvider").keySet());
                 }
-                else if(isPythonCharts())
+                else if (isPythonCharts())
                 {
-                    metricList.addAll(exportMetaData.getMetricIds("Python").keySet());
+                    metricList.addAll(exportMetaData.getMetricIds("PythonLanguageProvider").keySet());
                 }
                 else
                 {
@@ -453,7 +455,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     {
         return languageCPlusPlus;
     }
-    
+
     public boolean getLanguagePython()
     {
         return languagePython;
@@ -466,7 +468,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     protected static String getLanguages(final boolean languageJava, final boolean languageCPlusPlus, final boolean languageCSharp,
             final boolean languagePython)
     {
-        final boolean allLanguages = !(languageJava || languageCPlusPlus  || languageCSharp || languagePython);
+        final boolean allLanguages = !(languageJava || languageCPlusPlus || languageCSharp || languagePython);
         final List<String> languages = new ArrayList<>();
         if (allLanguages || languageJava)
         {
@@ -616,25 +618,24 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     public boolean isJavaCharts()
     {
-        SonargraphLogger.INSTANCE.log(Level.INFO, "isJavaCharts: " + getChartConfiguration());
         return "javaCharts".equals(getChartConfiguration());
     }
-    
+
     public boolean isCplusplusCharts()
     {
         return "cplusplusCharts".equals(getChartConfiguration());
     }
-    
+
     public boolean isCsharpCharts()
     {
         return "csharpCharts".equals(getChartConfiguration());
     }
-    
+
     public boolean isPythonCharts()
     {
         return "pythonCharts".equals(getChartConfiguration());
     }
-    
+
     public boolean isSelectedCharts()
     {
         return "selectedCharts".equals(getChartConfiguration());
@@ -747,9 +748,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             if (result.isSuccess())
             {
                 final MetricIds metaData = result.getOutcome();
-                for (final String c : metaData.getMetricCategories())
-                    SonargraphLogger.INSTANCE.log(Level.INFO, "category {0}", c);
-
                 metaData.getMetricCategories().stream().sorted().forEachOrdered(category -> items.add(category, category));
             }
 
@@ -777,7 +775,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                     items.add(metric.getName(), metric.getId());
                 }
             }
-            SonargraphLogger.INSTANCE.log(Level.INFO, "doFillMetricNameItems: iems found: " + items.size());
             return items;
         }
 
@@ -989,9 +986,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final ResultWithOutcome<MetricIds> overallResult = new ResultWithOutcome<>("Get stored MetricIds");
 
         // get metricIds from history
-        final File metricIdsHistoryFile = new File(project.getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
-        IMetricIdsHistoryProvider metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
-        final ResultWithOutcome<MetricIds> historyResult = metricIdsHistory.readMetricIds();
+        if (s_metricIdsHistory == null)
+        {
+            final File metricIdsHistoryFile = new File(project.getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
+            s_metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
+        }
+        final ResultWithOutcome<MetricIds> historyResult = s_metricIdsHistory.readMetricIds();
         if (historyResult.isFailure())
         {
             overallResult.addMessagesFrom(historyResult);

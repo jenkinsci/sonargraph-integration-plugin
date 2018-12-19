@@ -34,17 +34,20 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
 {
     public static final String ADD_METRIC_IDS_HAD_NO_EFFECT_ON_FILE = "Add metricIds had no effect on file ";
     public static final String OVERRIDE_METRIC_IDS_FILE = "Override metricIds file ";
-    
+
     private final File file;
+    private long lastModified = 0;
+    private MetricIds cachedMetricIds = null;
 
     public MetricIdsHistory(final File historyFile)
     {
         this.file = historyFile;
+
         if (!this.file.exists())
         {
             try
             {
-                SonargraphLogger.INSTANCE.log(Level.INFO, "Create new empty MetricIds JSON file {0}", this.file.getAbsolutePath());
+                SonargraphLogger.INSTANCE.log(Level.FINE, "Create new empty MetricIds JSON file {0}", this.file.getAbsolutePath());
                 this.file.createNewFile();
                 storeMetricIds(new MetricIds());
             }
@@ -60,16 +63,29 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
     {
         final ResultWithOutcome<MetricIds> result = new ResultWithOutcome<>("Read metricIds");
         String jsonString;
-        try
+        long modified = this.file.lastModified();
+        if (modified != this.lastModified || this.cachedMetricIds == null)
         {
-            SonargraphLogger.INSTANCE.log(Level.INFO, "Read metricIds file {0}", this.file.getAbsolutePath());
-            jsonString = TextFileReader.readLargeTextFile(this.file);
-            result.setOutcome(MetricIds.fromJSON(jsonString));
+            this.lastModified = modified;
+            try
+            {
+                SonargraphLogger.INSTANCE.log(Level.FINE, "Read metricIds file {0}", getStorageName());
+                jsonString = TextFileReader.readLargeTextFile(this.file);
+                this.cachedMetricIds = MetricIds.fromJSON(jsonString);
+                result.setOutcome(cachedMetricIds);
+            }
+            catch (final IOException ioe)
+            {
+                SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to read metricIds file '" + getStorageName(), ioe);
+                this.cachedMetricIds = null;
+                this.lastModified = 0;
+                result.addError(ResultCause.IO_EXCEPTION, ioe);
+            }
         }
-        catch (final IOException ioe)
+        else
         {
-            SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to read metricIds file '" + getStorageName(), ioe);
-            result.addError(ResultCause.IO_EXCEPTION, ioe);
+            SonargraphLogger.INSTANCE.log(Level.FINE, "Use cached metricIds");
+            result.setOutcome(this.cachedMetricIds);
         }
         return result;
     }
@@ -86,12 +102,12 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
             newMetricIds.addAll(metricIds);
             if (!existingMetricIds.equals(newMetricIds))
             {
-                SonargraphLogger.logToConsoleOutput(logger, Level.INFO, OVERRIDE_METRIC_IDS_FILE + this.file.getAbsolutePath(), null);
+                SonargraphLogger.logToConsoleOutput(logger, Level.FINE, OVERRIDE_METRIC_IDS_FILE + this.file.getAbsolutePath(), null);
                 storeMetricIds(newMetricIds);
             }
             else
             {
-                SonargraphLogger.logToConsoleOutput(logger, Level.INFO, ADD_METRIC_IDS_HAD_NO_EFFECT_ON_FILE + this.file.getAbsolutePath(), null);
+                SonargraphLogger.logToConsoleOutput(logger, Level.FINE, ADD_METRIC_IDS_HAD_NO_EFFECT_ON_FILE + this.file.getAbsolutePath(), null);
             }
             return newMetricIds;
         }
