@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.hello2morrow</groupId>
 			<artifactId>sonargraph-integration-access</artifactId>
-			<version>3.1.10</version>
+			<version>3.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
@@ -145,6 +145,11 @@
 							<rules>
 								<enforceBytecodeVersion>
 									<maxJdkVersion>1.8</maxJdkVersion>
+									<excludes>
+										<exclude>javax.xml.bind:jaxb-api:jar:2.3.1</exclude>
+										<exclude>com.sun.istack:istack-commons-runtime:jar:3.0.7</exclude>
+										<exclude>com.sun.xml.bind:jaxb-impl:jar:2.3.1</exclude>
+									</excludes>
 								</enforceBytecodeVersion>
 							</rules>
 						</configuration>
