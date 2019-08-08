@@ -146,10 +146,10 @@
     <f:entry title="If unassigned types exist, mark build as" field="unassignedTypesAction">
       <f:select />
     </f:entry>
-    <f:entry title="If cyclic elements exist, mark build as" field="cyclicElementsAction">
+    <f:entry title="If critical cyclic elements exist, mark build as" field="cyclicElementsAction">
       <f:select />
     </f:entry>
-    <f:entry title="If threshold violations exist, mark build as" field="thresholdViolationsAction">
+    <f:entry title="If critical threshold violations exist, mark build as" field="thresholdViolationsAction">
       <f:select />
     </f:entry>
     <f:entry title="If architecture warnings exist, mark build as" field="architectureWarningsAction">

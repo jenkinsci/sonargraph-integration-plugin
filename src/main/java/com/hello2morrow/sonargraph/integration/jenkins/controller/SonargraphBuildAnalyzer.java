@@ -47,16 +47,14 @@ import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 
 /**
- * Class that analyzes the values found for the metrics and takes action
- * depending of what the user selected to do.
+ * Class that analyzes the values found for the metrics and takes action depending of what the user selected to do.
  *
  * @author andreashoyerh2m
  */
 class SonargraphBuildAnalyzer
 {
     /**
-     * HashMap containing a code for the build result and a Result object for
-     * each code.
+     * HashMap containing a code for the build result and a Result object for each code.
      */
     private final HashMap<String, hudson.model.Result> m_buildResults = new HashMap<>();
 
@@ -68,13 +66,12 @@ class SonargraphBuildAnalyzer
 
     /**
      * Constructor.
-     * 
+     *
      * @param sonargraphReportPath Absolute path to the Sonargraph report.
-     * @throws InterruptedException 
-     * @throws IOException 
+     * @throws InterruptedException
+     * @throws IOException
      */
-    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final PrintStream logger)
-            throws IOException, InterruptedException
+    public SonargraphBuildAnalyzer(final FilePath sonargraphReportPath, final PrintStream logger) throws IOException, InterruptedException
     {
         assert sonargraphReportPath != null : "The path for the Sonargraph architect report must not be null";
 
@@ -132,12 +129,13 @@ class SonargraphBuildAnalyzer
         }
 
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
+        //FIXME [IK -> AH] Relying on the position of enum constants is very risky. Better: Create a comparator
         final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName().equals(issueCategory)
                 && issue.getIssueType().getSeverity().ordinal() <= minimumSeverity.ordinal() && !issue.hasResolution();
         final int numberOfIssues = infoProcessor.getIssues(filter).size();
         if (numberOfIssues <= 0)
         {
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.FINE,
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.FINE,
                     "Not changing build result because number of '" + issueCategory + "' is " + numberOfIssues, null);
             return;
         }
@@ -145,7 +143,7 @@ class SonargraphBuildAnalyzer
         if (userDefinedAction.equals(BuildActionsEnum.FAILED.getActionCode()))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.FAILED.getActionCode());
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO,
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO,
                     "Changing build result to " + m_overallBuildResult.toString() + " because value for '" + issueCategory + "' is " + numberOfIssues,
                     null);
         }
@@ -153,7 +151,7 @@ class SonargraphBuildAnalyzer
                 && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO,
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO,
                     "Changing build result to " + m_overallBuildResult.toString() + " because value for '" + issueCategory + "' is " + numberOfIssues,
                     null);
         }
@@ -170,7 +168,7 @@ class SonargraphBuildAnalyzer
         final Optional<IMetricValue> metricValue = infoProcessor.getMetricValue(metricName);
         if (!metricValue.isPresent())
         {
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.WARNING, "Metric '" + metricName + "' not present in analysis", null);
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.WARNING, "Metric '" + metricName + "' not present in analysis", null);
             return;
         }
 
@@ -183,14 +181,14 @@ class SonargraphBuildAnalyzer
         if (userDefinedAction.equals(BuildActionsEnum.FAILED.getActionCode()))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.FAILED.getActionCode());
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
                     + " because value for '" + metricValue.get().getId().getPresentationName() + "' is " + value, null);
         }
         else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
                 && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
                     + " because value for '" + metricValue.get().getId().getPresentationName() + "' is " + value, null);
         }
     }
@@ -206,7 +204,7 @@ class SonargraphBuildAnalyzer
 
         if (!metricValue.isPresent())
         {
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.WARNING, "Metric '" + metricName + "' not present in analysis", null);
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.WARNING, "Metric '" + metricName + "' not present in analysis", null);
             return;
         }
 
@@ -216,7 +214,7 @@ class SonargraphBuildAnalyzer
             if (userDefinedAction.equals(BuildActionsEnum.FAILED.getActionCode()))
             {
                 m_overallBuildResult = m_buildResults.get(BuildActionsEnum.FAILED.getActionCode());
-                SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
+                SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
                         + " because value for " + metricValue.get().getId().getName() + " is " + value, null);
 
             }
@@ -224,13 +222,13 @@ class SonargraphBuildAnalyzer
                     && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
             {
                 m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());
-                SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
+                SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO, "Changing build result to " + m_overallBuildResult.toString()
                         + " because value for " + metricValue.get().getId().getName() + " is " + value, null);
             }
         }
         else
         {
-            SonargraphLogger.logToConsoleOutput((PrintStream) m_logger, Level.FINE,
+            SonargraphLogger.logToConsoleOutput(m_logger, Level.FINE,
                     "Not changing build result because value for '" + metricValue.get().getId().getName() + "' is " + value, null);
 
         }
@@ -238,10 +236,10 @@ class SonargraphBuildAnalyzer
     }
 
     /**
-     * Append all metric values from report to sonargraph history file.
-     * Append all metricIds from report to sonargraph history file.
+     * Append all metric values from report to sonargraph history file. Append all metricIds from report to sonargraph history file.
      */
-    public void saveMetrics(final File metricHistoryFile, final File metricIdsHistoryFile, final long timeOfBuild, final Integer buildNumber) throws IOException
+    public void saveMetrics(final File metricHistoryFile, final File metricIdsHistoryFile, final long timeOfBuild, final Integer buildNumber)
+            throws IOException
     {
         SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO, "Save metrics to history", null);
         if (!m_controller.hasSoftwareSystem())
@@ -249,13 +247,12 @@ class SonargraphBuildAnalyzer
             SonargraphLogger.INSTANCE.log(Level.WARNING, "Software System expected");
             return;
         }
-        
+
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
 
         final IMetricIdsHistoryProvider metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
         final MetricIds metricIds = metricIdsHistory.addMetricIds(MetricIds.fromIMetricIds(infoProcessor.getMetricIds()), m_logger);
-        
-        
+
         final IMetricHistoryProvider metricHistory = new CSVFileHandler(metricHistoryFile, metricIds);
         final HashMap<MetricId, String> buildMetricValues = new HashMap<>();
         for (final IMetricId metric : infoProcessor.getMetricIds())
@@ -289,7 +286,7 @@ class SonargraphBuildAnalyzer
         @Override
         public void checkRoles(final RoleChecker checker) throws SecurityException
         {
-            // do nothing 
+            // do nothing
         }
 
         @Override
