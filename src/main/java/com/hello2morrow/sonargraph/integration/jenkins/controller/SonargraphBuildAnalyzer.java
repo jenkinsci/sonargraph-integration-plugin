@@ -27,7 +27,7 @@ import java.util.logging.Level;
 
 import org.jenkinsci.remoting.RoleChecker;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.ISonargraphSystemController;
 import com.hello2morrow.sonargraph.integration.access.controller.ISystemInfoProcessor;
 import com.hello2morrow.sonargraph.integration.access.foundation.Result;
@@ -62,7 +62,7 @@ class SonargraphBuildAnalyzer
     private hudson.model.Result m_overallBuildResult;
 
     private PrintStream m_logger = null;
-    private final ISonargraphSystemController m_controller = ControllerAccess.createController();
+    private final ISonargraphSystemController m_controller = ControllerFactory.createController();
 
     /**
      * Constructor.
@@ -129,7 +129,6 @@ class SonargraphBuildAnalyzer
         }
 
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
-        //FIXME [IK -> AH] Relying on the position of enum constants is very risky. Better: Create a comparator
         final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName().equals(issueCategory)
                 && issue.getIssueType().getSeverity().ordinal() <= minimumSeverity.ordinal() && !issue.hasResolution();
         final int numberOfIssues = infoProcessor.getIssues(filter).size();

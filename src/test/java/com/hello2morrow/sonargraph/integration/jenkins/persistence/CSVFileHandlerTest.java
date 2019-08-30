@@ -36,7 +36,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.jenkins.model.BuildDataPoint;
@@ -70,7 +70,7 @@ public class CSVFileHandlerTest
     public static void setUpClass() throws IOException
     {
         final File exportMetaDataFile = new File(META_DATA_XML);
-        final ResultWithOutcome<IExportMetaData> result = ControllerAccess.createMetaDataController().loadExportMetaData(exportMetaDataFile);
+        final ResultWithOutcome<IExportMetaData> result = ControllerFactory.createMetaDataController().loadExportMetaData(exportMetaDataFile);
         if (result.isSuccess())
         {
             s_metaData = MetricIds.fromExportMetaData(result.getOutcome());

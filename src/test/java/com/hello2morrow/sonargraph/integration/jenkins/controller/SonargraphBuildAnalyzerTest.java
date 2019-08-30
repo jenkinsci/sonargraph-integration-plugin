@@ -29,7 +29,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
@@ -51,7 +51,7 @@ public class SonargraphBuildAnalyzerTest
     @Before
     public void setUp() throws IOException
     {
-        final IMetaDataController metaDataController = ControllerAccess.createMetaDataController();
+        final IMetaDataController metaDataController = ControllerFactory.createMetaDataController();
         final ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(new File(METRIC_META_DATA_FILE_NAME));
         assertTrue(result.toString(), result.isSuccess());
 
