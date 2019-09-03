@@ -17,7 +17,9 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,13 +38,12 @@ public class ReportHistoryFileManagerTest
 {
     private static final String archReportHistoryPath = "src/test/resources/temp";
     private static final String buildReportDirectoryPath = "src/test/resources/report";
-    private FilePath sonargraphReporFile;
     private static final String dummyLogFileName = "src/test/resources/dummy.log";
     private final File dummyLogFile = new File(dummyLogFileName);
     private PrintStream m_logger;
 
     @Before
-    public void before() throws IOException, InterruptedException
+    public void before() throws IOException
     {
         removeFiles();
         if (!dummyLogFile.exists())
@@ -53,7 +54,7 @@ public class ReportHistoryFileManagerTest
     }
 
     @After
-    public void tearDown() throws IOException, InterruptedException
+    public void tearDown()
     {
         if (m_logger != null)
         {
@@ -62,12 +63,8 @@ public class ReportHistoryFileManagerTest
         removeFiles();
     }
 
-    private void removeFiles() throws IOException, InterruptedException
+    private void removeFiles()
     {
-        if ((sonargraphReporFile != null) && sonargraphReporFile.exists())
-        {
-            sonargraphReporFile.delete();
-        }
         final File historyDir = new File(archReportHistoryPath);
         if (historyDir.exists())
         {
@@ -111,10 +108,48 @@ public class ReportHistoryFileManagerTest
         {
             testFile.createNewFile();
         }
-        rhfm.storeGeneratedReportDirectory(buildReportDirectory, "testFile", 1, m_logger);
-        final String buildReportDirInHistory = "sonargraph-report-build-1";
+        buildAndCheckLatest(rhfm, buildReportDirectory, 1);
+    }
+    
+    @Test
+    public void testLatestAfterStoreGeneratedReportDirectory() throws IOException, InterruptedException
+    {
+        final ReportHistoryFileManager rhfm = new ReportHistoryFileManager(new FilePath((VirtualChannel) null, archReportHistoryPath),
+                "sonargraphReportHistory", m_logger);
+        final FilePath buildReportDirectory = new FilePath((VirtualChannel) null, buildReportDirectoryPath);
+        if (!buildReportDirectory.exists())
+        {
+            buildReportDirectory.mkdirs();
+        }
+        final File testFile = new File(buildReportDirectory.getRemote(), "testFile.xml");
+        if (!testFile.exists())
+        {
+            testFile.createNewFile();
+        }
+        buildAndCheckLatest(rhfm, buildReportDirectory, 1);
+        buildAndCheckLatest(rhfm, buildReportDirectory, 2);
+        buildAndCheckLatest(rhfm, buildReportDirectory, 3);
+        
+        // test for changing 'next build number' to a larger value, and then back to a lower value
+        buildAndCheckLatest(rhfm, buildReportDirectory, 999);
+        buildAndCheckLatest(rhfm, buildReportDirectory, 55);
+        buildAndCheckLatest(rhfm, buildReportDirectory, 2);
+        
+    }
+
+    private void buildAndCheckLatest(final ReportHistoryFileManager rhfm, final FilePath buildReportDirectory, final int build) throws IOException, InterruptedException
+    {
+        rhfm.storeGeneratedReportDirectory(buildReportDirectory, "testFile", build, m_logger);
+        final String buildReportDirInHistory = "sonargraph-report-build-" + build;
         assertTrue(new FilePath(rhfm.getReportHistoryDirectory(), buildReportDirInHistory).exists());
         assertTrue(new File(rhfm.getReportHistoryDirectory() + "/" + buildReportDirInHistory,
                 ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml").exists());
+        
+        // check "latest" symlink
+        final FilePath latestSymlink = new FilePath(rhfm.getReportHistoryDirectory(), "latest");
+        assertTrue(latestSymlink.exists());
+        final String linkTarget = latestSymlink.readLink();
+        assertNotNull(linkTarget);
+        assertEquals(buildReportDirInHistory , linkTarget);
     }
 }
