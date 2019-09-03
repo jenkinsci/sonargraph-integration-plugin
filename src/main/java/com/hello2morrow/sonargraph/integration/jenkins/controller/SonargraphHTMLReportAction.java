@@ -17,6 +17,7 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -32,13 +33,9 @@ public final class SonargraphHTMLReportAction extends InvisibleFromSidebarAction
     /** Project or build that is calling this action. */
     private final AbstractProject<?, ?> project;
 
-    /** Object that defines the post-build step associated with this action. */
-    private final IReportPathProvider pathProvider;
-
-    public SonargraphHTMLReportAction(final AbstractProject<?, ?> project, final IReportPathProvider pathProvider)
+    public SonargraphHTMLReportAction(final AbstractProject<?, ?> project)
     {
         this.project = project;
-        this.pathProvider = pathProvider;
     }
 
     public AbstractProject<?, ?> getProject()
@@ -55,16 +52,24 @@ public final class SonargraphHTMLReportAction extends InvisibleFromSidebarAction
     @Override
     public void doDynamic(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException
     {
-        final FilePath directory = new FilePath(project.getSomeWorkspace(), pathProvider.getReportDirectory());
-        enableDirectoryBrowserSupport(req, rsp, directory);
+        final File latestFolder = getLatestFolder();
+        enableDirectoryBrowserSupport(req, rsp, new FilePath(latestFolder));
+    }
+
+    private File getLatestFolder()
+    {
+        final File projectRootFolder = project.getRootDir();
+        final File reportHistoryFolder = new File(projectRootFolder, ConfigParameters.REPORT_HISTORY_FOLDER.getValue());
+        final File latestFolder = new File(reportHistoryFolder, "latest");
+        return latestFolder;
     }
 
     @Override
     public String getHTMLReport() throws IOException, InterruptedException
     {
-        final String reportRelativePath = pathProvider.getReportPath() + ".html";
-        final FilePath reportAbsouletPath = new FilePath(project.getSomeWorkspace(), reportRelativePath);
-
-        return readHTMLReport(reportAbsouletPath);
+        final File latestFolder = getLatestFolder();
+        final String reportFileName = ConfigParameters.SONARGRAPH_HTML_REPORT_FILE_NAME.getValue() + ".html";
+        final File reportFile = new File(latestFolder, reportFileName);
+        return readHTMLReport(new FilePath(reportFile));
     }
 }
