@@ -25,6 +25,7 @@ import com.hello2morrow.sonargraph.integration.jenkins.controller.ConfigParamete
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 
 import hudson.FilePath;
+import hudson.util.LogTaskListener;
 
 /**
  * Class that handles copies of each generated architect report to calculate trends or
@@ -117,6 +118,13 @@ public final class ReportHistoryFileManager
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.WARNING, "No html report file found at " + sourceHtmlReportFile.getRemote(), null);
         }
+        
+        // create symlink "latest"
+        final FilePath latest = new FilePath(m_sonargraphReportHistoryDir, "latest");
+        latest.symlinkTo(targetHistoryDirectory.getName(), new LogTaskListener(SonargraphLogger.INSTANCE, Level.INFO));
+        SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
+                "Created symlink 'latest' to " + targetHistoryDirectory.getRemote(), null);
+
 
         // return copied xml report from master
         return targetXmlReportFile;
