@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2018 hello2morrow GmbH
+ * Copyright (C) 2015-2019 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
@@ -51,7 +51,7 @@ public class SonargraphBuildAnalyzerTest
     @Before
     public void setUp() throws IOException
     {
-        final IMetaDataController metaDataController = ControllerAccess.createMetaDataController();
+        final IMetaDataController metaDataController = ControllerFactory.createMetaDataController();
         final ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(new File(METRIC_META_DATA_FILE_NAME));
         assertTrue(result.toString(), result.isSuccess());
 

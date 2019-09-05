@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2018 hello2morrow GmbH
+ * Copyright (C) 2015-2019 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,11 +33,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerAccess;
+import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
+import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphUtil;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter.MandatoryParameter;
@@ -63,6 +64,7 @@ import hudson.model.Queue.FlyweightTask;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import hudson.util.VersionNumber;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
@@ -209,7 +211,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             {
                 SonargraphLogger.INSTANCE.log(Level.SEVERE, "Cannot add SonargraphChartAction, no Meta Data found.");
             }
-            actions.add(new SonargraphHTMLReportAction(project, this));
+            actions.add(new SonargraphHTMLReportAction(project));
         }
         return actions;
     }
@@ -325,6 +327,32 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
         sonargraphBuild = sonargraphBuild.forNode(build.getBuiltOn(), listener);
 
+        final FilePath installationDirectory = new FilePath(launcher.getChannel(), sonargraphBuild.getHome());
+        final FilePath pluginsDirectory = new FilePath(installationDirectory, "plugins");
+        final FilePath clientDirectory = new FilePath(installationDirectory, "client");
+
+        final FilePath[] osgiJars = pluginsDirectory.list(ORG_ECLIPSE_OSGI_JAR);
+        final FilePath osgiJar = osgiJars.length == 1 ? osgiJars[0] : null;
+        // pre 8.9.0
+        FilePath[] clientJars = pluginsDirectory.list(SONARGRAPH_BUILD_CLIENT_JAR);
+        FilePath clientJar = clientJars.length == 1 ? clientJars[0] : null;
+        if (clientJar == null)
+        {
+            // since 8.9.0
+            clientJars = clientDirectory.list(SONARGRAPH_BUILD_CLIENT_JAR);
+            clientJar = clientJars.length == 1 ? clientJars[0] : null;
+        }
+
+        if (osgiJar == null || clientJar == null)
+        {
+            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Missing plugins in Sonargraph Build installation.", null);
+            return false;
+        }
+        
+        final VersionNumber clientVersion = SonargraphUtil.getVersionFromJarName(clientJar.getName());
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
+                "SonargraphBuild client jar version is " + clientVersion, null);
+
         // local configuration file, always on master
         final File configurationFileMaster = File.createTempFile("sonargraphBuildConfigurationMaster", ".xml");
 
@@ -355,32 +383,20 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.SPLIT_BY_MODULE, isSplitByModule() ? "true" : "false");
         parameters.put(MandatoryParameter.ELEMENT_COUNT_TO_SPLIT_HTML_REPORT, getElementCountToSplitHtmlReport());
         parameters.put(MandatoryParameter.MAX_ELEMENT_COUNT_FOR_HTML_DETEILS_PAGE, getMaxElementCountForHtmlDetailsPage());
+        
+        // since 9.12.0.xxx
+        final VersionNumber since = new VersionNumber("9.12");
+        if(clientVersion.isNewerThan(since))
+        {
+            // possible values are "none" (default), "basic", or "detailed". "detailed" will not work on Jenkins.
+            parameters.put(MandatoryParameter.PROGRESS_INFO, "basic");
+        }
 
         writer.createConfigurationFile(parameters, listener.getLogger());
         final String content = new FilePath(configurationFileMaster).readToString();
         final FilePath configurationFileSlave = javaDir.createTextTempFile("sonargraphBuildConfigurationSlave", ".xml", content, false);
 
-        final FilePath installationDirectory = new FilePath(launcher.getChannel(), sonargraphBuild.getHome());
-        final FilePath pluginsDirectory = new FilePath(installationDirectory, "plugins");
-        final FilePath clientDirectory = new FilePath(installationDirectory, "client");
 
-        final FilePath[] osgiJars = pluginsDirectory.list(ORG_ECLIPSE_OSGI_JAR);
-        final FilePath osgiJar = osgiJars.length == 1 ? osgiJars[0] : null;
-        // pre 8.9.0
-        FilePath[] clientJars = pluginsDirectory.list(SONARGRAPH_BUILD_CLIENT_JAR);
-        FilePath clientJar = clientJars.length == 1 ? clientJars[0] : null;
-        if (clientJar == null)
-        {
-            // since 8.9.0
-            clientJars = clientDirectory.list(SONARGRAPH_BUILD_CLIENT_JAR);
-            clientJar = clientJars.length == 1 ? clientJars[0] : null;
-        }
-
-        if (osgiJar == null || clientJar == null)
-        {
-            SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Missing plugins in Sonargraph Build installation.", null);
-            return false;
-        }
 
         // separator taken from launcher, to also work on slaves
         final String classpathSeparator = launcher.isUnix() ? ":" : ";";
@@ -999,7 +1015,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
 
         // get metricIds from export meta data file
-        final IMetaDataController controller = ControllerAccess.createMetaDataController();
+        final IMetaDataController controller = ControllerFactory.createMetaDataController();
         final InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
         final ResultWithOutcome<IExportMetaData> exportMetaDataResult = controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
 

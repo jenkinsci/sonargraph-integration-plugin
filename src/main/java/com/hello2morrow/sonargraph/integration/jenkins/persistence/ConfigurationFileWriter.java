@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2018 hello2morrow GmbH
+ * Copyright (C) 2015-2019 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,7 +61,8 @@ public class ConfigurationFileWriter
         LICENSE_SERVER_PORT("licenseServerPort"),
         ELEMENT_COUNT_TO_SPLIT_HTML_REPORT("elementCountToSplitHtmlReport"),
         MAX_ELEMENT_COUNT_FOR_HTML_DETEILS_PAGE("maxElementCountForHtmlDetailsPage"),
-        SPLIT_BY_MODULE("splitByModule");
+        SPLIT_BY_MODULE("splitByModule"),
+        PROGRESS_INFO("progressInfo");
 
         private final String m_presentationName;
 

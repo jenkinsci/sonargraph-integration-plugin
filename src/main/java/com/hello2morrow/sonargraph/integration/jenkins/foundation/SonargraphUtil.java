@@ -15,33 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hello2morrow.sonargraph.integration.jenkins.controller;
+package com.hello2morrow.sonargraph.integration.jenkins.foundation;
 
-/**
- * Extending from this class means that your action will not be visible as a
- * link in the sidebar, but since you can implement the getURLName method, It
- * will be possible to access the action by using the URL.
- * 
- * @author esteban
- *
- */
-public abstract class InvisibleFromSidebarAction extends AbstractHTMLAction
+import hudson.util.VersionNumber;
+
+public class SonargraphUtil
 {
-    /**
-     * Hides the Icon.
-     */
-    @Override
-    public final String getIconFileName()
+    public static VersionNumber getVersionFromJarName(String jarName)
     {
-        return null;
-    }
-
-    /**
-     * Hides the link.
-     */
-    @Override
-    public final String getDisplayName()
-    {
-        return null;
+        int first = jarName.indexOf("_");
+        int second = jarName.indexOf("_", first + 1);
+        if(first != -1 && second != -1)
+        {
+            final String version = jarName.substring(first + 1, second);
+            return new VersionNumber(version);
+        }
+        return new VersionNumber("0.0");
     }
 }
