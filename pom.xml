@@ -66,7 +66,7 @@
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
 			<version>2.3.1</version>
-			<scope>test</scope>
+			<scope>runtime</scope>
 		</dependency>
 	    <dependency>
 	      <groupId>org.slf4j</groupId>
@@ -160,6 +160,10 @@
 										<exclude>javax.xml.bind:jaxb-api:jar:2.3.1</exclude>
 										<exclude>com.sun.istack:istack-commons-runtime:jar:3.0.7</exclude>
 										<exclude>com.sun.xml.bind:jaxb-impl:jar:2.3.1</exclude>
+										<exclude>com.sun.xml.fastinfoset:FastInfoset:jar:1.2.15</exclude>
+										<exclude>org.jvnet.staxex:stax-ex:jar:1.8</exclude>
+										<exclude>org.glassfish.jaxb:txw2:jar:2.3.1</exclude>
+										<exclude>org.glassfish.jaxb:jaxb-runtime:jar:2.3.1</exclude>
 									</excludes>
 								</enforceBytecodeVersion>
 							</rules>
@@ -188,63 +192,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<!-- Needed to avoid error markers in Eclipse -->
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-enforcer-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals>
-											<goal>enforce</goal>
-											<goal>display-info</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.gmaven</groupId>
-										<artifactId>gmaven-plugin</artifactId>
-										<versionRange>[1.5,)</versionRange>
-										<goals>
-											<goal>generateTestStubs</goal>
-											<goal>testCompile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-javadoc-plugin</artifactId>
-										<versionRange>[2.10,)</versionRange>
-										<goals>
-											<goal>javadoc</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<url>https://wiki.jenkins-ci.org/display/JENKINS/Sonargraph+Integration+Plugin</url>
