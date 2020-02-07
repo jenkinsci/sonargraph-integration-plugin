@@ -60,8 +60,19 @@
 		<dependency>
 			<groupId>com.hello2morrow</groupId>
 			<artifactId>sonargraph-integration-access</artifactId>
-			<version>3.3.0</version>
+			<version>3.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.1</version>
+			<scope>test</scope>
+		</dependency>
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>slf4j-api</artifactId>
+	      <version>1.7.28</version>
+	    </dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
