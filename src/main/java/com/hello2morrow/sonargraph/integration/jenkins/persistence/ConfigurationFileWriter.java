@@ -47,6 +47,7 @@ public class ConfigurationFileWriter
         SYSTEM_DIRECTORY("systemDirectory"),
         REPORT_DIRECTORY("reportDirectory"),
         REPORT_FILENAME("reportFileName"),
+        REPORT_BASELINE("baselineReportPath"),
         REPORT_TYPE("reportType"),
         REPORT_FORMAT("reportFormat"),
         QUALITY_MODEL_FILE("qualityModelFile"),

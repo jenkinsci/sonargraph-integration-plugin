@@ -69,6 +69,7 @@ public abstract class JenkinsJobBasedTest
         final String qualityModelFile = "";
         final String virtualModel = "Modifiable.vm";
         final String reportPath = "";
+        final String baselineReportPath = "";
         final String reportGeneration = "";
         final String chartConfiguration = "";
         final String architectureViolationsAction = "";
@@ -96,7 +97,7 @@ public abstract class JenkinsJobBasedTest
         final String maxElementCountForHtmlDetailsPage = "2000";
         final boolean splitByModule = false;
 
-        return new SonargraphReportBuilder(metrics, metaDataFile, systemDirectory, qualityModelFile, virtualModel, reportPath, reportGeneration,
+        return new SonargraphReportBuilder(metrics, metaDataFile, systemDirectory, qualityModelFile, virtualModel, reportPath, baselineReportPath, reportGeneration,
                 chartConfiguration, architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction,
                 architectureWarningsAction, workspaceWarningsAction, workItemsAction, emptyWorkspaceAction, languageJava, languageCSharp,
                 languageCPlusPlus, languagePython, sonargraphBuildJDK, sonargraphBuildVersion, activationCode, licenseFile, workspaceProfile, snapshotDirectory,

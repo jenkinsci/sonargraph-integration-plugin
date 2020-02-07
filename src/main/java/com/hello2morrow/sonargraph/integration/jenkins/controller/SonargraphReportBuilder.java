@@ -90,6 +90,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     private final String qualityModelFile;
     private final String virtualModel;
     private final String reportPath;
+    private final String baselineReportPath;
     private final String reportGeneration;
     private final String chartConfiguration;
     private final List<Metric> metrics;
@@ -120,7 +121,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
      */
     @DataBoundConstructor
     public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemDirectory, final String qualityModelFile,
-            final String virtualModel, final String reportPath, final String reportGeneration, final String chartConfiguration,
+            final String virtualModel, final String reportPath, final String baselineReportPath, final String reportGeneration, final String chartConfiguration,
             final String architectureViolationsAction, final String unassignedTypesAction, final String cyclicElementsAction,
             final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
             final String workItemsAction, final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp,
@@ -136,6 +137,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         this.qualityModelFile = qualityModelFile;
         this.virtualModel = virtualModel;
         this.reportPath = reportPath;
+        this.baselineReportPath = baselineReportPath;
         this.reportGeneration = reportGeneration;
         this.chartConfiguration = chartConfiguration;
         this.metaDataFile = metaDataFile;
@@ -365,6 +367,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.LANGUAGES, getLanguages(languageJava, languageCPlusPlus, languageCSharp, languagePython));
         parameters.put(MandatoryParameter.SYSTEM_DIRECTORY, getSystemDirectory());
         parameters.put(MandatoryParameter.REPORT_DIRECTORY, getReportDirectory());
+        parameters.put(MandatoryParameter.REPORT_BASELINE, getBaselineReportPath());
         parameters.put(MandatoryParameter.REPORT_FILENAME, getReportFileName());
         parameters.put(MandatoryParameter.REPORT_TYPE, getReportType());
         parameters.put(MandatoryParameter.REPORT_FORMAT, getReportFormat());
@@ -385,11 +388,18 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.MAX_ELEMENT_COUNT_FOR_HTML_DETEILS_PAGE, getMaxElementCountForHtmlDetailsPage());
         
         // since 9.12.0.xxx
-        final VersionNumber since = new VersionNumber("9.12");
+        VersionNumber since = new VersionNumber("9.12");
         if(clientVersion.isNewerThan(since))
         {
             // possible values are "none" (default), "basic", or "detailed". "detailed" will not work on Jenkins.
             parameters.put(MandatoryParameter.PROGRESS_INFO, "basic");
+        }
+        
+        // since 9.13.0.xxx
+        since = new VersionNumber("9.13");
+        if(clientVersion.isNewerThan(since))
+        {
+            parameters.put(MandatoryParameter.REPORT_BASELINE, getBaselineReportPath());
         }
 
         writer.createConfigurationFile(parameters, listener.getLogger());
@@ -450,6 +460,11 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return ConfigParameters.SONARGRAPH_REPORT_TARGET_DIRECTORY.getValue() + ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue();
         }
         return reportPath;
+    }
+    
+    public String getBaselineReportPath()
+    {
+        return baselineReportPath;
     }
 
     public String getMetaDataFile()
@@ -895,6 +910,21 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return checkFileInWorkspace(project, value + ".xml", null);
         }
 
+        public FormValidation doCheckBaselineReportPath(@AncestorInPath
+                final AbstractProject<?, ?> project, @QueryParameter
+                final String value) throws IOException
+        {
+            if (value != null && !value.isEmpty())
+            {
+                if (value.endsWith(".xml"))
+                {
+                    return FormValidation.error("Please enter a path without extension \".xml\".");
+                }
+                return checkFileInWorkspace(project, value + ".xml", null);
+            }
+            return FormValidation.ok();
+        }
+        
         /**
          * Split integer parameters must be >= -1.
          * 
@@ -997,7 +1027,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     }
 
-    protected static ResultWithOutcome<MetricIds> getMetricIds(AbstractProject<?, ?> project)
+    protected static ResultWithOutcome<MetricIds> getMetricIds(final AbstractProject<?, ?> project)
     {
         final ResultWithOutcome<MetricIds> overallResult = new ResultWithOutcome<>("Get stored MetricIds");
 
