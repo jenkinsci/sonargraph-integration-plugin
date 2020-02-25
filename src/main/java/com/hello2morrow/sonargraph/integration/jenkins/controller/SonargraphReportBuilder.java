@@ -367,7 +367,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         parameters.put(MandatoryParameter.LANGUAGES, getLanguages(languageJava, languageCPlusPlus, languageCSharp, languagePython));
         parameters.put(MandatoryParameter.SYSTEM_DIRECTORY, getSystemDirectory());
         parameters.put(MandatoryParameter.REPORT_DIRECTORY, getReportDirectory());
-        parameters.put(MandatoryParameter.REPORT_BASELINE, getBaselineReportPath());
         parameters.put(MandatoryParameter.REPORT_FILENAME, getReportFileName());
         parameters.put(MandatoryParameter.REPORT_TYPE, getReportType());
         parameters.put(MandatoryParameter.REPORT_FORMAT, getReportFormat());
@@ -399,7 +398,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         since = new VersionNumber("9.13");
         if(clientVersion.isNewerThan(since))
         {
-            parameters.put(MandatoryParameter.REPORT_BASELINE, getBaselineReportPath());
+            parameters.put(MandatoryParameter.REPORT_BASELINE, getBaselineReportPath() + ".xml");
         }
 
         writer.createConfigurationFile(parameters, listener.getLogger());
