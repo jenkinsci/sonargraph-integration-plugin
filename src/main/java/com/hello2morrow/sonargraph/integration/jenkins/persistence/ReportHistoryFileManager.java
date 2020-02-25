@@ -119,6 +119,22 @@ public final class ReportHistoryFileManager
             SonargraphLogger.logToConsoleOutput(logger, Level.WARNING, "No html report file found at " + sourceHtmlReportFile.getRemote(), null);
         }
         
+        // copy html diff report, and rename it
+        final FilePath sourceHtmlDiffReportFile = new FilePath(reportDirectory, reportName + "_diff.html");
+        if (sourceHtmlDiffReportFile.exists())
+        {
+            final FilePath targetHtmlDiffReportFile = new FilePath(targetHistoryDirectory,
+                    ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + "_diff.html");
+            sourceHtmlDiffReportFile.copyTo(targetHtmlDiffReportFile);
+            SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
+                    "Copied html diff report file from " + sourceHtmlDiffReportFile.getRemote() + " to " + targetHtmlDiffReportFile.getRemote(), null);
+        }
+        else
+        {
+            // this always happens when there is no baseline report is configured 
+            SonargraphLogger.logToConsoleOutput(logger, Level.INFO, "No html diff report file found at " + sourceHtmlDiffReportFile.getRemote(), null);
+        }
+        
         // create symlink "latest"
         final FilePath latest = new FilePath(m_sonargraphReportHistoryDir, "latest");
         latest.symlinkTo(targetHistoryDirectory.getName(), new LogTaskListener(SonargraphLogger.INSTANCE, Level.INFO));
