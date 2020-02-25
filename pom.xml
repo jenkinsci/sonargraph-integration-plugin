@@ -13,7 +13,7 @@
 	<packaging>hpi</packaging>
 
 	<properties>
-		<jenkins.version>2.89.4</jenkins.version>
+		<jenkins.version>2.164.3</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<animal.sniffer.skip>true</animal.sniffer.skip>
 		<findbugs.skip>true</findbugs.skip>
@@ -189,6 +189,13 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<source>8</source>
 				</configuration>
 			</plugin>
 		</plugins>
