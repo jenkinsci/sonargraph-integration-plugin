@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2019 hello2morrow GmbH
+ * Copyright (C) 2015-2020 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
