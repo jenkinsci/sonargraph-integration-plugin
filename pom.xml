@@ -8,12 +8,12 @@
 	</parent>
 
 	<artifactId>sonargraph-integration</artifactId>
-	<version>2.2.2</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<name>Sonargraph Integration Jenkins Plugin</name>
 	<packaging>hpi</packaging>
 
 	<properties>
-		<jenkins.version>2.89.4</jenkins.version>
+		<jenkins.version>2.164.3</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<animal.sniffer.skip>true</animal.sniffer.skip>
 		<findbugs.skip>true</findbugs.skip>
@@ -60,8 +60,19 @@
 		<dependency>
 			<groupId>com.hello2morrow</groupId>
 			<artifactId>sonargraph-integration-access</artifactId>
-			<version>3.3.0</version>
+			<version>4.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.1</version>
+			<scope>runtime</scope>
+		</dependency>
+	    <dependency>
+	      <groupId>org.slf4j</groupId>
+	      <artifactId>slf4j-api</artifactId>
+	      <version>1.7.28</version>
+	    </dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
@@ -149,6 +160,10 @@
 										<exclude>javax.xml.bind:jaxb-api:jar:2.3.1</exclude>
 										<exclude>com.sun.istack:istack-commons-runtime:jar:3.0.7</exclude>
 										<exclude>com.sun.xml.bind:jaxb-impl:jar:2.3.1</exclude>
+										<exclude>com.sun.xml.fastinfoset:FastInfoset:jar:1.2.15</exclude>
+										<exclude>org.jvnet.staxex:stax-ex:jar:1.8</exclude>
+										<exclude>org.glassfish.jaxb:txw2:jar:2.3.1</exclude>
+										<exclude>org.glassfish.jaxb:jaxb-runtime:jar:2.3.1</exclude>
 									</excludes>
 								</enforceBytecodeVersion>
 							</rules>
@@ -176,64 +191,14 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<source>8</source>
+				</configuration>
+			</plugin>
 		</plugins>
-		<pluginManagement>
-			<!-- Needed to avoid error markers in Eclipse -->
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-enforcer-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals>
-											<goal>enforce</goal>
-											<goal>display-info</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.gmaven</groupId>
-										<artifactId>gmaven-plugin</artifactId>
-										<versionRange>[1.5,)</versionRange>
-										<goals>
-											<goal>generateTestStubs</goal>
-											<goal>testCompile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-javadoc-plugin</artifactId>
-										<versionRange>[2.10,)</versionRange>
-										<goals>
-											<goal>javadoc</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<url>https://wiki.jenkins-ci.org/display/JENKINS/Sonargraph+Integration+Plugin</url>

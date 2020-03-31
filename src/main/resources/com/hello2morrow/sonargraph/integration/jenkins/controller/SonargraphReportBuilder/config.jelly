@@ -88,6 +88,14 @@
 	              <f:textbox default="sonargraph_build.log"/>
 	            </f:entry>  
             
+            </f:section>  
+                           
+            <f:section title="Baseline">
+            
+	            <f:entry title="Baseline Report Path" field="baselineReportPath">
+	              <f:textbox />
+	            </f:entry>
+            
             </f:section>                 
           </f:advanced>
         </f:block>
