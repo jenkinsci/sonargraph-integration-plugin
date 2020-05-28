@@ -53,6 +53,7 @@ import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.Proc;
 import hudson.RelativePath;
+import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -862,19 +863,20 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         final AbstractProject<?, ?> project, @QueryParameter
         final String value) throws IOException
         {
+            final String escapedValue = Util.xmlEscape(value);
             final FilePath ws = project.getSomeWorkspace();
             if (ws == null)
             {
                 return FormValidation.error("Please run build at least once to get a workspace.");
             }
-            final FormValidation validateRelativePath = ws.validateRelativePath(value, false, true);
+            final FormValidation validateRelativePath = ws.validateRelativePath(escapedValue, false, true);
             if (validateRelativePath.kind != FormValidation.Kind.OK)
             {
                 return validateRelativePath;
             }
 
-            final FilePath logfile = new FilePath(ws, value);
-            final String logfileURL = project.getAbsoluteUrl() + "ws/" + value;
+            final FilePath logfile = new FilePath(ws, escapedValue);
+            final String logfileURL = project.getAbsoluteUrl() + "ws/" + escapedValue;
             return FormValidation.okWithMarkup("Logfile is <a href='" + logfileURL + "'>" + logfile.getRemote() + "</a>");
         }
 
