@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<analyzerConfiguration version="10.2.1.626" analyzer="ArchitectureCheck">
+	<stringEntry value="" name="./layers.arc"></stringEntry>
+</analyzerConfiguration>

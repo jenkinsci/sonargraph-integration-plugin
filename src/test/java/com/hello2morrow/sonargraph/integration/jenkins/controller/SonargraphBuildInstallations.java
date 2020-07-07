@@ -40,7 +40,7 @@ public final class SonargraphBuildInstallations
             final SonargraphBuildInstaller installer = new SonargraphBuildInstaller("newest");
             final SonargraphBuild sonargraphBuild = new SonargraphBuild("newest", getInstallationDirectory("newest"),
                     Collections.singletonList(new InstallSourceProperty(Collections.singletonList(installer))));
-            Jenkins.getInstance().getDescriptorByType(SonargraphBuild.DescriptorImpl.class).setInstallations(sonargraphBuild);
+            Jenkins.get().getDescriptorByType(SonargraphBuild.DescriptorImpl.class).setInstallations(sonargraphBuild);
             return sonargraphBuild;
         }
         catch (final IOException e)

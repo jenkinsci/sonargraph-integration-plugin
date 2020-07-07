@@ -1,0 +1,59 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <l:layout title="${it.job.displayName} Sonargraph Charts">
+    	<st:include it="${it.job}" page="sidepanel.jelly" />
+    	<l:main-panel>
+			<h1>Sonargraph Charts</h1>
+			<h2>Language Filter</h2>
+			<f:form action="submit" name="charts" method="post">
+				<f:block title="Languages">
+	              <f:entry title="Core" field="core">
+	                <f:checkbox checked="${it.core}"/>
+	              </f:entry>
+	              <f:entry title="Java" field="java">
+	                <f:checkbox checked="${it.java}"/>
+	              </f:entry>
+	              <f:entry title="C#" field="csharp">
+	                <f:checkbox checked="${it.csharp}"/>
+	              </f:entry>
+	              <f:entry title="C++" field="cplusplus">
+	                <f:checkbox checked="${it.cplusplus}"/>
+	              </f:entry>
+	              <f:entry title="Python" field="python">
+	                <f:checkbox checked="${it.python}"/>
+	              </f:entry>
+	            <f:submit value="Apply" />
+	            </f:block>
+            </f:form>
+			
+			<h2>Charts</h2>
+			<j:set var="metricList" value="${it.getChartsForMetrics()}"/>
+			
+      		<j:if test="${!metricList.isEmpty()}"> 
+      			<table cellspacing="15">
+	                <tr>
+	                    <th style="text-align:left;font-size:16px;font-weight:bold;color:#1122CC">Short Term Trend</th>
+	                    <th style="text-align:left;font-size:16px;font-weight:bold;color:#1122CC">Long Term Trend (24h Moving Average)</th>
+	      			</tr>
+	      			<j:forEach var="value" items="${metricList}">
+	        			<tr>
+		      				<td>
+		      					<img src="getPlot?metric=${value}&amp;type=shortterm" alt="Chart for metric '${value}'" width="${it.defaultGraphicWidth}" height="${it.defaultGraphicHeight}"/>
+		      				</td>
+		      				<td>
+		      				    <img src="getPlot?metric=${value}&amp;type=longterm" alt="Chart for long term trend of metric '${value}'" width="${it.defaultGraphicWidth}" height="${it.defaultGraphicHeight}"/>
+		      				</td>
+	                	</tr>    
+	    			</j:forEach>
+      			</table>
+    		</j:if>
+    		<j:if test="${metricList.isEmpty()}">
+    			<h2 style="text-align:left;font-size:16px;font-weight:bold;color:#C0C0C0">
+    				Sonargraph is configured to not display any chart. To change this, fix filter configuration above.
+    			</h2>
+    		</j:if>
+      	</l:main-panel>
+    </l:layout>
+</j:jelly>

@@ -6,7 +6,7 @@
     <f:entry>
 
       <f:radioBlock name="reportGeneration" value="generatedBySonargraphBuild" title="Generate with Sonargraph Build"
-        checked="${instance.generatedBySonargraphBuild}" inline="true" help="/plugin/sonargraph-integration/html/help-generatedBySonargraphBuild.html">
+        checked="${(instance == null) ? 'true': instance.generatedBySonargraphBuild}" inline="true" help="/plugin/sonargraph-integration/html/help-generatedBySonargraphBuild.html">
         <f:entry title="Sonargraph System Directory" field="systemDirectory">
           <f:textbox />
         </f:entry>
@@ -22,6 +22,12 @@
 
         <f:block title="Advanced Sonargraph Build Options">
           <f:advanced>
+            <f:entry title="Skip" field="skip">
+              <f:checkbox />
+            </f:entry>
+            <f:entry title="Use Proxy" field="useHttpProxy">
+              <f:checkbox default="true"/>
+            </f:entry>
             <f:entry title="Workspace Profile" field="workspaceProfile">
               <f:textbox />
             </f:entry>
@@ -29,7 +35,7 @@
               <f:combobox />
             </f:entry>
             <f:entry title="Virtual Model" field="virtualModel">
-              <f:textbox default="Modifiable.vm" />
+              <f:textbox default="${descriptor.DEFAULT_VIRTUAL_MODEL}" />
             </f:entry>
             
             <f:entry title="Snapshot Directory" field="snapshotDirectory">
@@ -61,31 +67,15 @@
                 <f:checkbox />
               </f:entry>
             </f:block>
-            
-            <f:section title="Split Report">
-            
-	            <f:entry title="Split By Module" field="splitByModule">
-	              <f:checkbox default="false"/>
-	            </f:entry>
-	            
-	            <f:entry title="Element Count To Split Html Report" field="elementCountToSplitHtmlReport">
-	              <f:textbox default="1000"/>
-	            </f:entry>  
-            
-	            <f:entry title="Max Element Count For Html Details Page" field="maxElementCountForHtmlDetailsPage">
-	              <f:textbox default="2000"/>
-	            </f:entry>
-            
-            </f:section>
                         
             <f:section title="Logging">
             
 	            <f:entry title="Log level" field="logLevel">
-	              <f:select />
+	              <f:select default="${descriptor.DEFAULT_LOG_LEVEL}"/>
 	            </f:entry>
 	            
 	            <f:entry title="Log file" field="logFile">
-	              <f:textbox default="sonargraph_build.log"/>
+	              <f:textbox default="${descriptor.DEFAULT_LOG_FILE}"/>
 	            </f:entry>  
             
             </f:section>  
@@ -101,7 +91,7 @@
         </f:block>
       </f:radioBlock>
       <f:radioBlock name="reportGeneration" value="preGenerated" title="Pre-Generated"
-        checked="${(instance == null) ? 'true': instance.preGenerated}" inline="true" help="/plugin/sonargraph-integration/html/help-preGenerated.html">
+        checked="${instance.preGenerated}" inline="true" help="/plugin/sonargraph-integration/html/help-preGenerated.html">
         <f:entry title="Sonargraph XML Report" field="reportPath">
           <f:textbox default="./target/sonargraph/sonargraph-report" />
         </f:entry>

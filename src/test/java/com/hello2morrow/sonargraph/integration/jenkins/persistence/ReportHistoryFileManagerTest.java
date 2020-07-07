@@ -17,9 +17,9 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,7 +97,7 @@ public class ReportHistoryFileManagerTest
     public void testStoreGeneratedReportDirectory() throws IOException, InterruptedException
     {
         final ReportHistoryFileManager rhfm = new ReportHistoryFileManager(new FilePath((VirtualChannel) null, archReportHistoryPath),
-                "sonargraphReportHistory", m_logger);
+                "sonargraphReportHistory", ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue(), m_logger);
         final FilePath buildReportDirectory = new FilePath((VirtualChannel) null, buildReportDirectoryPath);
         if (!buildReportDirectory.exists())
         {
@@ -115,7 +115,7 @@ public class ReportHistoryFileManagerTest
     public void testLatestAfterStoreGeneratedReportDirectory() throws IOException, InterruptedException
     {
         final ReportHistoryFileManager rhfm = new ReportHistoryFileManager(new FilePath((VirtualChannel) null, archReportHistoryPath),
-                "sonargraphReportHistory", m_logger);
+                "sonargraphReportHistory", ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue(), m_logger);
         final FilePath buildReportDirectory = new FilePath((VirtualChannel) null, buildReportDirectoryPath);
         if (!buildReportDirectory.exists())
         {

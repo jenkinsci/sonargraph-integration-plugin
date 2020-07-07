@@ -1,0 +1,27 @@
+pipeline {
+   agent any
+
+   tools {
+      // Install the Maven version configured as "M3" and add it to the path.
+      maven "M3"
+   }
+
+   stages {
+      stage('Build') {
+         steps {
+            // Get some code from a GitHub repository
+            git url: 'https://github.com/andreashoyerh2m/crm-domain-example.git'
+
+            // Run Maven on a Unix agent.
+            sh "mvn clean package"
+
+         }
+      }
+      
+      stage ('Sonargraph') {
+          steps {
+              SonargraphReport (activationCode: 'xxx', systemDirectory: 'crm-domain-example.sonargraph')
+          }
+      }
+   }
+}

@@ -21,15 +21,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
-import com.hello2morrow.sonargraph.integration.jenkins.controller.ConfigParameters;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 
 import hudson.FilePath;
 import hudson.util.LogTaskListener;
 
 /**
- * Class that handles copies of each generated architect report to calculate trends or
- * generate graphics.
+ * Class that handles copies of each generated architect report to calculate trends or generate graphics.
  * 
  * @author esteban
  * @author andreas
@@ -41,15 +39,20 @@ public final class ReportHistoryFileManager
     /** Path to the folder containing sonargraph report files generated for every build */
     private final FilePath m_sonargraphReportHistoryDir;
 
-    public ReportHistoryFileManager(final FilePath projectRootDir, final String reportHistoryBaseDirectoryName, final PrintStream logger)
-            throws IOException, InterruptedException
+    private final String m_reportHistoryFileName;
+
+    public ReportHistoryFileManager(final FilePath projectRootDir, final String reportHistoryBaseDirectoryName, final String reportHistoryFileName,
+            final PrintStream logger) throws IOException, InterruptedException
     {
         assert projectRootDir != null : "The path to the folder where architect reports are stored must not be null";
         assert !projectRootDir.isRemote() : "The path to the folder where architect reports are stored must not be remote";
         assert reportHistoryBaseDirectoryName != null
                 && !reportHistoryBaseDirectoryName.isEmpty() : "reportHistoryBaseDirectoryName must not be empty";
+        assert reportHistoryFileName != null && !reportHistoryFileName.isEmpty() : "reportHistoryFileName must not be empty";
+
         assert logger != null : "Parameter 'logger' of method 'ReportHistoryFileManager' must not be null";
 
+        m_reportHistoryFileName = reportHistoryFileName;
         m_sonargraphReportHistoryDir = new FilePath(projectRootDir, reportHistoryBaseDirectoryName);
         if (!m_sonargraphReportHistoryDir.exists())
         {
@@ -70,8 +73,8 @@ public final class ReportHistoryFileManager
         return m_sonargraphReportHistoryDir;
     }
 
-    public FilePath storeGeneratedReportDirectory(final FilePath reportDirectory, final String reportName, final Integer buildNumber, final PrintStream logger)
-            throws IOException, InterruptedException
+    public FilePath storeGeneratedReportDirectory(final FilePath reportDirectory, final String reportName, final Integer buildNumber,
+            final PrintStream logger) throws IOException, InterruptedException
     {
         assert reportDirectory != null : "Parameter 'reportDirectory' of method 'soterdGeneratedReportDirectory' must not be null";
         assert reportDirectory.exists() : "Parameter 'reportDirectory' must be an existing folder. '" + reportDirectory.getRemote()
@@ -94,7 +97,7 @@ public final class ReportHistoryFileManager
         final FilePath sourceXmlReportFile = new FilePath(reportDirectory, reportName + ".xml");
         if (sourceXmlReportFile.exists())
         {
-            targetXmlReportFile = new FilePath(targetHistoryDirectory, ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".xml");
+            targetXmlReportFile = new FilePath(targetHistoryDirectory, m_reportHistoryFileName + ".xml");
             sourceXmlReportFile.copyTo(targetXmlReportFile);
             SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
                     "Copied xml report file from " + sourceXmlReportFile.getRemote() + " to " + targetXmlReportFile.getRemote(), null);
@@ -109,7 +112,7 @@ public final class ReportHistoryFileManager
         if (sourceHtmlReportFile.exists())
         {
             final FilePath targetHtmlReportFile = new FilePath(targetHistoryDirectory,
-                    ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".html");
+                    m_reportHistoryFileName + ".html");
             sourceHtmlReportFile.copyTo(targetHtmlReportFile);
             SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
                     "Copied html report file from " + sourceHtmlReportFile.getRemote() + " to " + targetHtmlReportFile.getRemote(), null);
@@ -118,29 +121,29 @@ public final class ReportHistoryFileManager
         {
             SonargraphLogger.logToConsoleOutput(logger, Level.WARNING, "No html report file found at " + sourceHtmlReportFile.getRemote(), null);
         }
-        
+
         // copy html diff report, and rename it
         final FilePath sourceHtmlDiffReportFile = new FilePath(reportDirectory, reportName + "_diff.html");
         if (sourceHtmlDiffReportFile.exists())
         {
             final FilePath targetHtmlDiffReportFile = new FilePath(targetHistoryDirectory,
-                    ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + "_diff.html");
+                    m_reportHistoryFileName + "_diff.html");
             sourceHtmlDiffReportFile.copyTo(targetHtmlDiffReportFile);
             SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
-                    "Copied html diff report file from " + sourceHtmlDiffReportFile.getRemote() + " to " + targetHtmlDiffReportFile.getRemote(), null);
+                    "Copied html diff report file from " + sourceHtmlDiffReportFile.getRemote() + " to " + targetHtmlDiffReportFile.getRemote(),
+                    null);
         }
         else
         {
             // this always happens when there is no baseline report is configured 
-            SonargraphLogger.logToConsoleOutput(logger, Level.INFO, "No html diff report file found at " + sourceHtmlDiffReportFile.getRemote(), null);
+            SonargraphLogger.logToConsoleOutput(logger, Level.INFO, "No html diff report file found at " + sourceHtmlDiffReportFile.getRemote(),
+                    null);
         }
-        
+
         // create symlink "latest"
         final FilePath latest = new FilePath(m_sonargraphReportHistoryDir, "latest");
         latest.symlinkTo(targetHistoryDirectory.getName(), new LogTaskListener(SonargraphLogger.INSTANCE, Level.INFO));
-        SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
-                "Created symlink 'latest' to " + targetHistoryDirectory.getRemote(), null);
-
+        SonargraphLogger.logToConsoleOutput(logger, Level.INFO, "Created symlink 'latest' to " + targetHistoryDirectory.getRemote(), null);
 
         // return copied xml report from master
         return targetXmlReportFile;

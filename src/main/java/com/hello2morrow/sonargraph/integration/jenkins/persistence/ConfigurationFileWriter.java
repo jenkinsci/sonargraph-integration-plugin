@@ -39,7 +39,7 @@ import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogg
 public class ConfigurationFileWriter
 {
 
-    public enum MandatoryParameter
+    public enum SonargraphBuildParameter
     {
         ACTIVATION_CODE("activationCode"),
         INSTALLATION_DIRECTORY("installationDirectory"),
@@ -61,13 +61,15 @@ public class ConfigurationFileWriter
         LICENSE_SERVER_HOST("licenseServerHost"),
         LICENSE_SERVER_PORT("licenseServerPort"),
         ELEMENT_COUNT_TO_SPLIT_HTML_REPORT("elementCountToSplitHtmlReport"),
-        MAX_ELEMENT_COUNT_FOR_HTML_DETEILS_PAGE("maxElementCountForHtmlDetailsPage"),
-        SPLIT_BY_MODULE("splitByModule"),
-        PROGRESS_INFO("progressInfo");
+        PROGRESS_INFO("progressInfo"),
+        PROXY_HOST("proxyHost"),
+        PROXY_PORT("proxyPort"),
+        PROXY_USERNAME("proxyUsername"),
+        PROXY_PASSWORD("proxyPassword");
 
         private final String m_presentationName;
 
-        private MandatoryParameter(final String presentationName)
+        private SonargraphBuildParameter(final String presentationName)
         {
             assert presentationName != null
                     && presentationName.length() > 0 : "Parameter 'presentationName' of method 'MandatoryParameter' must not be empty";
@@ -89,7 +91,7 @@ public class ConfigurationFileWriter
         m_file = file;
     }
 
-    public void createConfigurationFile(final EnumMap<MandatoryParameter, String> parameters, final PrintStream logger)
+    public void createConfigurationFile(final EnumMap<SonargraphBuildParameter, String> parameters, final PrintStream logger)
     {
         try
         {
@@ -124,9 +126,9 @@ public class ConfigurationFileWriter
         }
     }
 
-    private void setStartupAttributes(final Element element, final EnumMap<MandatoryParameter, String> params)
+    private void setStartupAttributes(final Element element, final EnumMap<SonargraphBuildParameter, String> params)
     {
-        for (final MandatoryParameter parameter : params.keySet())
+        for (final SonargraphBuildParameter parameter : params.keySet())
         {
             final String value = params.get(parameter);
             if (value != null)
