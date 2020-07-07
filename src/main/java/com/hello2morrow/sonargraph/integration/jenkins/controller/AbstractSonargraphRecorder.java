@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
+import org.kohsuke.stapler.DataBoundSetter;
+
 import com.hello2morrow.sonargraph.integration.access.model.Severity;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.PluginVersionReader;
@@ -29,121 +31,25 @@ import com.hello2morrow.sonargraph.integration.jenkins.persistence.ReportHistory
 
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
 import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
 
 public abstract class AbstractSonargraphRecorder extends Recorder
 {
-    private final String architectureViolationsAction;
-    private final String unassignedTypesAction;
-    private final String cyclicElementsAction;
-    private final String thresholdViolationsAction;
-    private final String architectureWarningsAction;
-    private final String workspaceWarningsAction;
-    private final String workItemsAction;
-    private final String emptyWorkspaceAction;
-
-    public AbstractSonargraphRecorder(final String architectureViolationsAction, final String unassignedTypesAction,
-            final String cyclicElementsAction, final String thresholdViolationsAction, final String architectureWarningsAction,
-            final String workspaceWarningsAction, final String workItemsAction, final String emptyWorkspaceAction)
-    {
-        this.architectureViolationsAction = architectureViolationsAction;
-        this.unassignedTypesAction = unassignedTypesAction;
-        this.cyclicElementsAction = cyclicElementsAction;
-        this.thresholdViolationsAction = thresholdViolationsAction;
-        this.architectureWarningsAction = architectureWarningsAction;
-        this.workspaceWarningsAction = workspaceWarningsAction;
-        this.workItemsAction = workItemsAction;
-        this.emptyWorkspaceAction = emptyWorkspaceAction;
-
-    }
-
-    @Override
-    public BuildStepMonitor getRequiredMonitorService()
-    {
-        return BuildStepMonitor.NONE;
-    }
-
-    protected boolean processSonargraphReport(final AbstractBuild<?, ?> build, final FilePath sonargraphReportDirectory, final String reportFileName,
-            final PrintStream logger) throws IOException, InterruptedException
-    {
-        assert build != null : "Parameter 'build' of method 'processSonargraphReport' must not be null";
-        assert sonargraphReportDirectory != null : "Parameter 'sonargraphReportDirectory' of method 'processSonargraphReport' must not be null";
-
-        final FilePath projectRootDir = new FilePath(build.getProject().getRootDir());
-        final ReportHistoryFileManager reportHistoryManager = new ReportHistoryFileManager(projectRootDir,
-                ConfigParameters.REPORT_HISTORY_FOLDER.getValue(), logger);
-
-        FilePath reportFile = null;
-        try
-        {
-            reportFile = reportHistoryManager.storeGeneratedReportDirectory(sonargraphReportDirectory, reportFileName, build.getNumber(), logger);
-        }
-        catch (final IOException ex)
-        {
-            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to process the generated Sonargraph report", ex);
-            return false;
-        }
-
-        if (reportFile == null || !reportFile.exists() || reportFile.isRemote() || reportFile.isDirectory())
-        {
-            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Sonargraph analysis cannot be executed as Sonargraph report does not exist.",
-                    null);
-            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Report file \"" + reportFile + "\" does not exist.", null);
-            build.setResult(Result.FAILURE);
-            return false;
-        }
-
-        final SonargraphBuildAnalyzer sonargraphBuildAnalyzer = new SonargraphBuildAnalyzer(reportFile, logger);
-
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureViolation", Severity.NONE, architectureViolationsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfMetricValueNotZero("CoreUnassignedComponents", unassignedTypesAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("CycleGroup", Severity.ERROR, cyclicElementsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ThresholdViolation", Severity.ERROR, thresholdViolationsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureConsistency", Severity.NONE, architectureWarningsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Workspace", Severity.NONE, workspaceWarningsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Todo", Severity.NONE, workItemsAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfMetricValueIsZero("CoreComponents", emptyWorkspaceAction);
-        final Result buildResult = sonargraphBuildAnalyzer.getOverallBuildResult();
-
-        final File metricHistoryFile = new File(build.getProject().getRootDir(), ConfigParameters.METRIC_HISTORY_CSV_FILE_PATH.getValue());
-        final File metricIdsHistoryFile = new File(build.getProject().getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
-        try
-        {
-            sonargraphBuildAnalyzer.saveMetrics(metricHistoryFile, metricIdsHistoryFile, build.getTimestamp().getTimeInMillis(), build.getNumber());
-        }
-        catch (final IOException ex)
-        {
-            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to save Sonargraph metrics to CSV data file", ex);
-            return false;
-        }
-        if (buildResult != null)
-        {
-            SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
-                    "Sonargraph analysis has set the final build result to '" + buildResult.toString() + "'", null);
-            build.setResult(buildResult);
-        }
-        return true;
-    }
-
-    protected void logExecutionStart(final AbstractBuild<?, ?> build, final BuildListener listener,
-            final Class<? extends AbstractSonargraphRecorder> recorderClazz)
-    {
-        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
-                "Sonargraph Jenkins Plugin, Version '" + PluginVersionReader.INSTANCE.getVersion() + "', post-build step '" + recorderClazz.getName()
-                        + "'\n" + "Start structural analysis on project '" + build.getProject().getDisplayName() + "', build number '"
-                        + build.getNumber() + "'",
-                null);
-    }
-
-    protected void addActions(final AbstractBuild<?, ?> build)
-    {
-        build.addAction(new SonargraphBadgeAction());
-        build.addAction(new SonargraphBuildAction(build));
-    }
-
+    private static final String DEFAULT_ACTION = "nothing";
+    
+    private String architectureViolationsAction = DEFAULT_ACTION;
+    private String unassignedTypesAction = DEFAULT_ACTION;
+    private String cyclicElementsAction = DEFAULT_ACTION;
+    private String thresholdViolationsAction = DEFAULT_ACTION;
+    private String architectureWarningsAction = DEFAULT_ACTION;
+    private String workspaceWarningsAction = DEFAULT_ACTION;
+    private String workItemsAction = DEFAULT_ACTION;
+    private String emptyWorkspaceAction = DEFAULT_ACTION;
+    
     public String getArchitectureViolationsAction()
     {
         return architectureViolationsAction;
@@ -182,5 +88,141 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     public String getEmptyWorkspaceAction()
     {
         return emptyWorkspaceAction;
+    }
+
+    @DataBoundSetter
+    public void setArchitectureViolationsAction(String architectureViolationsAction)
+    {
+        this.architectureViolationsAction = architectureViolationsAction;
+    }
+
+    @DataBoundSetter
+    public void setUnassignedTypesAction(String unassignedTypesAction)
+    {
+        this.unassignedTypesAction = unassignedTypesAction;
+    }
+
+    @DataBoundSetter
+    public void setCyclicElementsAction(String cyclicElementsAction)
+    {
+        this.cyclicElementsAction = cyclicElementsAction;
+    }
+
+    @DataBoundSetter
+    public void setThresholdViolationsAction(String thresholdViolationsAction)
+    {
+        this.thresholdViolationsAction = thresholdViolationsAction;
+    }
+
+    @DataBoundSetter
+    public void setArchitectureWarningsAction(String architectureWarningsAction)
+    {
+        this.architectureWarningsAction = architectureWarningsAction;
+    }
+
+    @DataBoundSetter
+    public void setWorkspaceWarningsAction(String workspaceWarningsAction)
+    {
+        this.workspaceWarningsAction = workspaceWarningsAction;
+    }
+
+    @DataBoundSetter
+    public void setWorkItemsAction(String workItemsAction)
+    {
+        this.workItemsAction = workItemsAction;
+    }
+
+    @DataBoundSetter
+    public void setEmptyWorkspaceAction(String emptyWorkspaceAction)
+    {
+        this.emptyWorkspaceAction = emptyWorkspaceAction;
+    }
+
+    @Override
+    public BuildStepMonitor getRequiredMonitorService()
+    {
+        return BuildStepMonitor.NONE;
+    }
+
+    protected final boolean processSonargraphReport(final Run<?, ?> run, final FilePath sonargraphReportDirectory, final String reportFileName,
+            final PrintStream logger) throws IOException, InterruptedException
+    {
+        assert run != null : "Parameter 'run' of method 'processSonargraphReport' must not be null";
+        assert sonargraphReportDirectory != null : "Parameter 'sonargraphReportDirectory' of method 'processSonargraphReport' must not be null";
+
+        final FilePath projectRootDir = new FilePath(run.getParent().getRootDir());
+        final ReportHistoryFileManager reportHistoryManager = new ReportHistoryFileManager(projectRootDir,
+                ConfigParameters.REPORT_HISTORY_FOLDER.getValue(), ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue(), logger);
+
+        FilePath reportFile = null;
+        try
+        {
+            reportFile = reportHistoryManager.storeGeneratedReportDirectory(sonargraphReportDirectory, reportFileName, run.getNumber(), logger);
+        }
+        catch (final IOException ex)
+        {
+            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to process the generated Sonargraph report", ex);
+            return false;
+        }
+
+        if (reportFile == null || !reportFile.exists() || reportFile.isRemote() || reportFile.isDirectory())
+        {
+            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Sonargraph analysis cannot be executed as Sonargraph report does not exist.",
+                    null);
+            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Report file \"" + reportFile + "\" does not exist.", null);
+            run.setResult(Result.FAILURE);
+            return false;
+        }
+
+        final SonargraphBuildAnalyzer sonargraphBuildAnalyzer = new SonargraphBuildAnalyzer(reportFile, logger);
+
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureViolation", Severity.NONE, architectureViolationsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfMetricValueNotZero("CoreUnassignedComponents", unassignedTypesAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("CycleGroup", Severity.ERROR, cyclicElementsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ThresholdViolation", Severity.ERROR, thresholdViolationsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("ArchitectureConsistency", Severity.NONE, architectureWarningsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Workspace", Severity.NONE, workspaceWarningsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Todo", Severity.NONE, workItemsAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfMetricValueIsZero("CoreComponents", emptyWorkspaceAction);
+        final Result buildResult = sonargraphBuildAnalyzer.getOverallBuildResult();
+
+        final File metricHistoryFile = new File(run.getParent().getRootDir(), ConfigParameters.METRIC_HISTORY_CSV_FILE_PATH.getValue());
+        final File metricIdsHistoryFile = new File(run.getParent().getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
+        try
+        {
+            sonargraphBuildAnalyzer.saveMetrics(metricHistoryFile, metricIdsHistoryFile, run.getTimestamp().getTimeInMillis(), run.getNumber());
+        }
+        catch (final IOException ex)
+        {
+            SonargraphLogger.logToConsoleOutput(logger, Level.SEVERE, "Failed to save Sonargraph metrics to CSV data file", ex);
+            return false;
+        }
+        if (buildResult != null)
+        {
+            SonargraphLogger.logToConsoleOutput(logger, Level.INFO,
+                    "Sonargraph analysis has set the final build result to '" + buildResult.toString() + "'", null);
+            run.setResult(buildResult);
+        }
+        return true;
+    }
+
+    protected void logExecutionStart(final AbstractBuild<?, ?> build, final TaskListener listener,
+            final Class<? extends AbstractSonargraphRecorder> recorderClazz)
+    {
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
+                "Sonargraph Jenkins Plugin, Version '" + PluginVersionReader.INSTANCE.getVersion() + "', post-build step '" + recorderClazz.getName()
+                        + "'\n" + "Start structural analysis on project '" + build.getProject().getDisplayName() + "', build number '"
+                        + build.getNumber() + "'",
+                null);
+    }
+
+    protected void logExecutionStart(final Run<?, ?> run, final TaskListener listener,
+            final Class<? extends AbstractSonargraphRecorder> recorderClazz)
+    {
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
+                "Sonargraph Jenkins Plugin, Version '" + PluginVersionReader.INSTANCE.getVersion() + "', post-build step '" + recorderClazz.getName()
+                        + "'\n" + "Start structural analysis on project '" + run.getParent().getDisplayName() + "', build number '" + run.getNumber()
+                        + "'",
+                null);
     }
 }

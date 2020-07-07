@@ -19,7 +19,7 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,23 +28,20 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
-import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
-import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphUtil;
-import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter.MandatoryParameter;
+import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter.SonargraphBuildParameter;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHistory;
 import com.hello2morrow.sonargraph.integration.jenkins.tool.SonargraphBuild;
 
 import hudson.Extension;
@@ -52,21 +49,22 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Launcher.ProcStarter;
 import hudson.Proc;
+import hudson.ProxyConfiguration;
 import hudson.RelativePath;
 import hudson.Util;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.BuildListener;
 import hudson.model.JDK;
-import hudson.model.Project;
-import hudson.model.TopLevelItem;
-import hudson.model.Queue.FlyweightTask;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import hudson.util.Secret;
 import hudson.util.VersionNumber;
 import jenkins.model.Jenkins;
+import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
 /**
@@ -76,103 +74,209 @@ import net.sf.json.JSONObject;
  * @author andreas
  *
  */
-public final class SonargraphReportBuilder extends AbstractSonargraphRecorder implements IReportPathProvider
+@Symbol("SonargraphReport")
+public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
+        implements IReportPathProvider, SimpleBuildStep, SimpleBuildStep.LastBuildAction, RunAction2, Serializable
 {
+    private static final long serialVersionUID = -4080719672719164118L;
+
     private static final String ORG_ECLIPSE_OSGI_JAR = "org.eclipse.osgi_*.jar";
     private static final String SONARGRAPH_BUILD_CLIENT_JAR = "com.hello2morrow.sonargraph.build.client_*.jar";
-    private static final String DEFAULT_META_DATA_XML = "MetaData.xml";
     private static final String SONARGRAPH_BUILD_MAIN_CLASS = "com.hello2morrow.sonargraph.build.client.SonargraphBuildRunner";
 
     public static final int MAX_PORT_NUMBER = 65535;
+    public static final String DO_NOT_SPLIT = "-1";
 
-    private static IMetricIdsHistoryProvider s_metricIdsHistory;
+    private transient Run<?, ?> run;
 
-    private final String systemDirectory;
-    private final String qualityModelFile;
-    private final String virtualModel;
-    private final String reportPath;
-    private final String baselineReportPath;
-    private final String reportGeneration;
-    private final String chartConfiguration;
-    private final List<Metric> metrics;
-    private final String metaDataFile;
+    private String systemDirectory = "";
+    private String qualityModelFile = "";
+    private String virtualModel = DescriptorImpl.DEFAULT_VIRTUAL_MODEL;
+    private String reportPath = DescriptorImpl.DEFAULT_REPORT_PATH;
+    private String baselineReportPath = "";
+    private String reportGeneration = DescriptorImpl.DEFAULT_REPORT_GENERATION;
+    private String chartConfiguration = DescriptorImpl.DEFAULT_CHART_CONFIGURATION;
+    private List<Metric> metrics;
+    private String metaDataFile = "";
 
-    private final boolean languageJava;
-    private final boolean languageCSharp;
-    private final boolean languageCPlusPlus;
-    private final boolean languagePython;
+    private boolean languageJava;
+    private boolean languageCSharp;
+    private boolean languageCPlusPlus;
+    private boolean languagePython;
 
-    private final String sonargraphBuildJDK;
-    private final String sonargraphBuildVersion;
-    private final String activationCode;
-    private final String licenseFile;
-    private final String workspaceProfile;
-    private final String snapshotDirectory;
-    private final String snapshotFileName;
-    private final String logLevel;
-    private final String logFile;
+    private String sonargraphBuildJDK = "";
+    private String sonargraphBuildVersion = "";
+    private String activationCode = "";
+    private String licenseFile = "";
+    private String workspaceProfile = "";
+    private String snapshotDirectory = "";
+    private String snapshotFileName = "";
+    private String logLevel = DescriptorImpl.DEFAULT_LOG_LEVEL;
+    private String logFile = DescriptorImpl.DEFAULT_LOG_FILE;
 
-    private final boolean splitByModule;
-    private final String elementCountToSplitHtmlReport;
-    private final String maxElementCountForHtmlDetailsPage;
+    private boolean skip;
+    private boolean useHttpProxy = true;
 
-    /**
-     * Constructor. Fields in the config.jelly/global.jelly must match the parameters in this
-     * constructor.
-     */
     @DataBoundConstructor
-    public SonargraphReportBuilder(final List<Metric> metrics, final String metaDataFile, final String systemDirectory, final String qualityModelFile,
-            final String virtualModel, final String reportPath, final String baselineReportPath, final String reportGeneration, final String chartConfiguration,
-            final String architectureViolationsAction, final String unassignedTypesAction, final String cyclicElementsAction,
-            final String thresholdViolationsAction, final String architectureWarningsAction, final String workspaceWarningsAction,
-            final String workItemsAction, final String emptyWorkspaceAction, final boolean languageJava, final boolean languageCSharp,
-            final boolean languageCPlusPlus, final boolean languagePython, final String sonargraphBuildJDK, final String sonargraphBuildVersion,
-            final String activationCode, final String licenseFile, final String workspaceProfile, final String snapshotDirectory,
-            final String snapshotFileName, final String logLevel, final String logFile, final String elementCountToSplitHtmlReport,
-            final String maxElementCountForHtmlDetailsPage, final boolean splitByModule)
+    public SonargraphReportBuilder()
     {
-        super(architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction, architectureWarningsAction,
-                workspaceWarningsAction, workItemsAction, emptyWorkspaceAction);
 
+    }
+
+    @DataBoundSetter
+    public void setSkip(final boolean skip)
+    {
+        this.skip = skip;
+    }
+
+    @DataBoundSetter
+    public void setUseHttpProxy(final boolean useHttpProxy)
+    {
+        this.useHttpProxy = useHttpProxy;
+    }
+
+    @DataBoundSetter
+    public void setSystemDirectory(final String systemDirectory)
+    {
         this.systemDirectory = systemDirectory;
-        this.qualityModelFile = qualityModelFile;
-        this.virtualModel = virtualModel;
-        this.reportPath = reportPath;
-        this.baselineReportPath = baselineReportPath;
-        this.reportGeneration = reportGeneration;
-        this.chartConfiguration = chartConfiguration;
-        this.metaDataFile = metaDataFile;
-        this.metrics = metrics;
-        this.languageJava = languageJava;
-        this.languageCSharp = languageCSharp;
-        this.languageCPlusPlus = languageCPlusPlus;
-        this.languagePython = languagePython;
-        this.sonargraphBuildJDK = sonargraphBuildJDK;
-        this.sonargraphBuildVersion = sonargraphBuildVersion;
-        this.activationCode = activationCode;
-        this.licenseFile = licenseFile;
-        this.workspaceProfile = workspaceProfile;
-        this.snapshotDirectory = snapshotDirectory;
-        this.snapshotFileName = snapshotFileName;
-        this.logFile = logFile;
-        this.logLevel = logLevel;
+    }
 
-        this.splitByModule = splitByModule;
-        this.elementCountToSplitHtmlReport = elementCountToSplitHtmlReport;
-        this.maxElementCountForHtmlDetailsPage = maxElementCountForHtmlDetailsPage;
+    @DataBoundSetter
+    public void setQualityModelFile(final String qualityModelFile)
+    {
+        this.qualityModelFile = qualityModelFile;
+    }
+
+    @DataBoundSetter
+    public void setVirtualModel(final String virtualModel)
+    {
+        this.virtualModel = virtualModel;
+    }
+
+    @DataBoundSetter
+    public void setReportPath(final String reportPath)
+    {
+        this.reportPath = reportPath;
+    }
+
+    @DataBoundSetter
+    public void setBaselineReportPath(final String baselineReportPath)
+    {
+        this.baselineReportPath = baselineReportPath;
+    }
+
+    @DataBoundSetter
+    public void setReportGeneration(final String reportGeneration)
+    {
+        this.reportGeneration = reportGeneration;
+    }
+
+    @DataBoundSetter
+    public void setChartConfiguration(final String chartConfiguration)
+    {
+        this.chartConfiguration = chartConfiguration;
+    }
+
+    @DataBoundSetter
+    public void setMetrics(final List<Metric> metrics)
+    {
+        this.metrics = metrics;
+    }
+
+    @DataBoundSetter
+    public void setMetaDataFile(final String metaDataFile)
+    {
+        this.metaDataFile = metaDataFile;
+    }
+
+    @DataBoundSetter
+    public void setLanguageJava(final boolean languageJava)
+    {
+        this.languageJava = languageJava;
+    }
+
+    @DataBoundSetter
+    public void setLanguageCSharp(final boolean languageCSharp)
+    {
+        this.languageCSharp = languageCSharp;
+    }
+
+    @DataBoundSetter
+    public void setLanguageCPlusPlus(final boolean languageCPlusPlus)
+    {
+        this.languageCPlusPlus = languageCPlusPlus;
+    }
+
+    @DataBoundSetter
+    public void setLanguagePython(final boolean languagePython)
+    {
+        this.languagePython = languagePython;
+    }
+
+    @DataBoundSetter
+    public void setSonargraphBuildJDK(final String sonargraphBuildJDK)
+    {
+        this.sonargraphBuildJDK = sonargraphBuildJDK;
+    }
+
+    @DataBoundSetter
+    public void setSonargraphBuildVersion(final String sonargraphBuildVersion)
+    {
+        this.sonargraphBuildVersion = sonargraphBuildVersion;
+    }
+
+    @DataBoundSetter
+    public void setActivationCode(final String activationCode)
+    {
+        this.activationCode = activationCode;
+    }
+
+    @DataBoundSetter
+    public void setLicenseFile(final String licenseFile)
+    {
+        this.licenseFile = licenseFile;
+    }
+
+    @DataBoundSetter
+    public void setWorkspaceProfile(final String workspaceProfile)
+    {
+        this.workspaceProfile = workspaceProfile;
+    }
+
+    @DataBoundSetter
+    public void setSnapshotDirectory(final String snapshotDirectory)
+    {
+        this.snapshotDirectory = snapshotDirectory;
+    }
+
+    @DataBoundSetter
+    public void setSnapshotFileName(final String snapshotFileName)
+    {
+        this.snapshotFileName = snapshotFileName;
+    }
+
+    @DataBoundSetter
+    public void setLogLevel(final String logLevel)
+    {
+        this.logLevel = logLevel;
+    }
+
+    @DataBoundSetter
+    public void setLogFile(final String logFile)
+    {
+        this.logFile = logFile;
     }
 
     /**
-     * We override the getProjectAction method to define our custom action
-     * that will show the charts for sonargraph's metrics.
+     * We override the getProjectAction method to define our custom action that will show the charts for sonargraph's metrics.
      */
     @Override
     public Collection<Action> getProjectActions(final AbstractProject<?, ?> project)
     {
         final Collection<Action> actions = new ArrayList<>();
-        if (project instanceof Project || (project instanceof TopLevelItem && !(project instanceof FlyweightTask)))
+        if (JobCategory.isRelevantProject(project))
         {
-            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
+            final ResultWithOutcome<MetricIds> result = MetricIdProvider.getMetricIds(project);
 
             if (result.isSuccess())
             {
@@ -208,51 +312,56 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                         }
                     }
                 }
-                actions.add(new SonargraphChartAction(project, metricList, exportMetaData));
+                actions.add(new SonargraphIntegrationAction(project, metricList, exportMetaData));
             }
             else
             {
                 SonargraphLogger.INSTANCE.log(Level.SEVERE, "Cannot add SonargraphChartAction, no Meta Data found.");
             }
-            actions.add(new SonargraphHTMLReportAction(project));
+            actions.add(new InvisibleReportAction(project));
+            actions.add(new InvisibleDiffAction(project));
         }
         return actions;
     }
 
     @Override
-    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
+    public void perform(final Run<?, ?> run, final FilePath workspace, final Launcher launcher, final TaskListener listener)
             throws InterruptedException, IOException
     {
-        super.logExecutionStart(build, listener, SonargraphReportBuilder.class);
+        super.logExecutionStart(run, listener, SonargraphReportBuilder.class);
+        if (isSkip())
+        {
+            SonargraphLogger.INSTANCE.log(Level.INFO, "Skipping Sonargraph Build");
+            return;
+        }
+
         if (isGeneratedBySonargraphBuild())
         {
-            if (!callSonargraphBuild(build, launcher, listener))
+            if (!callSonargraphBuild(run, workspace, launcher, listener))
             {
-                return false;
+                return;
             }
         }
 
-        final FilePath sonargraphReportDirectory = new FilePath(build.getWorkspace(), getReportDirectory());
-        if (super.processSonargraphReport(build, sonargraphReportDirectory, getReportFileName(), listener.getLogger()))
+        final FilePath sonargraphReportDirectory = new FilePath(workspace, getReportDirectory());
+        if (processSonargraphReport(run, sonargraphReportDirectory, getReportFileName(), listener.getLogger()))
         {
             //only add the actions after the processing has been successful
-            addActions(build);
+            run.addAction(new SonargraphBadgeAction());
+            run.addAction(new SonargraphReportAction(run));
+            if (diffReportCreated())
+            {
+                run.addAction(new SonargraphDiffAction(run));
+            }
         }
-
-        /*
-         * Must return true for jenkins to mark the build as SUCCESS. Only then,
-         * it can be downgraded to the result that was set but it can never be
-         * upgraded.
-         */
-        return true;
     }
 
-    private boolean callSonargraphBuild(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
+    private boolean callSonargraphBuild(final Run<?, ?> build, final FilePath workspace, final Launcher launcher, final TaskListener listener)
             throws IOException, InterruptedException
     {
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Calling Sonargraph Build.", null);
 
-        final Jenkins jenkins = Jenkins.getInstance();
+        final Jenkins jenkins = Jenkins.getInstanceOrNull();
         if (jenkins == null)
         {
             return false;
@@ -297,7 +406,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
                     null);
             return false;
         }
-        jdk = jdk.forNode(build.getBuiltOn(), listener);
+        jdk = jdk.forNode(workspace.toComputer().getNode(), listener);
         final FilePath javaDir = new FilePath(launcher.getChannel(), jdk.getHome());
         final FilePath javaBinDir = new FilePath(javaDir, "bin");
         final FilePath javaExe = new FilePath(javaBinDir, (File.separatorChar == '\\') ? "java.exe" : "java");
@@ -328,7 +437,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown Sonargraph Build configured.", null);
             return false;
         }
-        sonargraphBuild = sonargraphBuild.forNode(build.getBuiltOn(), listener);
+        sonargraphBuild = sonargraphBuild.forNode(workspace.toComputer().getNode(), listener);
 
         final FilePath installationDirectory = new FilePath(launcher.getChannel(), sonargraphBuild.getHome());
         final FilePath pluginsDirectory = new FilePath(installationDirectory, "plugins");
@@ -351,10 +460,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Missing plugins in Sonargraph Build installation.", null);
             return false;
         }
-        
+
         final VersionNumber clientVersion = SonargraphUtil.getVersionFromJarName(clientJar.getName());
-        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
-                "SonargraphBuild client jar version is " + clientVersion, null);
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "SonargraphBuild client jar version is " + clientVersion, null);
 
         // local configuration file, always on master
         final File configurationFileMaster = File.createTempFile("sonargraphBuildConfigurationMaster", ".xml");
@@ -362,51 +470,78 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
                 "Writing SonargraphBuild temporary configuration file on master to " + configurationFileMaster.getAbsolutePath(), null);
         final ConfigurationFileWriter writer = new ConfigurationFileWriter(configurationFileMaster);
-        final EnumMap<MandatoryParameter, String> parameters = new EnumMap<>(MandatoryParameter.class);
-        parameters.put(MandatoryParameter.ACTIVATION_CODE, getActivationCode());
-        parameters.put(MandatoryParameter.INSTALLATION_DIRECTORY, sonargraphBuild.getHome());
-        parameters.put(MandatoryParameter.LANGUAGES, getLanguages(languageJava, languageCPlusPlus, languageCSharp, languagePython));
-        parameters.put(MandatoryParameter.SYSTEM_DIRECTORY, getSystemDirectory());
-        parameters.put(MandatoryParameter.REPORT_DIRECTORY, getReportDirectory());
-        parameters.put(MandatoryParameter.REPORT_FILENAME, getReportFileName());
-        parameters.put(MandatoryParameter.REPORT_TYPE, getReportType());
-        parameters.put(MandatoryParameter.REPORT_FORMAT, getReportFormat());
-        parameters.put(MandatoryParameter.QUALITY_MODEL_FILE, getQualityModelFile());
-        parameters.put(MandatoryParameter.VIRTUAL_MODEL, getVirtualModel());
-        parameters.put(MandatoryParameter.LICENSE_FILE, getLicenseFile());
+        final EnumMap<SonargraphBuildParameter, String> parameters = new EnumMap<>(SonargraphBuildParameter.class);
+        parameters.put(SonargraphBuildParameter.ACTIVATION_CODE, getActivationCode());
+        parameters.put(SonargraphBuildParameter.INSTALLATION_DIRECTORY, sonargraphBuild.getHome());
+        parameters.put(SonargraphBuildParameter.LANGUAGES, getLanguages(languageJava, languageCPlusPlus, languageCSharp, languagePython));
+        parameters.put(SonargraphBuildParameter.SYSTEM_DIRECTORY, getSystemDirectory());
+        parameters.put(SonargraphBuildParameter.REPORT_DIRECTORY, getReportDirectory());
+        parameters.put(SonargraphBuildParameter.REPORT_FILENAME, getReportFileName());
+        parameters.put(SonargraphBuildParameter.REPORT_TYPE, getReportType());
+        parameters.put(SonargraphBuildParameter.REPORT_FORMAT, getReportFormat());
+        parameters.put(SonargraphBuildParameter.QUALITY_MODEL_FILE, getQualityModelFile());
+        parameters.put(SonargraphBuildParameter.VIRTUAL_MODEL, getVirtualModel());
+        parameters.put(SonargraphBuildParameter.LICENSE_FILE, getLicenseFile());
 
-        parameters.put(MandatoryParameter.LICENSE_SERVER_HOST, getDescriptor().getLicenseServerHost());
-        parameters.put(MandatoryParameter.LICENSE_SERVER_PORT, getDescriptor().getLicenseServerPort());
-        parameters.put(MandatoryParameter.WORKSPACE_PROFILE, getWorkspaceProfile());
-        parameters.put(MandatoryParameter.SNAPSHOT_DIRECTORY, getSnapshotDirectory());
-        parameters.put(MandatoryParameter.SNAPSHOT_FILE_NAME, getSnapshotFileName());
-        parameters.put(MandatoryParameter.LOG_LEVEL, getLogLevel());
-        parameters.put(MandatoryParameter.LOG_FILE, getLogFile());
+        parameters.put(SonargraphBuildParameter.LICENSE_SERVER_HOST, getDescriptor().getLicenseServerHost());
+        parameters.put(SonargraphBuildParameter.LICENSE_SERVER_PORT, getDescriptor().getLicenseServerPort());
+        parameters.put(SonargraphBuildParameter.WORKSPACE_PROFILE, getWorkspaceProfile());
+        parameters.put(SonargraphBuildParameter.SNAPSHOT_DIRECTORY, getSnapshotDirectory());
+        parameters.put(SonargraphBuildParameter.SNAPSHOT_FILE_NAME, getSnapshotFileName());
+        parameters.put(SonargraphBuildParameter.LOG_LEVEL, getLogLevel());
+        parameters.put(SonargraphBuildParameter.LOG_FILE, getLogFile());
 
-        parameters.put(MandatoryParameter.SPLIT_BY_MODULE, isSplitByModule() ? "true" : "false");
-        parameters.put(MandatoryParameter.ELEMENT_COUNT_TO_SPLIT_HTML_REPORT, getElementCountToSplitHtmlReport());
-        parameters.put(MandatoryParameter.MAX_ELEMENT_COUNT_FOR_HTML_DETEILS_PAGE, getMaxElementCountForHtmlDetailsPage());
-        
+        parameters.put(SonargraphBuildParameter.ELEMENT_COUNT_TO_SPLIT_HTML_REPORT, DO_NOT_SPLIT);
+
+        if (isUseHttpProxy())
+        {
+            ProxyConfiguration proxyConfig = ProxyConfiguration.load();
+            if (proxyConfig != null)
+            {
+                final String host = proxyConfig.getName();
+                if (host != null && !host.isEmpty())
+                {
+                    final int port = proxyConfig.getPort();
+                    parameters.put(SonargraphBuildParameter.PROXY_HOST, host);
+                    parameters.put(SonargraphBuildParameter.PROXY_PORT, String.valueOf(port));
+
+                    final String username = proxyConfig.getUserName();
+                    if (username != null && !username.isEmpty())
+                    {
+                        parameters.put(SonargraphBuildParameter.PROXY_USERNAME, username);
+                        Secret secretPassword = proxyConfig.getSecretPassword();
+                        if (secretPassword != null)
+                        {
+                            final String password = Secret.toString(secretPassword);
+                            parameters.put(SonargraphBuildParameter.PROXY_PASSWORD, password);
+                        }
+                    }
+                }
+            }
+        }
+
         // since 9.12.0.xxx
         VersionNumber since = new VersionNumber("9.12");
-        if(clientVersion.isNewerThan(since))
+        if (clientVersion.isNewerThan(since))
         {
             // possible values are "none" (default), "basic", or "detailed". "detailed" will not work on Jenkins.
-            parameters.put(MandatoryParameter.PROGRESS_INFO, "basic");
+            parameters.put(SonargraphBuildParameter.PROGRESS_INFO, "basic");
         }
-        
+
         // since 9.13.0.xxx
         since = new VersionNumber("9.13");
-        if(clientVersion.isNewerThan(since))
+        if (clientVersion.isNewerThan(since))
         {
-            parameters.put(MandatoryParameter.REPORT_BASELINE, getBaselineReportPath() + ".xml");
+            final String baselineReportPath = getBaselineReportPath();
+            if (baselineReportPath != null && !baselineReportPath.isEmpty())
+            {
+                parameters.put(SonargraphBuildParameter.REPORT_BASELINE, getBaselineReportPath() + ".xml");
+            }
         }
 
         writer.createConfigurationFile(parameters, listener.getLogger());
         final String content = new FilePath(configurationFileMaster).readToString();
         final FilePath configurationFileSlave = javaDir.createTextTempFile("sonargraphBuildConfigurationSlave", ".xml", content, false);
-
-
 
         // separator taken from launcher, to also work on slaves
         final String classpathSeparator = launcher.isUnix() ? ":" : ";";
@@ -418,7 +553,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         ProcStarter procStarter = launcher.new ProcStarter();
         procStarter.cmdAsSingleString(sonargraphBuildCommand);
         procStarter.stdout(listener.getLogger());
-        final FilePath workspace = build.getWorkspace();
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Setting working directory for Sonargraph Build to " + workspace, null);
         procStarter = procStarter.pwd(workspace);
         final Proc proc = launcher.launch(procStarter);
@@ -461,10 +595,15 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         }
         return reportPath;
     }
-    
+
     public String getBaselineReportPath()
     {
         return baselineReportPath;
+    }
+
+    public boolean diffReportCreated()
+    {
+        return getBaselineReportPath() != null && !getBaselineReportPath().isEmpty();
     }
 
     public String getMetaDataFile()
@@ -494,6 +633,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     /**
      * Returns comma separated list of languages in 'Sonargraph historical' order.
+     * 
      * @return
      */
     protected static String getLanguages(final boolean languageJava, final boolean languageCPlusPlus, final boolean languageCSharp,
@@ -617,21 +757,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return virtualModel;
     }
 
-    public String getMaxElementCountForHtmlDetailsPage()
-    {
-        return maxElementCountForHtmlDetailsPage;
-    }
-
-    public String getElementCountToSplitHtmlReport()
-    {
-        return elementCountToSplitHtmlReport;
-    }
-
-    public boolean isSplitByModule()
-    {
-        return splitByModule;
-    }
-
     public boolean isGeneratedBySonargraphBuild()
     {
         return !isPreGenerated();
@@ -677,6 +802,16 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         return metrics;
     }
 
+    public boolean isSkip()
+    {
+        return skip;
+    }
+
+    public boolean isUseHttpProxy()
+    {
+        return useHttpProxy;
+    }
+
     @Override
     public DescriptorImpl getDescriptor()
     {
@@ -684,12 +819,21 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
     }
 
     @Extension
+    @Symbol("SonargraphReport")
     public static final class DescriptorImpl extends AbstractBuildStepDescriptor
     {
+
         static final List<String> DEFAULT_QUALITY_MODELS = Arrays.asList("Sonargraph:Default.sgqm", "Sonargraph:Java.sgqm", "Sonargraph:CSharp.sgqm",
                 "Sonargraph:CPlusPlus.sgqm");
 
         static final List<String> LOG_LEVELS = Arrays.asList("info", "off", "error", "warn", "debug", "trace", "all");
+
+        public static final String DEFAULT_VIRTUAL_MODEL = "Modifiable.vm";
+        public static final String DEFAULT_LOG_FILE = "sonargraph_build.log";
+        public static final String DEFAULT_LOG_LEVEL = "info";
+        public static final String DEFAULT_REPORT_PATH = "./target/sonargraph/sonargraph-report";
+        public static final String DEFAULT_REPORT_GENERATION = "generatedBySonargraphBuild";
+        public static final String DEFAULT_CHART_CONFIGURATION = "allCharts";
 
         private String licenseServerHost;
         private String licenseServerPort;
@@ -741,7 +885,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         public ListBoxModel doFillSonargraphBuildJDKItems()
         {
             final ListBoxModel items = new ListBoxModel();
-            final Jenkins jenkins = Jenkins.getInstance();
+            final Jenkins jenkins = Jenkins.getInstanceOrNull();
             if (jenkins == null)
             {
                 return items;
@@ -758,7 +902,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
         {
 
             final ListBoxModel items = new ListBoxModel();
-            final Jenkins jenkins = Jenkins.getInstance();
+            final Jenkins jenkins = Jenkins.getInstanceOrNull();
             if (jenkins == null)
             {
                 return items;
@@ -771,11 +915,10 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return items;
         }
 
-        public ListBoxModel doFillMetricCategoryItems(@AncestorInPath
-        final AbstractProject<?, ?> project)
+        public ListBoxModel doFillMetricCategoryItems(@AncestorInPath final AbstractProject<?, ?> project)
         {
             final ListBoxModel items = new ListBoxModel();
-            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
+            final ResultWithOutcome<MetricIds> result = MetricIdProvider.getMetricIds(project);
             if (result.isSuccess())
             {
                 final MetricIds metaData = result.getOutcome();
@@ -785,10 +928,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return items;
         }
 
-        public ListBoxModel doFillMetricNameItems(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter String metricCategory, @QueryParameter("metaDataFile")
-        @RelativePath("..")
-        final String metaDataFile)
+        public ListBoxModel doFillMetricNameItems(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter String metricCategory,
+                @QueryParameter("metaDataFile") @RelativePath("..") final String metaDataFile)
         {
             if (metricCategory == null || metricCategory.isEmpty())
             {
@@ -797,7 +938,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             }
             final ListBoxModel items = new ListBoxModel();
 
-            final ResultWithOutcome<MetricIds> result = getMetricIds(project);
+            final ResultWithOutcome<MetricIds> result = MetricIdProvider.getMetricIds(project);
             if (result.isSuccess())
             {
                 final MetricIds metaData = result.getOutcome();
@@ -814,30 +955,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return new ComboBoxModel(DEFAULT_QUALITY_MODELS);
         }
 
-        public FormValidation doCheckLicenseFile(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String value)
+        public FormValidation doCheckLicenseFile(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
         {
             return checkAbsoluteFile(value, "license");
         }
 
-        public FormValidation doCheckElementCountToSplitHtmlReport(@QueryParameter
-        final String value)
-        {
-            if (value == null || value.isEmpty())
-                return FormValidation.ok();
-
-            return checkSplitIntegerParameter(value);
-        }
-
-        public FormValidation doCheckMaxElementCountForHtmlDetailsPage(@QueryParameter
-        final String value)
-        {
-            return checkSplitIntegerParameter(value);
-        }
-
-        public FormValidation doCheckLicenseServerPort(@QueryParameter
-        final String value)
+        public FormValidation doCheckLicenseServerPort(@QueryParameter final String value)
         {
             if (value == null || value.isEmpty())
             {
@@ -859,10 +982,13 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return FormValidation.error("Please enter a valid port number.");
         }
 
-        public FormValidation doCheckLogFile(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException
+        public FormValidation doCheckLogFile(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
+                throws IOException
         {
+            if (project == null)
+            {
+                return FormValidation.ok();
+            }
             final String escapedValue = Util.xmlEscape(value);
             final FilePath ws = project.getSomeWorkspace();
             if (ws == null)
@@ -880,9 +1006,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return FormValidation.okWithMarkup("Logfile is <a href='" + logfileURL + "'>" + logfile.getRemote() + "</a>");
         }
 
-        public FormValidation doCheckQualityModelFile(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException
+        public FormValidation doCheckQualityModelFile(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
+                throws IOException
         {
             if (DEFAULT_QUALITY_MODELS.contains(value))
             {
@@ -891,9 +1016,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return checkFileInWorkspace(project, value, "sgqm");
         }
 
-        public FormValidation doCheckReportPath(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException
+        public FormValidation doCheckReportPath(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
+                throws IOException
         {
             if (value != null && !value.isEmpty())
             {
@@ -911,9 +1035,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return checkFileInWorkspace(project, value + ".xml", null);
         }
 
-        public FormValidation doCheckBaselineReportPath(@AncestorInPath
-                final AbstractProject<?, ?> project, @QueryParameter
-                final String value) throws IOException
+        public FormValidation doCheckBaselineReportPath(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
+                throws IOException
         {
             if (value != null && !value.isEmpty())
             {
@@ -925,32 +1048,14 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             }
             return FormValidation.ok();
         }
-        
-        /**
-         * Split integer parameters must be >= -1.
-         * 
-         * @param value the value to check.
-         * @return FormValidation.ok when value is a valid split integer value, FormValidation.error otherwise.
-         */
-        private FormValidation checkSplitIntegerParameter(final String value)
-        {
-            try
-            {
-                final int parsed = Integer.parseInt(value);
-                if (parsed >= -1)
-                {
-                    return FormValidation.ok();
-                }
-            }
-            catch (final NumberFormatException nfe)
-            {
-                // do nothing
-            }
-            return FormValidation.error("Please enter either '-1' (never split), or '0' (use default), or a positive integer value.");
-        }
 
         private FormValidation checkFileInWorkspace(final AbstractProject<?, ?> project, final String file, final String extension) throws IOException
         {
+            if (project == null)
+            {
+                return FormValidation.ok();
+            }
+
             if (file != null && !file.isEmpty())
             {
                 if (extension != null && !extension.isEmpty() && !file.endsWith(extension))
@@ -998,9 +1103,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             return FormValidation.ok();
         }
 
-        public FormValidation doCheckSystemDirectory(@AncestorInPath
-        final AbstractProject<?, ?> project, @QueryParameter
-        final String value) throws IOException
+        public FormValidation doCheckSystemDirectory(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
+                throws IOException
         {
             if ((value == null) || (value.length() == 0))
             {
@@ -1010,6 +1114,10 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
             if (!validateNotNullAndRegexp(value, "([a-zA-Z]:\\\\)?[\\/\\\\a-zA-Z0-9_.-]+.sonargraph$"))
             {
                 return FormValidation.error("Please enter a valid system directory");
+            }
+            if (project == null)
+            {
+                return FormValidation.ok();
             }
             final FilePath ws = project.getSomeWorkspace();
             if (ws == null)
@@ -1028,42 +1136,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
     }
 
-    protected static ResultWithOutcome<MetricIds> getMetricIds(final AbstractProject<?, ?> project)
-    {
-        final ResultWithOutcome<MetricIds> overallResult = new ResultWithOutcome<>("Get stored MetricIds");
-
-        // get metricIds from history
-        if (s_metricIdsHistory == null)
-        {
-            final File metricIdsHistoryFile = new File(project.getRootDir(), ConfigParameters.METRICIDS_HISTORY_JSON_FILE_PATH.getValue());
-            s_metricIdsHistory = new MetricIdsHistory(metricIdsHistoryFile);
-        }
-        final ResultWithOutcome<MetricIds> historyResult = s_metricIdsHistory.readMetricIds();
-        if (historyResult.isFailure())
-        {
-            overallResult.addMessagesFrom(historyResult);
-            return overallResult;
-        }
-
-        // get metricIds from export meta data file
-        final IMetaDataController controller = ControllerFactory.createMetaDataController();
-        final InputStream is = SonargraphReportBuilder.class.getResourceAsStream(DEFAULT_META_DATA_XML);
-        final ResultWithOutcome<IExportMetaData> exportMetaDataResult = controller.loadExportMetaData(is, DEFAULT_META_DATA_XML);
-
-        if (exportMetaDataResult.isFailure())
-        {
-            overallResult.addMessagesFrom(exportMetaDataResult);
-            return overallResult;
-        }
-
-        // combine and return them
-        final MetricIds defaultMetricIds = MetricIds.fromExportMetaData(exportMetaDataResult.getOutcome());
-        final MetricIds historyMetricIds = historyResult.getOutcome();
-        overallResult.setOutcome(defaultMetricIds.addAll(historyMetricIds));
-
-        return overallResult;
-    }
-
     public static boolean validateNotNullAndRegexp(final String value, final String pattern)
     {
         if (value == null)
@@ -1078,4 +1150,42 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder im
 
         return true;
     }
+
+    @Override
+    public String getIconFileName()
+    {
+        return ConfigParameters.SONARGRAPH_ICON.getValue();
+    }
+
+    @Override
+    public String getDisplayName()
+    {
+        return ConfigParameters.ACTION_DISPLAY_INTEGRATION.getValue();
+    }
+
+    @Override
+    public String getUrlName()
+    {
+        return ConfigParameters.ACTION_URL_INTEGRATION.getValue();
+    }
+
+    @Override
+    public Collection<? extends Action> getProjectActions()
+    {
+        System.out.println("Class of project: " + run.getClass());
+        return getProjectActions((AbstractProject<?, ?>) run.getParent());
+    }
+
+    @Override
+    public void onAttached(Run<?, ?> run)
+    {
+        this.run = run;
+    }
+
+    @Override
+    public void onLoad(Run<?, ?> run)
+    {
+        this.run = run;
+    }
+
 }

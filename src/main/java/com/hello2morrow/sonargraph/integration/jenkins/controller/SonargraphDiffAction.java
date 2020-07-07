@@ -26,28 +26,27 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.FilePath;
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 
-public final class SonargraphBuildAction extends AbstractHTMLAction
+public final class SonargraphDiffAction extends AbstractHTMLAction
 {
-    private final AbstractBuild<?, ?> build;
+    private final Run<?, ?> run;
 
-    public SonargraphBuildAction(final AbstractBuild<?, ?> build)
+    public SonargraphDiffAction(final Run<?, ?> run)
     {
-        this.build = build;
+        this.run = run;
     }
 
     @Override
     public void doDynamic(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException
     {
-        final FilePath reportHistoryDir = new FilePath(new FilePath(build.getProject().getRootDir()),
-                ConfigParameters.REPORT_HISTORY_FOLDER.getValue());
-        enableDirectoryBrowserSupport(req, rsp, new FilePath(reportHistoryDir, "sonargraph-report-build-" + build.getNumber()));
+        final FilePath reportHistoryDir = new FilePath(new FilePath(run.getParent().getRootDir()), ConfigParameters.REPORT_HISTORY_FOLDER.getValue());
+        enableDirectoryBrowserSupport(req, rsp, new FilePath(reportHistoryDir, "sonargraph-report-build-" + run.getNumber()));
     }
 
-    public AbstractBuild<?, ?> getBuild()
+    public Run<?, ?> getRun()
     {
-        return build;
+        return run;
     }
 
     @Override
@@ -59,23 +58,24 @@ public final class SonargraphBuildAction extends AbstractHTMLAction
     @Override
     public String getDisplayName()
     {
-        return ConfigParameters.ACTION_DISPLAY_NAME.getValue();
+        return ConfigParameters.ACTION_DISPLAY_DIFF.getValue();
     }
 
     @Override
     public String getUrlName()
     {
-        return ConfigParameters.HTML_REPORT_ACTION_URL.getValue();
+        return ConfigParameters.ACTION_URL_DIFF.getValue();
     }
 
     @Override
     public String getHTMLReport() throws IOException, InterruptedException
     {
-        final File projectRootFolder = build.getProject().getRootDir();
+        final File projectRootFolder = run.getParent().getRootDir();
         final File reportHistoryFolder = new File(projectRootFolder, ConfigParameters.REPORT_HISTORY_FOLDER.getValue());
-        final File reportBuildFolder = new File(reportHistoryFolder, "sonargraph-report-build-" + build.getNumber());
-        final String reportFileName = ConfigParameters.SONARGRAPH_HTML_REPORT_FILE_NAME.getValue() + ".html";
+        final File reportBuildFolder = new File(reportHistoryFolder, "sonargraph-report-build-" + run.getNumber());
+        final String reportFileName = ConfigParameters.SONARGRAPH_DIFF_FILE_NAME.getValue() + ".html";
         final File reportFile = new File(reportBuildFolder, reportFileName);
-        return readHTMLReport(new FilePath(reportFile));
+        return readHTMLReport(new FilePath(reportFile), "Unable to read Sonargraph Diff report.");
     }
+
 }

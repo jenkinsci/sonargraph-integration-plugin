@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<architecturalView version="10.2.1.626" structureMode="logicalSystemScope">
+	<operation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xsdCreateArtifactsForElementsOperation" outgoingDependencyMode="relaxed" targetPos="0">
+		<element>Internal [Java]:com:hello2morrow:sonargraph:integration:jenkins:controller</element>
+		<element>Internal [Java]:com:hello2morrow:sonargraph:integration:jenkins:persistence</element>
+		<element>Internal [Java]:com:hello2morrow:sonargraph:integration:jenkins:model</element>
+		<element>Internal [Java]:com:hello2morrow:sonargraph:integration:jenkins:tool</element>
+		<element>Internal [Java]:com:hello2morrow:sonargraph:integration:jenkins:foundation</element>
+	</operation>
+</architecturalView>

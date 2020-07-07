@@ -17,36 +17,52 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import javax.servlet.ServletException;
-
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-
+import com.hello2morrow.sonargraph.integration.jenkins.foundation.LatestFolder;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.TextFileReader;
 
 import hudson.FilePath;
 import hudson.model.Action;
-import hudson.model.DirectoryBrowserSupport;
+import hudson.model.Job;
+import jenkins.model.JenkinsLocationConfiguration;
 
-public abstract class AbstractHTMLAction implements Action
+public class PipelineReportAction implements Action
 {
-    /**
-     * Enables directory browsing for directoryToServe.
-     * Needed when showing the report, to be able to also serve referenced image and css files.
-     */
-    protected void enableDirectoryBrowserSupport(final StaplerRequest req, final StaplerResponse rsp, final FilePath directoryToServe)
-            throws IOException, ServletException
+
+    private final Job<?, ?> job;
+
+    public PipelineReportAction(Job<?, ?> job)
     {
-        final DirectoryBrowserSupport directoryBrowser = new DirectoryBrowserSupport(this, directoryToServe, this.getDisplayName() + "html2", "graph.gif",
-                false);
-        SonargraphLogger.INSTANCE.log(Level.FINE, "AbstractHTMLAction.enableDirectoryBrowserSupport for directory " + directoryToServe.getRemote());
-        directoryBrowser.generateResponse(req, rsp, this);
+        this.job = job;
+    }
+    
+    public Job<?, ?> getJob()
+    {
+        return job;
     }
 
+    @Override
+    public String getIconFileName()
+    {
+        return ConfigParameters.SONARGRAPH_ICON.getValue();
+    }
+
+    @Override
+    public String getDisplayName()
+    {
+        return ConfigParameters.ACTION_DISPLAY_REPORT.getValue();
+    }
+
+    @Override
+    public String getUrlName()
+    {
+        return ConfigParameters.ACTION_URL_PIPELINE_REPORT.getValue();
+    }
+    
     protected String readHTMLReport(final FilePath pathToReport, String alternative) throws IOException, InterruptedException
     {
         SonargraphLogger.INSTANCE.log(Level.INFO, "Reading Sonargraph HTML Report from '" + pathToReport + "'");
@@ -62,7 +78,9 @@ public abstract class AbstractHTMLAction implements Action
         }
     }
 
-    public abstract void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException;
-
-    public abstract String getHTMLReport() throws IOException, InterruptedException;
+    public String getHTMLReport() throws IOException, InterruptedException
+    {
+        final File reportFile = LatestFolder.getReport(job);
+        return readHTMLReport(new FilePath(reportFile), "Unable to read Sonargraph HTML report.");
+    }
 }

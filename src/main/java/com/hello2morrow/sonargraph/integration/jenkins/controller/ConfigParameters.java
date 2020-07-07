@@ -19,19 +19,29 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 public enum ConfigParameters
 {
-    ACTION_URL_NAME("sonargraphIntegration"),
-    SONARGRAPH_ICON("/plugin/sonargraph-integration/icons/Sonargraph.png"),
-    ACTION_DISPLAY_NAME("Sonargraph Integration"),
+    ACTION_URL_REPORT("sonargraph-integration-report"),
+    ACTION_URL_DIFF("sonargraph-integration-diff"),
+    
+    ACTION_URL_INTEGRATION("sonargraph-integration"),
+    ACTION_URL_PIPELINE_REPORT("sonargraph-pipeline-report"),
+    ACTION_URL_PIPELINE_DIFF("sonargraph-pipeline-diff"),
+    ACTION_URL_PIPELINE_CHART("sonargraph-pipeline-chart"),
+    
+    ACTION_DISPLAY_INTEGRATION("Sonargraph Integration"),
+    ACTION_DISPLAY_REPORT("Sonargraph Report"),
+    ACTION_DISPLAY_DIFF("Sonargraph Diff Report"),
+    ACTION_DISPLAY_CHART("Sonargraph Charts"),
+    
     REPORT_BUILDER_DISPLAY_NAME("Sonargraph Integration Report Generation & Analysis"),
+    SONARGRAPH_ICON("/plugin/sonargraph-integration/icons/Sonargraph.png"),
     JOB_FOLDER("job/"),
-    HTML_REPORT_ACTION_URL("sonargraph-integration-html-report"),
     METRIC_HISTORY_CSV_FILE_PATH("sonargraph-integration-metric-history.csv"),
     METRICIDS_HISTORY_JSON_FILE_PATH("sonargraph-integration-metricid-history.json"),
     CHARTS_FOR_METRICS_CSV_FILE_PATH("sonargraph-integration-charts-for-metrics.csv"),
-    SONARGRAPH_HTML_REPORT_FILE_NAME("sonargraph-integration-report"),
     REPORT_HISTORY_FOLDER("sonargraphIntegrationReportHistory"),
     SONARGRAPH_REPORT_TARGET_DIRECTORY("target/report/"),
-    SONARGRAPH_REPORT_FILE_NAME("sonargraph-integration-report");
+    SONARGRAPH_REPORT_FILE_NAME("sonargraph-integration-report"),
+    SONARGRAPH_DIFF_FILE_NAME("sonargraph-integration-report_diff");
 
     private String m_value;
 

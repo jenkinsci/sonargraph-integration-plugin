@@ -139,14 +139,14 @@ class SonargraphBuildAnalyzer
             return;
         }
 
-        if (userDefinedAction.equals(BuildActionsEnum.FAILED.getActionCode()))
+        if (BuildActionsEnum.FAILED.getActionCode().equals(userDefinedAction))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.FAILED.getActionCode());
             SonargraphLogger.logToConsoleOutput(m_logger, Level.INFO,
                     "Changing build result to " + m_overallBuildResult.toString() + " because value for '" + issueCategory + "' is " + numberOfIssues,
                     null);
         }
-        else if (userDefinedAction.equals(BuildActionsEnum.UNSTABLE.getActionCode())
+        else if (BuildActionsEnum.UNSTABLE.getActionCode().equals(userDefinedAction)
                 && ((m_overallBuildResult == null) || !m_overallBuildResult.equals(hudson.model.Result.FAILURE)))
         {
             m_overallBuildResult = m_buildResults.get(BuildActionsEnum.UNSTABLE.getActionCode());

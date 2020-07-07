@@ -2,11 +2,13 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-    <l:layout title="${it.project.displayName} Sonargraph">
-    	<st:include it="${it.project}" page="sidepanel.jelly" />
+    <l:layout title="${it.job.displayName} Sonargraph">
+    	<st:include it="${it.job}" page="sidepanel.jelly" />
     	<l:main-panel>
-			<h1>${%Sonargraph}</h1>
+			<h1>Sonargraph Report</h1>
 			<h2><a href="${it.reportURL}">Show most recent Sonargraph Report</a></h2>
+			<h2><a href="${it.diffURL}">Show most recent Sonargraph Diff</a></h2>
+			<h1>Sonargraph Charts</h1>
       		<j:if test="${it.chartsForMetrics.size() != 0}"> 
       			<table cellspacing="15">
 	                <tr>

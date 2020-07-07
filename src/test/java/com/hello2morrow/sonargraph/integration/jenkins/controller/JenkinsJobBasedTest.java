@@ -18,8 +18,6 @@
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -63,44 +61,17 @@ public abstract class JenkinsJobBasedTest
     
     private static SonargraphReportBuilder createSonargraphReportBuilder()
     {
-        final List<Metric> metrics = Collections.emptyList();
-        final String metaDataFile = "";
         final String systemDirectory = "AlarmClock.sonargraph";
-        final String qualityModelFile = "";
         final String virtualModel = "Modifiable.vm";
-        final String reportPath = "";
-        final String baselineReportPath = "";
-        final String reportGeneration = "";
-        final String chartConfiguration = "";
-        final String architectureViolationsAction = "";
-        final String unassignedTypesAction = "";
-        final String cyclicElementsAction = "";
-        final String thresholdViolationsAction = "";
-        final String architectureWarningsAction = "";
-        final String workspaceWarningsAction = "";
-        final String workItemsAction = "";
-        final String emptyWorkspaceAction = "";
-        final boolean languageJava = false;
-        final boolean languageCSharp = false;
-        final boolean languageCPlusPlus = false;
-        final boolean languagePython = false;
-        final String sonargraphBuildJDK = "";
         final String sonargraphBuildVersion = "newest";
         final String activationCode = System.getProperty("sonargraph.activationcode.test", "");
-        final String licenseFile = "";
-        final String workspaceProfile = "";
-        final String snapshotDirectory = "";
-        final String snapshotFileName = "";
-        final String logLevel = "";
-        final String logFile = "";
-        final String elementCountToSplitHtmlReport = "1000";
-        final String maxElementCountForHtmlDetailsPage = "2000";
-        final boolean splitByModule = false;
 
-        return new SonargraphReportBuilder(metrics, metaDataFile, systemDirectory, qualityModelFile, virtualModel, reportPath, baselineReportPath, reportGeneration,
-                chartConfiguration, architectureViolationsAction, unassignedTypesAction, cyclicElementsAction, thresholdViolationsAction,
-                architectureWarningsAction, workspaceWarningsAction, workItemsAction, emptyWorkspaceAction, languageJava, languageCSharp,
-                languageCPlusPlus, languagePython, sonargraphBuildJDK, sonargraphBuildVersion, activationCode, licenseFile, workspaceProfile, snapshotDirectory,
-                snapshotFileName, logLevel, logFile, elementCountToSplitHtmlReport, maxElementCountForHtmlDetailsPage, splitByModule);
+        final SonargraphReportBuilder result = new SonargraphReportBuilder();
+        result.setSystemDirectory(systemDirectory);
+        result.setActivationCode(activationCode);
+        result.setVirtualModel(virtualModel);
+        result.setSonargraphBuildVersion(sonargraphBuildVersion);
+        
+        return result;
     }
 }
