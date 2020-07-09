@@ -235,7 +235,7 @@
 		</plugins>
 	</build>
 
-	<url>https://wiki.jenkins-ci.org/display/JENKINS/Sonargraph+Integration+Plugin</url>
+	<url>https://github.com/jenkinsci/sonargraph-integration-plugin</url>
 	<organization>
 		<name>hello2morrow GmbH, hello2morrow Inc., hello2morrow S.A.S</name>
 		<url>https://www.hello2morrow.com</url>
