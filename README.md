@@ -269,6 +269,9 @@ graphics are generated.
 
 ## Changelog
 
+#### 4.0.1 July 14th, 2020
+-   Moved documentation from wiki to github
+
 #### 4.0.0 July 7th, 2020
 -   Pipeline support
 -   Use Jenkins Proxy settings for SonargraphBuild’s license handler
