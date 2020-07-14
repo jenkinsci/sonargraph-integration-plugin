@@ -203,6 +203,11 @@ Use this option to let Sonargraph Build create a Sonargraph report.
     (relative to workspace of Jenkins job). Default:
     sonargraph\_build.log.
 
+<img src="screenshot/Baseline.png"/>
+
+-   **"Baseline Report Path"** Path to the baseline Sonargraph XML report 
+    file (without extension ".xml"). This path must be relative to the workspace.
+
 ### Chart Configuration
 
 Besides controlling the build result, the plugin also generates graphics
@@ -270,6 +275,15 @@ graphics are generated.
 -   Added links for Sonargraph diff reports
 -   Removed splitting options
 
+#### 3.0.1 May 28th, 2020
+
+-   Security fix SECURITY-1775
+
+#### 3.0.0 March 31th, 2020
+
+-   Sonargraph baseline report support
+-   Java 11 support
+
 #### 2.2.2 September 5th, 2019
 
 -   Fixed misleading message regarding Cycle Groups
@@ -329,20 +343,23 @@ graphics are generated.
 
 ## Compatibility Matrix
 
-Plugin version 4.0.0: Compatible with SonargraphBuild \>= 9.9.2 and
-Jenkins \>= 2.222.3
+Plugin version 4.0.0: Compatible with SonargraphBuild >= 9.9.2 and
+Jenkins >= 2.222.3
 
-Plugin version 2.2.0: Compatible with SonargraphBuild \>= 9.9.2 and
-Jenkins \>= 2.138.2
+Plugin version 3.0.0: Compatible with SonargraphBuild >= 9.9.2 and
+Jenkins >= 2.164.3
 
-Plugin version 2.1.1: Compatible with SonargraphBuild \>= 9.4.6 and
-Jenkins \>= 1.609.3
+Plugin version 2.2.0: Compatible with SonargraphBuild >= 9.9.2 and
+Jenkins >= 2.138.2
 
-Plugin version 2.1.0: Compatible with SonargraphBuild \>= 9.4.3 and
-Jenkins \>= 1.609.3
+Plugin version 2.1.1: Compatible with SonargraphBuild >= 9.4.6 and
+Jenkins >= 1.609.3
+
+Plugin version 2.1.0: Compatible with SonargraphBuild >= 9.4.3 and
+Jenkins >= 1.609.3
 
 Plugin version 2.0.0: Compatible with SonargraphBuild 9.1.1 - 9.4.2 and
-Jenkins \>= 1.609.3
+Jenkins >= 1.609.3
 
 Plugin version 1.1.4: Compatible with SonargraphBuild 8.x - 9.1.0 and
-Jenkins \>= 1.609.3
+Jenkins >= 1.609.3
