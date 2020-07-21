@@ -77,6 +77,11 @@ public abstract class AbstractBuildStepDescriptor extends BuildStepDescriptor<Pu
         return createListWithActions();
     }
 
+    public ListBoxModel doFillQualityGateActionItems()
+    {
+        return createListWithActions();
+    }
+    
     private ListBoxModel createListWithActions()
     {
         final ListBoxModel items = new ListBoxModel();
