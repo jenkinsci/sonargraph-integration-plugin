@@ -162,6 +162,9 @@
     <f:entry title="If the workspace is empty, mark build as" field="emptyWorkspaceAction">
       <f:select />
     </f:entry>
+    <f:entry title="If quality gate issues exist, mark build as" field="qualityGateAction">
+      <f:select />
+    </f:entry>
   </f:section>
 
 </j:jelly>

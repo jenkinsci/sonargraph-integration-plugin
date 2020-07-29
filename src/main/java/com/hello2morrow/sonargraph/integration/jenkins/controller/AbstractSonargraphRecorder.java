@@ -49,6 +49,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     private String workspaceWarningsAction = DEFAULT_ACTION;
     private String workItemsAction = DEFAULT_ACTION;
     private String emptyWorkspaceAction = DEFAULT_ACTION;
+    private String qualityGateAction = DEFAULT_ACTION;
     
     public String getArchitectureViolationsAction()
     {
@@ -90,6 +91,11 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         return emptyWorkspaceAction;
     }
 
+    public String getQualityGateAction()
+    {
+        return qualityGateAction;
+    }
+    
     @DataBoundSetter
     public void setArchitectureViolationsAction(String architectureViolationsAction)
     {
@@ -138,6 +144,12 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         this.emptyWorkspaceAction = emptyWorkspaceAction;
     }
 
+    @DataBoundSetter
+    public void setQualityGateAction(String qualityGateAction)
+    {
+        this.qualityGateAction = qualityGateAction;
+    }
+    
     @Override
     public BuildStepMonitor getRequiredMonitorService()
     {
@@ -184,6 +196,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Workspace", Severity.NONE, workspaceWarningsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Todo", Severity.NONE, workItemsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfMetricValueIsZero("CoreComponents", emptyWorkspaceAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("QualityGateIssue", Severity.NONE, qualityGateAction);
         final Result buildResult = sonargraphBuildAnalyzer.getOverallBuildResult();
 
         final File metricHistoryFile = new File(run.getParent().getRootDir(), ConfigParameters.METRIC_HISTORY_CSV_FILE_PATH.getValue());

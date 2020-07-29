@@ -68,6 +68,8 @@ Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Sonargraph+Plugin).
 
 ## Global Configuration
 
+The first step is to configure one or more versions of Sonargraph Build in "Manage Jenkins"-> "Global Tool Configuration"
+
 ### Tool Installation for Sonargraph Build
 
 **NOTE:** This global configuration is only required when you are going
@@ -75,7 +77,7 @@ to use the "Generate with Sonargraph Build" option in "Sonargraph
 Integration Generation & Analysis" post-build action.
 
 To see the global configuration options after installing the plugin, go
-to "Manage Jenkins" -\> "Global Tool Configuration". You will find the "Sonargraph Build" section
+to "Manage Jenkins" -> "Global Tool Configuration". You will find the "Sonargraph Build" section
 
 <img src="screenshot/GlobalToolConfiguration1.png"/>
 
@@ -127,9 +129,11 @@ NOTE: For the free Jenkins / SonarQube license, only the options for
 
 ### Add post-build action
 
+Add post build action "Sonargraph Integration Report Generation & Analysis" to your job.
+
 <img src="screenshot/AddPostBuildAction.png"/>
 
-### Use Pre-Generated Report
+## Use Pre-Generated Report
 
 Use this option to use a pre-generated Sonargraph report. To do so you
 must use Sonargraph Maven plugin, Sonargraph Gradle plugin, or
@@ -144,7 +148,7 @@ workspace.
     Sonargraph XML report file (without extension ".xml"). This path
     must be relative to the workspace.
 
-### Generate Report with Sonargraph Build
+## Generate Report with Sonargraph Build
 
 Use this option to let Sonargraph Build create a Sonargraph report.
 
@@ -162,6 +166,9 @@ Use this option to let Sonargraph Build create a Sonargraph report.
 
 <img src="screenshot/AdvancedOptions.png"/>
 
+-   **"Skip"** Skip Sonargraph Jenkins Plugin.
+-   **"UseProxy"** Use Jenkins proxy configuration when
+    connecting to Sonargraph license server.
 -   **"Workspace Profile"** The profile file name (e.g.
     "BuildProfile.xml") for transforming the workspace paths to match
     the build environment.
@@ -226,10 +233,10 @@ show all of them by selecting "All charts".
 For every Sonargraph metric supported by this plugin, you have the
 following options:
 
--   Don't mark: Will not change the build result in any way.
--   Build unstable: If the value for this metric is greater than zero,
+-   **Don't mark:** Will not change the build result in any way.
+-   **Build unstable:** If the value for this metric is greater than zero,
     the build result will be set as "unstable".
--   Build failed: If the value for this metric is greater than zero, the
+-   **Build failed:** If the value for this metric is greater than zero, the
     build result will be set as "failure".
 
 Take into account that if you have set to mark the build unstable for
@@ -242,14 +249,14 @@ NOTE: For the free Jenkins / SonarQube license, only the options for
 
 <img src="screenshot/MarkBuild.png"/>
 
-### Configure Jenkins Logging
+## Configure Jenkins Logging
 
 Sonargraph's Jenkins integration uses the standard Jenkins logger
 mechanism to provide feedback to the user about the events that occur
 during the execution of the post-build action or the generation of the
 graphics. To enable this feature follow these steps:
 
--   Go to "Manage Jenkins" -\> "System Log".
+-   Go to "Manage Jenkins" -> "System Log".
 -   Click "Add new log recorder" button.
 -   Provide the name you wish for this log recorder.
 -   In the field logger, provide the value with the exact value
@@ -268,6 +275,9 @@ be able to see messages as the post-build actions are executed and
 graphics are generated.
 
 ## Changelog
+
+#### 4.0.2 July 29th, 2020
+-   Added possibility to mark build on quality gate issues
 
 #### 4.0.1 July 14th, 2020
 -   Moved documentation from wiki to github
