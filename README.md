@@ -276,7 +276,7 @@ graphics are generated.
 
 ## Changelog
 
-#### 4.0.2 July 22th, 2020
+#### 4.0.2 July 29th, 2020
 -   Added possibility to mark build on quality gate issues
 
 #### 4.0.1 July 14th, 2020
