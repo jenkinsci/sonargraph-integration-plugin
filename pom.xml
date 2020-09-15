@@ -8,12 +8,12 @@
 	</parent>
 
 	<artifactId>sonargraph-integration</artifactId>
-	<version>4.0.3-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<name>Sonargraph Integration Jenkins Plugin</name>
 	<packaging>hpi</packaging>
 
 	<properties>
-		<jenkins.version>2.222.3</jenkins.version>
+		<jenkins.version>2.222.4</jenkins.version>
 		<slf4j.version>1.7.28</slf4j.version>
 		<java.level>8</java.level>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,7 +52,7 @@
 			<dependency>
 				<groupId>io.jenkins.tools.bom</groupId>
 				<artifactId>bom-2.222.x</artifactId>
-				<version>9</version>
+				<version>11</version>
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>com.hello2morrow</groupId>
 			<artifactId>sonargraph-integration-access</artifactId>
-			<version>4.1.0</version>
+			<version>5.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
