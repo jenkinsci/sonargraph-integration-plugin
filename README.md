@@ -276,6 +276,9 @@ graphics are generated.
 
 ## Changelog
 
+#### 5.0.0 September 15th, 2020
+-   Requires Sonargraph Build 10.4.0
+
 #### 4.0.2 July 29th, 2020
 -   Added possibility to mark build on quality gate issues
 
@@ -355,6 +358,9 @@ graphics are generated.
 -   Read changed meta data file immediately
 
 ## Compatibility Matrix
+
+Plugin version 5.0.0: Compatible with SonargraphBuild >= 10.4.0 and
+Jenkins >= 2.222.4
 
 Plugin version 4.0.0: Compatible with SonargraphBuild >= 9.9.2 and
 Jenkins >= 2.222.3

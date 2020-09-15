@@ -130,7 +130,7 @@ class SonargraphBuildAnalyzer
 
         final ISystemInfoProcessor infoProcessor = m_controller.createSystemInfoProcessor();
         final Predicate<IIssue> filter = (final IIssue issue) -> issue.getIssueType().getCategory().getName().equals(issueCategory)
-                && issue.getIssueType().getSeverity().ordinal() <= minimumSeverity.ordinal() && !issue.hasResolution();
+                && issue.getSeverity().ordinal() <= minimumSeverity.ordinal() && !issue.hasResolution();
         final int numberOfIssues = infoProcessor.getIssues(filter).size();
         if (numberOfIssues <= 0)
         {

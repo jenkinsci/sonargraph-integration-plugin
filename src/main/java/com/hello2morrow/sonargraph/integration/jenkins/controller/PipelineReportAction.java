@@ -28,7 +28,6 @@ import com.hello2morrow.sonargraph.integration.jenkins.persistence.TextFileReade
 import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.Job;
-import jenkins.model.JenkinsLocationConfiguration;
 
 public class PipelineReportAction implements Action
 {
