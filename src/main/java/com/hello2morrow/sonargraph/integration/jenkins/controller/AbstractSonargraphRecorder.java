@@ -40,7 +40,7 @@ import hudson.tasks.Recorder;
 public abstract class AbstractSonargraphRecorder extends Recorder
 {
     private static final String DEFAULT_ACTION = "nothing";
-    
+
     private String architectureViolationsAction = DEFAULT_ACTION;
     private String unassignedTypesAction = DEFAULT_ACTION;
     private String cyclicElementsAction = DEFAULT_ACTION;
@@ -50,7 +50,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     private String workItemsAction = DEFAULT_ACTION;
     private String emptyWorkspaceAction = DEFAULT_ACTION;
     private String qualityGateAction = DEFAULT_ACTION;
-    
+
     public String getArchitectureViolationsAction()
     {
         return architectureViolationsAction;
@@ -95,61 +95,61 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     {
         return qualityGateAction;
     }
-    
+
     @DataBoundSetter
-    public void setArchitectureViolationsAction(String architectureViolationsAction)
+    public void setArchitectureViolationsAction(final String architectureViolationsAction)
     {
         this.architectureViolationsAction = architectureViolationsAction;
     }
 
     @DataBoundSetter
-    public void setUnassignedTypesAction(String unassignedTypesAction)
+    public void setUnassignedTypesAction(final String unassignedTypesAction)
     {
         this.unassignedTypesAction = unassignedTypesAction;
     }
 
     @DataBoundSetter
-    public void setCyclicElementsAction(String cyclicElementsAction)
+    public void setCyclicElementsAction(final String cyclicElementsAction)
     {
         this.cyclicElementsAction = cyclicElementsAction;
     }
 
     @DataBoundSetter
-    public void setThresholdViolationsAction(String thresholdViolationsAction)
+    public void setThresholdViolationsAction(final String thresholdViolationsAction)
     {
         this.thresholdViolationsAction = thresholdViolationsAction;
     }
 
     @DataBoundSetter
-    public void setArchitectureWarningsAction(String architectureWarningsAction)
+    public void setArchitectureWarningsAction(final String architectureWarningsAction)
     {
         this.architectureWarningsAction = architectureWarningsAction;
     }
 
     @DataBoundSetter
-    public void setWorkspaceWarningsAction(String workspaceWarningsAction)
+    public void setWorkspaceWarningsAction(final String workspaceWarningsAction)
     {
         this.workspaceWarningsAction = workspaceWarningsAction;
     }
 
     @DataBoundSetter
-    public void setWorkItemsAction(String workItemsAction)
+    public void setWorkItemsAction(final String workItemsAction)
     {
         this.workItemsAction = workItemsAction;
     }
 
     @DataBoundSetter
-    public void setEmptyWorkspaceAction(String emptyWorkspaceAction)
+    public void setEmptyWorkspaceAction(final String emptyWorkspaceAction)
     {
         this.emptyWorkspaceAction = emptyWorkspaceAction;
     }
 
     @DataBoundSetter
-    public void setQualityGateAction(String qualityGateAction)
+    public void setQualityGateAction(final String qualityGateAction)
     {
         this.qualityGateAction = qualityGateAction;
     }
-    
+
     @Override
     public BuildStepMonitor getRequiredMonitorService()
     {
@@ -196,7 +196,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Workspace", Severity.NONE, workspaceWarningsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("Todo", Severity.NONE, workItemsAction);
         sonargraphBuildAnalyzer.changeBuildResultIfMetricValueIsZero("CoreComponents", emptyWorkspaceAction);
-        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("QualityGateIssue", Severity.NONE, qualityGateAction);
+        sonargraphBuildAnalyzer.changeBuildResultIfIssuesExist("QualityGate", Severity.NONE, qualityGateAction);
         final Result buildResult = sonargraphBuildAnalyzer.getOverallBuildResult();
 
         final File metricHistoryFile = new File(run.getParent().getRootDir(), ConfigParameters.METRIC_HISTORY_CSV_FILE_PATH.getValue());
