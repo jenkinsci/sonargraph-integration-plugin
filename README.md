@@ -276,6 +276,9 @@ graphics are generated.
 
 ## Changelog
 
+#### 5.0.1 September 29th, 2020
+-   Fixed Issue Category 'QualityGate'
+
 #### 5.0.0 September 15th, 2020
 -   Requires Sonargraph Build 10.4.0
 
