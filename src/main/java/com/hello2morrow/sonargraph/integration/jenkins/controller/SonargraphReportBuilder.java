@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2020 hello2morrow GmbH
+ * Copyright (C) 2015-2023 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,10 +69,6 @@ import net.sf.json.JSONObject;
 
 /**
  * This class contains all the functionality of the build step.
- *
- * @author esteban
- * @author andreas
- *
  */
 @Symbol("SonargraphReport")
 public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
@@ -120,7 +116,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
     @DataBoundConstructor
     public SonargraphReportBuilder()
     {
-
+        super();
     }
 
     @DataBoundSetter
@@ -989,7 +985,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
             {
                 return FormValidation.ok();
             }
-            final String escapedValue = Util.xmlEscape(value);
+            final String escapedValue = Util.escape(value);
             final FilePath ws = project.getSomeWorkspace();
             if (ws == null)
             {
@@ -1002,8 +998,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
             }
 
             final FilePath logfile = new FilePath(ws, escapedValue);
-            final String logfileURL = project.getAbsoluteUrl() + "ws/" + escapedValue;
-            return FormValidation.okWithMarkup("Logfile is <a href='" + logfileURL + "'>" + logfile.getRemote() + "</a>");
+            return FormValidation.okWithMarkup("Open <a href='log file'>" + logfile.getRemote() + "</a>");
         }
 
         public FormValidation doCheckQualityModelFile(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)

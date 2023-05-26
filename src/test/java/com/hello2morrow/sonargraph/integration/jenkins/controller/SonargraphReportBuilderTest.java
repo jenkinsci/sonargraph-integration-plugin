@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2020 hello2morrow GmbH
+ * Copyright (C) 2015-2023 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +19,14 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.Test;
 
 public class SonargraphReportBuilderTest
 {
-
     @Test
     public void testGetLanguages()
     {
@@ -40,5 +43,21 @@ public class SonargraphReportBuilderTest
         assertEquals("CSharp only", "CSharp", SonargraphReportBuilder.getLanguages(false, false, true, false));
         assertEquals("CPlusPlus only", "CPlusPlus", SonargraphReportBuilder.getLanguages(false, true, false, false));
         assertEquals("Python only", "Python", SonargraphReportBuilder.getLanguages(false, false, false, true));
+    }
+
+    @Test
+    public void testUrlEncoding()
+    {
+        String url = "http://www.hello2morrow.com";
+        try
+        {
+            String encoded = URLEncoder.encode(url, StandardCharsets.UTF_8.toString());
+            System.out.println(encoded);
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }
