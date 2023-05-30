@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2020 hello2morrow GmbH
+ * Copyright (C) 2015-2023 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +51,6 @@ import hudson.Launcher.ProcStarter;
 import hudson.Proc;
 import hudson.ProxyConfiguration;
 import hudson.RelativePath;
-import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.JDK;
@@ -69,10 +68,6 @@ import net.sf.json.JSONObject;
 
 /**
  * This class contains all the functionality of the build step.
- *
- * @author esteban
- * @author andreas
- *
  */
 @Symbol("SonargraphReport")
 public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
@@ -120,7 +115,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
     @DataBoundConstructor
     public SonargraphReportBuilder()
     {
-
+        super();
     }
 
     @DataBoundSetter
@@ -985,25 +980,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
         public FormValidation doCheckLogFile(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
                 throws IOException
         {
-            if (project == null)
+            if (project != null && (value == null || value.isEmpty()))
             {
-                return FormValidation.ok();
-            }
-            final String escapedValue = Util.xmlEscape(value);
-            final FilePath ws = project.getSomeWorkspace();
-            if (ws == null)
-            {
-                return FormValidation.error("Please run build at least once to get a workspace.");
-            }
-            final FormValidation validateRelativePath = ws.validateRelativePath(escapedValue, false, true);
-            if (validateRelativePath.kind != FormValidation.Kind.OK)
-            {
-                return validateRelativePath;
+                return FormValidation.error("Path of log file must be specified.");
             }
 
-            final FilePath logfile = new FilePath(ws, escapedValue);
-            final String logfileURL = project.getAbsoluteUrl() + "ws/" + escapedValue;
-            return FormValidation.okWithMarkup("Logfile is <a href='" + logfileURL + "'>" + logfile.getRemote() + "</a>");
+            return FormValidation.ok();
         }
 
         public FormValidation doCheckQualityModelFile(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
