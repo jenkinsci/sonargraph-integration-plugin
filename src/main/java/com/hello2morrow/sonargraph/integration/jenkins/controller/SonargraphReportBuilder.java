@@ -51,7 +51,6 @@ import hudson.Launcher.ProcStarter;
 import hudson.Proc;
 import hudson.ProxyConfiguration;
 import hudson.RelativePath;
-import hudson.Util;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.JDK;
@@ -981,24 +980,12 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
         public FormValidation doCheckLogFile(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
                 throws IOException
         {
-            if (project == null)
+            if (project != null && (value == null || value.isEmpty()))
             {
-                return FormValidation.ok();
-            }
-            final String escapedValue = Util.escape(value);
-            final FilePath ws = project.getSomeWorkspace();
-            if (ws == null)
-            {
-                return FormValidation.error("Please run build at least once to get a workspace.");
-            }
-            final FormValidation validateRelativePath = ws.validateRelativePath(escapedValue, false, true);
-            if (validateRelativePath.kind != FormValidation.Kind.OK)
-            {
-                return validateRelativePath;
+                return FormValidation.error("Path of log file must be specified.");
             }
 
-            final FilePath logfile = new FilePath(ws, escapedValue);
-            return FormValidation.okWithMarkup("Open <a href='log file'>" + logfile.getRemote() + "</a>");
+            return FormValidation.ok();
         }
 
         public FormValidation doCheckQualityModelFile(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String value)
