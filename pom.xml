@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>sonargraph-integration</artifactId>
-	<version>5.0.2-SNAPSHOT</version>
+	<version>5.0.2</version>
 	<name>Sonargraph Integration Jenkins Plugin</name>
 	<packaging>hpi</packaging>
 
@@ -242,7 +242,7 @@
 		<connection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</connection>
 		<developerConnection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/sonargraph-integration-plugin</url>
-		<tag>HEAD</tag>
+		<tag>sonargraph-integration-5.0.2-2nd</tag>
 	</scm>
 
 	<licenses>
