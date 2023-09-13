@@ -24,7 +24,7 @@ import java.util.List;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;

@@ -38,10 +38,10 @@ import org.kohsuke.stapler.StaplerRequest;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphUtil;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter.SonargraphBuildParameter;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.tool.SonargraphBuild;
 
 import hudson.Extension;

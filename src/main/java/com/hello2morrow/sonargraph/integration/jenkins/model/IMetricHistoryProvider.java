@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
-
 public interface IMetricHistoryProvider
 {
     /**

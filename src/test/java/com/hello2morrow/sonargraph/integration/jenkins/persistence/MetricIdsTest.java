@@ -21,6 +21,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
+
 public class MetricIdsTest
 {
     @Test

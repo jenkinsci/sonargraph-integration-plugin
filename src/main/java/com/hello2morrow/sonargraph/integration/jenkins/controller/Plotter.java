@@ -29,11 +29,11 @@ import org.kohsuke.stapler.StaplerResponse;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.AbstractPlot;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvider;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.model.TimeSeriesPlot;
 import com.hello2morrow.sonargraph.integration.jenkins.model.XYLineAndShapePlot;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.CSVFileHandler;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 
 import hudson.model.Job;
 import hudson.util.Graph;

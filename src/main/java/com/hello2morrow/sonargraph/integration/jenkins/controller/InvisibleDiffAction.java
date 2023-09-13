@@ -20,30 +20,26 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 import java.io.File;
 import java.io.IOException;
 
-import com.hello2morrow.sonargraph.integration.jenkins.foundation.LatestFolder;
-
 import hudson.FilePath;
 import hudson.model.Job;
 
-public class InvisibleDiffAction extends InvisibleReportAction
+public final class InvisibleDiffAction extends InvisibleReportAction
 {
-
     public InvisibleDiffAction(Job<?, ?> job)
     {
         super(job);
     }
-    
+
     @Override
     public String getUrlName()
     {
         return ConfigParameters.ACTION_URL_DIFF.getValue();
     }
-    
+
     @Override
     public String getHTMLReport() throws IOException, InterruptedException
     {
         final File reportFile = LatestFolder.getDiffReport(getJob());
         return readHTMLReport(new FilePath(reportFile), "Unable to read Sonargraph Diff report.");
     }
-
 }

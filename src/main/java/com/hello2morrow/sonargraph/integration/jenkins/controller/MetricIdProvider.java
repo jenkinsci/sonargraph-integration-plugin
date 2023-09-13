@@ -25,7 +25,7 @@ import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataContro
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryProvider;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHistory;
 
 import hudson.model.Job;

@@ -31,7 +31,6 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
 
 public abstract class AbstractPlot
 {

@@ -43,6 +43,8 @@ import com.hello2morrow.sonargraph.integration.jenkins.model.BuildDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.model.InvalidDataPoint;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.model.NotExistingDataPoint;
 import com.opencsv.CSVReader;
 

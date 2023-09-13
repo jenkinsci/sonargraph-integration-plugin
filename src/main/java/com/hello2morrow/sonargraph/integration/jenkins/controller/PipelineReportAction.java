@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import com.hello2morrow.sonargraph.integration.jenkins.foundation.LatestFolder;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.TextFileReader;
 

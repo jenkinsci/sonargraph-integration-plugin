@@ -42,7 +42,6 @@ import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
 
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
 
 public class TimeSeriesPlot extends AbstractPlot
 {

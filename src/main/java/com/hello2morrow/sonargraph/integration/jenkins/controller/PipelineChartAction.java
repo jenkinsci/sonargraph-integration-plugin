@@ -30,10 +30,10 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ChartConfigurationFileHandler;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ChartConfigurationFileHandler.ChartConfiguration;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 
 import hudson.model.Action;
 import hudson.model.Job;

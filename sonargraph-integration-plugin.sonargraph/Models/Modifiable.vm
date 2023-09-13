@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<virtualModel version="10.2.1.626">
+<virtualModel version="13.0.2.815">
 	<resolutions>
 		<ignore date="2020-07-07T17:10:13.394Z" description="Given by base classes">
 			<type class="com.hello2morrow.sonargraph.core.model.element.CoreIssueId" name="ComponentCycleGroup"></type>
@@ -9,17 +9,5 @@
 				<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:tool:SonargraphBuildInstaller.java</elementPattern>
 			</matching>
 		</ignore>
-		<move targetRootDirectory="Workspace:sonargraph-integration:./src/main/java" moveToParentName="com.hello2morrow.sonargraph.integration.jenkins.controller" language="Java" elementType="Component" assignedTo="" priority="Medium" date="2020-07-07T17:13:58.744Z" description="">
-			<type class="com.hello2morrow.sonargraph.core.model.element.CoreIssueId" name="MoveRefactoring" descriptor="10d58b26d90ba3874aaf25c26fa72fdc"></type>
-			<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:foundation:LatestFolder.java</elementPattern>
-		</move>
-		<move targetRootDirectory="Workspace:sonargraph-integration:./src/main/java" moveToParentName="com.hello2morrow.sonargraph.integration.jenkins.model" language="Java" elementType="Component" assignedTo="" priority="Medium" date="2020-07-07T17:21:57.308Z" description="">
-			<type class="com.hello2morrow.sonargraph.core.model.element.CoreIssueId" name="MoveRefactoring" descriptor="ecd8ba4a81e28c6bbb492120e0073f9e"></type>
-			<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:persistence:MetricId.java</elementPattern>
-		</move>
-		<move targetRootDirectory="Workspace:sonargraph-integration:./src/main/java" moveToParentName="com.hello2morrow.sonargraph.integration.jenkins.model" language="Java" elementType="Component" assignedTo="" priority="Medium" date="2020-07-07T17:22:50.054Z" description="">
-			<type class="com.hello2morrow.sonargraph.core.model.element.CoreIssueId" name="MoveRefactoring" descriptor="ff39bdfc9d8a7b86e4c5ab0cc6f8da23"></type>
-			<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:persistence:MetricIds.java</elementPattern>
-		</move>
 	</resolutions>
 </virtualModel>

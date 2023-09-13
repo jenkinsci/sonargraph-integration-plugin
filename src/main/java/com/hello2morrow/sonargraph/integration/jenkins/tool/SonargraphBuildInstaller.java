@@ -69,6 +69,7 @@ public final class SonargraphBuildInstaller extends DownloadFromUrlInstaller
 
         public DescriptorImpl()
         {
+            super();
         }
 
         @Override

@@ -39,9 +39,8 @@ import hudson.tools.ToolInstaller;
 import hudson.tools.ToolProperty;
 import hudson.util.FormValidation;
 
-public class SonargraphBuild extends ToolInstallation implements NodeSpecific<SonargraphBuild>, EnvironmentSpecific<SonargraphBuild>
+public final class SonargraphBuild extends ToolInstallation implements NodeSpecific<SonargraphBuild>, EnvironmentSpecific<SonargraphBuild>
 {
-
     private static final long serialVersionUID = 1L;
 
     public SonargraphBuild(final String name, final String home)
@@ -118,7 +117,5 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
         {
             return "Sonargraph Build";
         }
-
     }
-
 }

@@ -38,9 +38,9 @@ import com.hello2morrow.sonargraph.integration.access.model.Severity;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryProvider;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricId;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.CSVFileHandler;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricId;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHistory;
 
 import hudson.FilePath;

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hello2morrow.sonargraph.integration.jenkins.persistence;
+package com.hello2morrow.sonargraph.integration.jenkins.model;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import com.hello2morrow.sonargraph.integration.access.model.IMetricId;
 
-public class MetricId implements Serializable
+public final class MetricId implements Serializable
 {
     private static final long serialVersionUID = 4950947267793381336L;
 
@@ -81,7 +81,7 @@ public class MetricId implements Serializable
     {
         return providerId;
     }
-    
+
     public boolean isFloat()
     {
         return isFloat;
@@ -158,8 +158,8 @@ public class MetricId implements Serializable
     public static MetricId from(final IMetricId metricId)
     {
         final List<String> categories = metricId.getCategories().stream().map(x -> x.getPresentationName()).collect(Collectors.toList());
-        final MetricId result = new MetricId(metricId.getName(), metricId.getProvider().getName(), metricId.getPresentationName(), metricId.isFloat(), categories);
+        final MetricId result = new MetricId(metricId.getName(), metricId.getProvider().getName(), metricId.getPresentationName(), metricId.isFloat(),
+                categories);
         return result;
     }
-
 }

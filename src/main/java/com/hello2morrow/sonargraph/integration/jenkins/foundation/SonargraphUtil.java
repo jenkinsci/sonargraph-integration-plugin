@@ -19,13 +19,18 @@ package com.hello2morrow.sonargraph.integration.jenkins.foundation;
 
 import hudson.util.VersionNumber;
 
-public class SonargraphUtil
+public final class SonargraphUtil
 {
+    private SonargraphUtil()
+    {
+        super();
+    }
+
     public static VersionNumber getVersionFromJarName(String jarName)
     {
         int first = jarName.indexOf("_");
         int second = jarName.indexOf("_", first + 1);
-        if(first != -1 && second != -1)
+        if (first != -1 && second != -1)
         {
             final String version = jarName.substring(first + 1, second);
             return new VersionNumber(version);

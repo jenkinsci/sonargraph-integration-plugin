@@ -1,0 +1,990 @@
+<?xml version="1.0" ?>
+<ns3:report xmlns:ns3="http://www.hello2morrow.com/sonargraph/core/report" xmlns:ns2="http://www.hello2morrow.com/sonargraph/core/export" id="_0" systemId="b954cad62fce6eb84e6a9aedbb084c24" name="sonargraph-integration-plugin" version="13.0.2.815" systemPath="/Users/dietmar/Documents/Workspaces/sgng-satellites/sonargraph-integration-plugin/sonargraph-integration-plugin.sonargraph" timestamp="2023-09-13T12:01:44.639-05:00" currentVirtualModel="Modifiable.vm" systemDescription="" analyzerExecutionLevel="full">
+	<reportContextInfo></reportContextInfo>
+	<description></description>
+	<metaData>
+		<issueProviders>
+			<issueProvider id="_52" name="Core" presentationName="Core"></issueProvider>
+		</issueProviders>
+		<issueCategories>
+			<category id="_41" name="ArchitecturalView" presentationName="Architectural View"></category>
+			<category id="_42" name="ArchitectureConsistency" presentationName="Architecture Consistency"></category>
+			<category id="_43" name="ArchitectureDefinition" presentationName="Architecture Definition"></category>
+			<category id="_44" name="ArchitectureDeprecation" presentationName="Architecture Deprecation"></category>
+			<category id="_45" name="ArchitectureViolation" presentationName="Architecture Violation"></category>
+			<category id="_46" name="CycleGroup" presentationName="Cycle Group"></category>
+			<category id="_47" name="DuplicateCode" presentationName="Duplicate Code"></category>
+			<category id="_48" name="InstallationConfiguration" presentationName="Installation Configuration"></category>
+			<category id="_49" name="PluginBased" presentationName="Plugin Based"></category>
+			<category id="_4a" name="QualityGate" presentationName="Quality Gate"></category>
+			<category id="_4b" name="Refactoring" presentationName="Refactoring"></category>
+			<category id="_4c" name="ScriptBased" presentationName="Script Based"></category>
+			<category id="_4d" name="ScriptDefinition" presentationName="Script Definition"></category>
+			<category id="_4e" name="SystemConfiguration" presentationName="System Configuration"></category>
+			<category id="_4f" name="ThresholdViolation" presentationName="Threshold Violation"></category>
+			<category id="_50" name="Todo" presentationName="Todo"></category>
+			<category id="_51" name="Workspace" presentationName="Workspace"></category>
+		</issueCategories>
+		<issueTypes>
+			<issueType severity="Error, Warning" category="_46" id="_53" name="ComponentCycleGroup" presentationName="Component Cycle Group"></issueType>
+			<issueType severity="None" category="_4b" id="_54" name="MoveRefactoring" presentationName="Move Refactoring"></issueType>
+		</issueTypes>
+		<metricProviders>
+			<provider id="_5a" name="Core" presentationName="Core"></provider>
+			<provider id="_63" name="JavaLanguageProvider" presentationName="Java"></provider>
+		</metricProviders>
+		<metricCategories>
+			<category id="_5c" name="Architecture" presentationName="Architecture" orderNumber="0"></category>
+			<category id="_5f" name="CodeAnalysis" presentationName="Code Analysis" orderNumber="1"></category>
+			<category id="_65" name="Cycle" presentationName="Cycle" orderNumber="2"></category>
+			<category id="_56" name="CohesionAndCoupling" presentationName="Cohesion/Coupling" orderNumber="3"></category>
+			<category id="_7c" name="Dependency" presentationName="Dependency" orderNumber="4"></category>
+			<category id="_68" name="Size" presentationName="Size" orderNumber="5"></category>
+			<category id="_57" name="JohnLakos" presentationName="John Lakos" orderNumber="7"></category>
+			<category id="_61" name="ThomasMccabe" presentationName="Thomas J. McCabe" orderNumber="10"></category>
+			<category id="_d6" name="MacCormack" presentationName="MacCormack, Rusnak, Baldwin" orderNumber="11"></category>
+			<category id="_6b" name="ChangeHistory" presentationName="Change History" orderNumber="12"></category>
+			<category id="_c2" name="Complexity" presentationName="Complexity" orderNumber="13"></category>
+		</metricCategories>
+		<metricLevels>
+			<level id="_58" name="System" presentationName="System" orderNumber="0"></level>
+			<level id="_59" name="Module" presentationName="Module" orderNumber="10"></level>
+		</metricLevels>
+		<metricIds>
+			<metricId id="_55" name="CoreAcd" presentationName="ACD" description="Average component dependency according to John Lakos. Average number of components a component depends on directly and indirectly. This metric can be used to characterize the overall average coupling of internal components." categories="_56 _57" provider="_5a" isFloat="true" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_5b" name="CoreViolationDensityLinesOfCode" presentationName="Architecture Violation Density" description="Number of architecture violations per 1000 lines of code. This metric is calculated for code that is fully analyzed plus code that is excluded by the 'Issue Filter'." categories="_5c" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_5d" name="CoreViolationDensitySourceElements" presentationName="Architecture Violation Density (Source Elements)" description="Number of architecture violations per 1000 source elements. This metric is calculated for code that is fully analyzed plus code that is excluded by the 'Issue Filter'." categories="_5c" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_5e" name="CoreAverageNesting" presentationName="Average Block Nesting Depth" description="Weighted average of nesting depth." categories="_5f" provider="_5a" isFloat="true" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_60" name="CoreAverageComplexity" presentationName="Average Complexity" description="Weighted average modified extended cyclomatic complexity for fully analyzed code" categories="_61" provider="_5a" isFloat="true" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_62" name="JavaAveragePackagePublicVisibility" presentationName="Average Java Public Visibility (%)" description="Average of Java public visibility for all Java packages in a Java module" categories="_5f" provider="_63" isFloat="true" levels="_59" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_64" name="CoreBiggestComponentCycleGroup" presentationName="Biggest Component Cycle Group" description="Number of components in biggest cycle." categories="_65" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_66" name="JavaBiggestPackageCycleGroup" presentationName="Biggest Java Package Cycle Group" description="Biggest Java package cycle group." categories="_65" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_67" name="JavaByteCodeInstructions" presentationName="Byte Code Instructions" description="Number of Java byte code instructions." categories="_68" provider="_63" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_69" name="CoreCcd" presentationName="CCD" description="Cumulative component dependency according to John Lakos. Cumulated depends upon values." categories="_56 _57" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_6a" name="CoreCodeChurn2y" presentationName="Code Churn (2y)" description="Number of lines added or removed in the last 2 years" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_6c" name="CoreCodeChurn30" presentationName="Code Churn (30d)" description="Number of lines added or removed in the last 30 days" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_6d" name="CoreCodeChurn365" presentationName="Code Churn (365d)" description="Number of lines added or removed in the last 365 days" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_6e" name="CoreCodeChurn5y" presentationName="Code Churn (5y)" description="Number of lines added or removed in the last 5 years" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_6f" name="CoreCodeChurn90" presentationName="Code Churn (90d)" description="Number of lines added or removed in the last 90 days" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_70" name="CoreCodeChurnRate2y" presentationName="Code Churn Rate (2y)" description="Percentage of lines added or removed in the last 2 years based on total lines" categories="_6b" provider="_5a" isFloat="true" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_71" name="CoreCodeChurnRate30" presentationName="Code Churn Rate (30d)" description="Percentage of lines added or removed in the last 30 days based on total lines" categories="_6b" provider="_5a" isFloat="true" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_72" name="CoreCodeChurnRate365" presentationName="Code Churn Rate (365d)" description="Percentage of lines added or removed in the last 365 days based on total lines" categories="_6b" provider="_5a" isFloat="true" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_73" name="CoreCodeChurnRate5y" presentationName="Code Churn Rate (5y)" description="Percentage of lines added or removed in the last 5 years based on total lines" categories="_6b" provider="_5a" isFloat="true" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_74" name="CoreCodeChurnRate90" presentationName="Code Churn Rate (90d)" description="Percentage of lines added or removed in the last 90 days based on total lines" categories="_6b" provider="_5a" isFloat="true" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_75" name="CoreCodeCommentLines" presentationName="Code Comment Lines" description="Counts all comment lines excluding header comments and blank comment lines. This includes code of fully analyzed and issue ignoring code." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_76" name="CoreUnassignedLinesOfCodePercent" presentationName="Code Contained in Files Uncovered by Architecture (%)" description="Percentage of lines of code contained in files not assigned to any architecture artifact. This metric is calculated for code that is fully analyzed plus code that is excluded by the 'Issue Filter'." categories="_5c" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_77" name="CoreViolatingLinesOfCodePercent" presentationName="Code Contained in Files with Violations (%)" description="Percentage of lines of code contained in files with at least one violation. This metric is calculated for code that is fully analyzed plus code that is excluded by the 'Issue Filter'." categories="_5c" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_78" name="CoreDeprecatedOrViolatingLinesOfCodePercent" presentationName="Code Contained in Files with Violations or Deprecations (%)" description="Percentage of lines of code contained in files with at least one violation or deprecation.This metric is calculated for code that is fully analyzed plus code that is excluded by the 'Issue Filter'." categories="_5c" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_79" name="CoreCommentLines" presentationName="Comment Lines" description="Counts all comment lines excluding blank comment lines. This includes fully analyzed and issue ignoring code." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_7a" name="CoreComponentDependenciesToRemoveComponents" presentationName="Component Dependencies to Remove (Components)" description="Number of component dependencies to remove to break up all  component cycles." categories="_5f _65" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_7b" name="JavaComponentDependenciesToRemovePackages" presentationName="Component Dependencies to Remove (Java Packages)" description="Number of component dependencies to remove to break up all Java package cycle groups." categories="_5f _7c" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_7d" name="CoreCriticalEntangledLinesOfCode" presentationName="Critically Entangled Lines of Code" description="Lines of code of source files involved any type of critical cycle (marked as error)." categories="_65" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_7e" name="CoreCriticalEntangledLinesOfCodePercent" presentationName="Critically Entangled Lines of Code (%)" description="Percentage of fully analyzed code contained in source files involved any type of critical cycle (marked as error). This also represents the probability that any line is involved in critically entangled code." categories="_65" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_7f" name="CoreCriticalEntangledLinesOfCodeIgnored" presentationName="Critically Entangled Lines of Code [Ignored]" description="Lines of code of source files involved in any type of ignored critical cycle (marked as error)." categories="_65" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_80" name="CoreCriticalEntangledLinesOfCodePercentIgnored" presentationName="Critically Entangled Lines of Code [Ignored] (%)" description="Percentage of fully analyzed code contained in source files involved in any type of ignored critical cycle (marked as error). This also represents the probability that any line is involved in ignored critically entangled code." categories="_65" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_81" name="CoreCriticalEntangledLinesOfCodeToFix" presentationName="Critically Entangled Lines of Code [To Be Fixed]" description="Lines of code of source files involved any type of to be fixed critical cycle (marked as error)." categories="_65" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_82" name="CoreCriticalEntangledLinesOfCodePercentToFix" presentationName="Critically Entangled Lines of Code [To Be Fixed] (%)" description="Percentage of fully analyzed code contained in source files involved any type of to be fixed critical cycle (marked as error). This also represents the probability that any line is involved in to be fixed critically entangled code." categories="_65" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_83" name="CoreCyclicityComponents" presentationName="Cyclicity (Components)" description="Cumulated cyclicity of component cycles." categories="_65" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_84" name="JavaCyclicityPackages" presentationName="Cyclicity (Java Packages)" description="Cumulated cyclicity of Java package cycle groups." categories="_65" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_85" name="CoreDeprecatedParserDependencies" presentationName="Deprecated parser dependencies" description="Number of deprecated parser dependencies" categories="_5c" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_86" name="CoreEntangledLinesOfCode" presentationName="Entangled Lines of Code" description="Lines of code of source files involved any type of cycle." categories="_65" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_87" name="CoreEntangledLinesOfCodePercent" presentationName="Entangled Lines of Code (%)" description="Percentage of fully analyzed code contained in source files involved in any type of cycle. This also represents the probability that any line is involved in entangled code." categories="_65" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_88" name="CoreEntangledLinesOfCodeIgnored" presentationName="Entangled Lines of Code [Ignored]" description="Lines of code of source files involved in any type of ignored cycle." categories="_65" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_89" name="CoreEntangledLinesOfCodePercentIgnored" presentationName="Entangled Lines of Code [Ignored] (%)" description="Percentage of fully analyzed code contained in source files involved in any type of ignored cycle. This also represents the probability that any line is involved in ignored entangled code." categories="_65" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_8a" name="CoreEntangledLinesOfCodeToFix" presentationName="Entangled Lines of Code [To Be Fixed]" description="Lines of code of source files involved any type of to be fixed cycle." categories="_65" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_8b" name="CoreEntangledLinesOfCodePercentToFix" presentationName="Entangled Lines of Code [To Be Fixed] (%)" description="Percentage of fully analyzed code contained in source files involved any type of to be fixed cycle. This also represents the probability that any line is involved in to be fixed entangled code." categories="_65" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_8c" name="CoreChanges2y" presentationName="File Changes (2y)" description="Number of committed file changes in the last 2 years" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_8d" name="CoreChanges30" presentationName="File Changes (30d)" description="Number of committed file changes in the last 30 days" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_8e" name="CoreChanges365" presentationName="File Changes (365d)" description="Number of committed file changes in the last 365 days" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_8f" name="CoreChanges5y" presentationName="File Changes (5y)" description="Number of committed file changes in the last 5 years" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_90" name="CoreChanges90" presentationName="File Changes (90d)" description="Number of committed file changes in the last 90 days" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_91" name="CoreMaxAcd" presentationName="Highest ACD" description="Highest module ACD." categories="_56 _57" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_92" name="CoreIgnoredDeprecatedParserDependencies" presentationName="Ignored Deprecated Parser Dependencies" description="Number of parser dependencies in ignored architecture deprecations" categories="_5c" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_93" name="CoreIssueDensity" presentationName="Issue Density" description="Calculated as the number of unresolved issues (errors, warnings) * 1000, divided by source element count" categories="_5f" provider="_5a" isFloat="true" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_94" name="CoreLinesOfCode" presentationName="Lines of Code" description="Lines of code excluding blank and comment lines. This includes fully analyzed and issue ignoring code." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_95" name="CoreViolatingLinesOfCode" presentationName="Lines of Code in Files with Violations" description="Lines of code contained in files with at least one violation. This metric is calculated for code that is fully analyzed plus code that is excluded by the 'Issue Filter'." categories="_5c" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_96" name="CoreDeprecatedOrViolatingLinesOfCode" presentationName="Lines of Code in Files with Violations or Deprecations (%)" description="Lines of code contained in files with at least one violation or deprecation.This metric is calculated for code that is fully analyzed plus code that is excluded by the 'Issue Filter'." categories="_5c" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_97" name="CoreLinesOfCodeFullyAnalyzed" presentationName="Lines of Fully Analyzed Code" description="Lines of fully analyzed code excluding blank and comment lines." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_98" name="CoreLinesOfCodeInLargeFiles" presentationName="Lines of Fully Analyzed Code in Large Files" description="Lines of fully analyzed code excluding blank and comment lines in files violating the threshold (default 1000)." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_99" name="CoreLinesOfCodeInLargeFilesPercent" presentationName="Lines of Fully Analyzed Code in Large Files (%)" description="Percent of lines of fully analyzed code excluding blank and comment lines in files violating the threshold (default 1000)." categories="_68" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_9a" name="CoreLinesOfCodeInLargeFilesIgnored" presentationName="Lines of Fully Analyzed Code in Large Files [Ignored]" description="Lines of fully analyzed code excluding blank and comment lines in ignored files violating the threshold (default 1000)." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_9b" name="CoreLinesOfCodeInLargeFilesIgnoredPercent" presentationName="Lines of Fully Analyzed Code in Large Files [Ignored] (%)" description="Percent of lines of fully analyzed code excluding blank and comment lines in ignored files violating the threshold (default 1000)." categories="_68" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_9c" name="CoreLinesOfCodeInLargeFilesToFix" presentationName="Lines of Fully Analyzed Code in Large Files [To Be Fixed]" description="Lines of fully analyzed code excluding blank and comment lines in to be fixed files violating the threshold (default 1000)." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_9d" name="CoreLinesOfCodeInLargeFilesToFixPercent" presentationName="Lines of Fully Analyzed Code in Large Files [To Be Fixed] (%)" description="Percent of lines of fully analyzed code excluding blank and comment lines in to be fixed files violating the threshold (default 1000)." categories="_68" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_9e" name="CoreLinesOfCodeIssueIgnoring" presentationName="Lines of Issue-Ignoring Code" description="Lines of code excluding blank and comment lines for which only architecture violations and parsing problems are reported." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_9f" name="CoreMaintainabilityLevel" presentationName="Maintainability Level" description="This metric estimates maintainability as a percentage. 100% is the best possible value. To do that it looks at the dependency structure between components (source files in most languages). Cyclic dependencies and low level classes with a lot of incoming dependencies have a negative influence on the metric. Keeping good vertical boundaries and not having too many layers will have a positive influence. It is also recommended to have as many components as possible that are independent, i.e. have no incoming dependencies and therefore can be changed without influencing the rest of the system. In Java and C# the metric also considers the value of the relative cyclicity metric for packages/namespaces. If you have large cycle groups they will have a negative influence on the metric value." categories="_56" provider="_5a" isFloat="true" levels="_58 _59" bestValue="100.0" worstValue="0.0" minValue="0.0" maxValue="100.0" direction="LowerWorse"></metricId>
+			<metricId id="_a0" name="CoreBiggestCycleLoc" presentationName="Maximum Lines of Code Involved in a Cycle" description="Biggest cycle group with respect to the lines of code of involved source files." categories="_65" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_a1" name="CoreNccd" presentationName="NCCD" description="Normalized cumulative component dependency  according to John Lakos. The ratio between the cumulative component dependency and the cumulative component dependency of a balanced binary tree of the same size. A value greater than 1 indicates a more vertical design. A value less than 1 indicates a more horizontal design." categories="_56 _57" provider="_5a" isFloat="true" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_a2" name="CoreArtifactCount" presentationName="Number of Artifacts" description="Number of architecture artifacts in checked files" categories="_5c" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_a3" name="CoreNumberOfAuthors30" presentationName="Number of Authors (30d)" description="Number of developers who have worked on this item in the last 30 days" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_a4" name="CoreDuplicates" presentationName="Number of Code Duplicates" description="Number of duplicated code blocks." categories="_5f" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_a5" name="CoreDuplicatesFixed" presentationName="Number of Code Duplicates to be Fixed" description="Number of duplicated code blocks with applied Fix task." categories="_5f" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_a6" name="CoreComponentCycleGroups" presentationName="Number of Component Cycle Groups" description="Number of all component cycle groups, warnings and errors." categories="_65" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_a7" name="CoreComponents" presentationName="Number of Components" description="Number of components in fully analyzed and issue ignoring code." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_a8" name="CoreComponentsFullyAnalyzed" presentationName="Number of Components (Full Analysis)" description="Number of fully analyzed components." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_a9" name="CoreComponentsIgnoringIssues" presentationName="Number of Components (Ignoring Issues)" description="Number of components ignoring issues." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_aa" name="CoreComponentsInDeprecatedArtifacts" presentationName="Number of Components in Deprecated Artifacts" description="Number of components that are assigned to deprecated artifact" categories="_5c" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_ab" name="CoreViolatingComponents" presentationName="Number of Components with Violations" description="Number of components that contain architecture violations" categories="_5c" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_ac" name="CoreCriticalComponentCycleGroups" presentationName="Number of Critical Component Cycle Groups" description="Number of component cycle groups marked as errors." categories="_65" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_ad" name="JavaCriticalPackageCycleGroups" presentationName="Number of Critical Java Package Cycle Groups" description="Number of Java package cycle groups marked as errors." categories="_65" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_ae" name="CoreCyclicComponents" presentationName="Number of Cyclic Components" description="Number of cyclic components." categories="_65" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_af" name="JavaCyclicPackages" presentationName="Number of Cyclic Java Packages" description="Number of cyclic Java packages." categories="_65" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_b0" name="CoreCyclicModules" presentationName="Number of Cyclic Modules" description="Number of cyclic modules." categories="_65" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_b1" name="CoreDuplicatedLines" presentationName="Number of Duplicated Code Lines" description="Number of duplicated lines in duplicated code blocks. The duplicated lines of each code block are calculated as the sum of involved occurrences excluding the largest, which is treated as the reference." categories="_5f" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_b2" name="CoreEmptyArtifactCount" presentationName="Number of Empty Artifacts" description="Number of architecture artifacts that are empty in checked files" categories="_5c" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_b3" name="CoreSourcefilesExcluded" presentationName="Number of Excluded Source Files" description="Number of source files excluded via 'File Filter'. These files are completely excluded from the analysis and do not contribute to any metric." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_b4" name="CoreIgnoredDuplicates" presentationName="Number of Ignored Code Duplicates" description="Number of ignored duplicated code blocks." categories="_5f" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_b5" name="CoreIgnoredCyclicComponents" presentationName="Number of Ignored Cyclic Components" description="Number of ignored cyclic components." categories="_65" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_b6" name="JavaIgnoredCyclicPackages" presentationName="Number of Ignored Cyclic Java Packages" description="Number of ignored cyclic Java packages." categories="_65" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_b7" name="CoreIgnoredViolationsParserDependencies" presentationName="Number of Ignored Violations (Parser Dependencies)" description="Number of parser dependencies in ignored architecture violations" categories="_5c" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_b8" name="JavaPackages" presentationName="Number of Java Packages" description="Number of Java packages containing types in fully analyzed and issue ignoring code." categories="_68" provider="_63" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_b9" name="JavaPackagesFullyAnalyzed" presentationName="Number of Java Packages (Full Analysis)" description="Number of Java packages containing fully analyzed types." categories="_68" provider="_63" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_ba" name="CoreElementsInDeprecatedArtifacts" presentationName="Number of Logical Elements in Deprecated Artifacts" description="Number of logical programming elements that are assigned to deprecated artifact" categories="_5c" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_bb" name="CoreModules" presentationName="Number of Modules" description="Number of modules." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_bc" name="CoreSourcefiles" presentationName="Number of Source Files" description="Number of source files in fully analyzed and issue ignoring code." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_bd" name="CoreSourcefilesTest" presentationName="Number of Source Files (Excluded)" description="Number of source files in test code (excluded via 'Production Code Filter')." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_be" name="CoreSourcefilesFullyAnalyzed" presentationName="Number of Source Files (Full Analysis)" description="Number of source files that are fully analyzed, i.e. not excluded by any workspace filter." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_bf" name="CoreSourcefilesIssueIgnore" presentationName="Number of Source Files (Ignoring Issue)" description="Number of source files excluded via 'Issue Filter' that no issues (except parser issues and architecture violations) are generated for." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_c0" name="CoreStatements" presentationName="Number of Statements" description="Counts all statements. This includes statements of fully analyzed and issue ignoring code." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_c1" name="CoreStatementsComplexMethods" presentationName="Number of Statements in Complex Methods" description="Counts all statements in fully analyzed code of too complex methods, i.e. that violate the thresholds for max nesting depth (default 4) or for extended modified cyclomatic complexity (default 15)." categories="_c2" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_c3" name="CoreStatementsComplexMethodsPercent" presentationName="Number of Statements in Complex Methods (%)" description="Percentage of statements in fully analyzed code in too complex methods, i.e. that violate the thresholds for max nesting depth (default 4) or for extended modified cyclomatic complexity (default 15)." categories="_c2" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_c4" name="CoreStatementsComplexMethodsIgnored" presentationName="Number of Statements in Complex Methods [Ignored]" description="Counts all statements in fully analyzed code of ignored too complex methods, i.e. that violate the thresholds for max nesting depth (default 4) or for extended modified cyclomatic complexity (default 15)." categories="_c2" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_c5" name="CoreStatementsComplexMethodsIgnoredPercent" presentationName="Number of Statements in Complex Methods [Ignored] (%)" description="Percentage of statements in fully analyzed code in ignored too complex methods, i.e. that violate the thresholds for max nesting depth (default 4) or for extended modified cyclomatic complexity (default 15)." categories="_c2" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_c6" name="CoreStatementsComplexMethodsToFix" presentationName="Number of Statements in Complex Methods [To Be Fixed]" description="Counts all statements in fully analyzed code of to be fixed too complex methods, i.e. that violate the thresholds for max nesting depth (default 4) or for extended modified cyclomatic complexity (default 15)." categories="_c2" provider="_5a" isFloat="false" levels="_58" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_c7" name="CoreStatementsComplexMethodsToFixPercent" presentationName="Number of Statements in Complex Methods [To Be Fixed] (%)" description="Percentage of statements in fully analyzed code in to be fixed too complex methods, i.e. that violate the thresholds for max nesting depth (default 4) or for extended modified cyclomatic complexity (default 15)." categories="_c2" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_c8" name="CoreStatementsFullyAnalyzed" presentationName="Number of Statements in Fully Analyzed Code" description="Counts all statements in fully analyzed code." categories="_68" provider="_5a" isFloat="false" levels="_58" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_c9" name="CoreTypes" presentationName="Number of Types" description="Number of types (classes, enums or similar) in container." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_ca" name="CoreUnassignedLogicalElements" presentationName="Number of Unassigned Logical Elements" description="Number of internal logical elements that are not assigned to any artifact" categories="_5c" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_cb" name="CoreUnassignedComponents" presentationName="Number of Unassigned Physical Components" description="Number of internal physical components that are not assigned to any artifact" categories="_5c" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_cc" name="CoreViolationsComponentDependencies" presentationName="Number of Violations (Component Dependencies)" description="Number of architecture-violating component dependencies" categories="_5c" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_cd" name="CoreViolationsParserDependencies" presentationName="Number of Violations (Parser Dependencies)" description="Number of architecture-violating parser dependencies" categories="_5c" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_ce" name="JavaPackageCycleGroups" presentationName="Number of all Java Package Cycle Groups" description="Number of all Java package cycle groups, errors and warnings" categories="_65" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_cf" name="CoreNumberOfAuthors2y" presentationName="Number of authors (2y)" description="Number of developers who have worked on this item in the last 2 years" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_d0" name="CoreNumberOfAuthors" presentationName="Number of authors (365d)" description="Number of developers who have worked on this item in the last year" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_d1" name="CoreNumberOfAuthors5y" presentationName="Number of authors (5y)" description="Number of developers who have worked on this item in the last 5 years" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_d2" name="CoreNumberOfAuthors90" presentationName="Number of authors (90d)" description="Number of developers who have worked on this item in the last 90 days" categories="_6b" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_d3" name="CoreParserDependenciesToRemoveComponents" presentationName="Parser Dependencies to Remove (Components)" description="Number of code lines to change to break up all  component cycles." categories="_5f _65" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_d4" name="JavaParserDependenciesToRemovePackages" presentationName="Parser Dependencies to Remove (Java Packages)" description="Number of code lines to change to break up all Java package cycle groups)." categories="_5f _7c" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_d5" name="CorePropagationCost" presentationName="Propagation Cost" description="Propagation cost metric according to MacCormack, Rusnak and Baldwin. It describes the proportion of software files that are directly or indirectly linked to each other." categories="_56 _d6" provider="_5a" isFloat="true" levels="_58 _59" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_d7" name="CoreRedundancy" presentationName="Redundant Code (%)" description="Percentage of redundant code. This also represents the probability that any line is contained in a duplicate. This metric is calculated for fully analyzed code." categories="_5f" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_d8" name="CoreRedundancyIgnored" presentationName="Redundant Code [Ignored] (%)" description="Percentage of ignored redundant code. This also represents the probability that any line is contained in an ignored duplicate. This metric is calculated for fully analyzed code." categories="_5f" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_d9" name="CoreRedundancyFixed" presentationName="Redundant Code [To Be Fixed] (%)" description="Percentage of redundant code with an assigned &quot;Fix&quot; task. This also represents the probability that any line is contained in a to-be-fixed duplicate. This metric is calculated for fully analyzed code." categories="_5f" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_da" name="CoreRelativeCyclicityComponents" presentationName="Relative Cyclicity (Components)" description="Relative component cyclicity in percent." categories="_65" provider="_5a" isFloat="true" levels="_58 _59" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_db" name="JavaRelativeCyclicityPackages" presentationName="Relative Cyclicity (Java Packages)" description="Relative Java package cyclicity in percent." categories="_65" provider="_63" isFloat="true" levels="_58 _59" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_dc" name="CoreRelativeEntanglement" presentationName="Relative Entanglement (%)" description="Computed as the sum of relative cyclicities on component and namespace/directory levels, with each level contributing 50%. If the system contains several languages, the namespace/directory values per language are weighted against the lines of code contributed by the language. High values are an indicator for very large cycle groups." categories="_65" provider="_5a" isFloat="true" levels="_58" bestValue="0.0" worstValue="100.0" minValue="0.0" maxValue="100.0" direction="HigherWorse"></metricId>
+			<metricId id="_dd" name="CoreSourceElementCount" presentationName="Source Element Count" description="Number of programming elements (i.e. types, fields, methods, functions, ...) plus number of statements. This includes elements of fully analyzed and issue ignoring code." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+			<metricId id="_de" name="CoreStructuralDebtIndexComponents" presentationName="Structural Debt Index (Components)" description="Cumulative structural debt index of component cycles." categories="_5f" provider="_5a" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_df" name="JavaStructuralDebtIndexPackages" presentationName="Structural Debt Index (Java Packages)" description="Cumulative structural debt index of all Java package cycle groups." categories="_5f" provider="_63" isFloat="false" levels="_58 _59" bestValue="0.0" worstValue="INF" minValue="0.0" maxValue="INF" direction="HigherWorse"></metricId>
+			<metricId id="_e0" name="CoreTotalLines" presentationName="Total Lines" description="Counts all lines including empty and comment lines of source files. This includes files of fully analyzed and issue ignoring code." categories="_68" provider="_5a" isFloat="false" levels="_58 _59" bestValue="NaN" worstValue="NaN" minValue="0.0" maxValue="INF" direction="Indifferent"></metricId>
+		</metricIds>
+	</metaData>
+	<features>
+		<feature name="Architecture" presentationName="Architecture" licensed="true"></feature>
+		<feature name="CohesionAndCouplingMetrics" presentationName="Cohesion And Coupling Metrics" licensed="true"></feature>
+		<feature name="CycleBreakUp" presentationName="Cycle Break Up" licensed="true"></feature>
+		<feature name="DuplicateCode" presentationName="Duplicate Code" licensed="true"></feature>
+		<feature name="Platform" presentationName="Platform" licensed="true"></feature>
+		<feature name="Plugins" presentationName="Plugins" licensed="true"></feature>
+		<feature name="Reporting" presentationName="Reporting" licensed="true"></feature>
+		<feature name="Scripts" presentationName="Scripts" licensed="true"></feature>
+		<feature name="ScriptsAutomated" presentationName="Scripts Automated" licensed="true"></feature>
+		<feature name="Snapshots" presentationName="Snapshots" licensed="true"></feature>
+		<feature name="Systems" presentationName="Systems" licensed="true"></feature>
+		<feature name="VirtualModels" presentationName="Virtual Models" licensed="true"></feature>
+	</features>
+	<analyzers>
+		<analyzer description="Checks for architecture violations" licensed="true" executionLevel="minimal" executed="true" id="_6" name="ArchitectureCheck" presentationName="Architecture Check"></analyzer>
+		<analyzer description="Computes metrics related to source code and architecture violations" licensed="true" executionLevel="basic" executed="true" id="_a" name="ArchitectureSourcecodeMetrics" presentationName="Architecture Metrics"></analyzer>
+		<analyzer description="Calculates average complexity metrics" licensed="true" executionLevel="basic" executed="true" id="_b" name="AverageComplexityMetrics" presentationName="Average Complexity Metrics"></analyzer>
+		<analyzer description="Checks for code in large files" licensed="true" executionLevel="minimal" executed="true" id="_7" name="CodeOrganization" presentationName="Code Organization"></analyzer>
+		<analyzer description="Calculates cohesion and coupling metrics on module level" licensed="true" executionLevel="basic" executed="true" id="_c" name="CohesionAndCouplingMetricsModule" presentationName="Cohesion and Coupling Metrics (Module)"></analyzer>
+		<analyzer description="Calculates cohesion and coupling metrics on system level" licensed="true" executionLevel="basic" executed="true" id="_d" name="CohesionAndCouplingMetricsSystem" presentationName="Cohesion and Coupling Metrics (System)"></analyzer>
+		<analyzer description="Calculates system complexity metrics" licensed="true" executionLevel="basic" executed="true" id="_e" name="ComplexitySystemMetrics" presentationName="System Complexity Metrics"></analyzer>
+		<analyzer description="Analyzes component / compilation unit cycles on module level" licensed="true" executionLevel="advanced" executed="true" id="_2a" name="ComponentCyclesModule" presentationName="Component Cycles (Module)"></analyzer>
+		<analyzer description="Computes component cycle metrics on module level" licensed="true" executionLevel="advanced" executed="true" id="_2b" name="ComponentCyclesModuleMetrics" presentationName="Component Cycle Metrics (Module)"></analyzer>
+		<analyzer description="Analyzes component / compilation unit cycles on system level" licensed="true" executionLevel="advanced" executed="true" id="_2c" name="ComponentCyclesSystem" presentationName="Component Cycles (System)"></analyzer>
+		<analyzer description="Computes component cycle metrics on system level" licensed="true" executionLevel="advanced" executed="true" id="_2d" name="ComponentCyclesSystemMetrics" presentationName="Component Cycle Metrics (System)"></analyzer>
+		<analyzer description="Analyzes directory cycles on module level" licensed="true" executionLevel="basic" executed="false" id="_f" name="CppDirectoryCyclesModule" presentationName="C,C++ Directory Cycles (Module)"></analyzer>
+		<analyzer description="Computes directory cycle metrics on module level" licensed="true" executionLevel="basic" executed="false" id="_10" name="CppDirectoryCyclesModuleMetrics" presentationName="C,C++ Directory Cycle Metrics (Module)"></analyzer>
+		<analyzer description="Analyzes directory cycles on system level" licensed="true" executionLevel="basic" executed="false" id="_11" name="CppDirectoryCyclesSystem" presentationName="C,C++ Directory Cycles (System)"></analyzer>
+		<analyzer description="Computes directory cycle metrics on system level" licensed="true" executionLevel="basic" executed="false" id="_12" name="CppDirectoryCyclesSystemMetrics" presentationName="C,C++ Directory Cycle Metrics (System)"></analyzer>
+		<analyzer description="Analyzes namespace cycles on module level" licensed="true" executionLevel="basic" executed="false" id="_13" name="CppNamespaceCyclesModule" presentationName="C++ Namespace Cycles (Module)"></analyzer>
+		<analyzer description="Computes namespace cycle metrics on module level" licensed="true" executionLevel="basic" executed="false" id="_14" name="CppNamespaceCyclesModuleMetrics" presentationName="C++ Namespace Cycle Metrics (Module)"></analyzer>
+		<analyzer description="Analyzes namespace cycles on system level" licensed="true" executionLevel="basic" executed="false" id="_15" name="CppNamespaceCyclesSystem" presentationName="C++ Namespace Cycles (System)"></analyzer>
+		<analyzer description="Computes namespace cycle metrics on system level" licensed="true" executionLevel="basic" executed="false" id="_16" name="CppNamespaceCyclesSystemMetrics" presentationName="C++ Namespace Cycle Metrics (System)"></analyzer>
+		<analyzer description="Analyzes directory cycles on module level" licensed="true" executionLevel="basic" executed="false" id="_17" name="CsDirectoryCyclesModule" presentationName="C# Directory Cycles (Module)"></analyzer>
+		<analyzer description="Computes directory cycle metrics on module level" licensed="true" executionLevel="basic" executed="false" id="_18" name="CsDirectoryCyclesModuleMetrics" presentationName="C# Directory Cycle Metrics (Module)"></analyzer>
+		<analyzer description="Analyzes directory cycles on system level" licensed="true" executionLevel="basic" executed="false" id="_19" name="CsDirectoryCyclesSystem" presentationName="C# Directory Cycles (System)"></analyzer>
+		<analyzer description="Computes directory cycle metrics on system level" licensed="true" executionLevel="basic" executed="false" id="_1a" name="CsDirectoryCyclesSystemMetrics" presentationName="C# Directory Cycle Metrics (System)"></analyzer>
+		<analyzer description="Search duplicate code on system level" licensed="true" executionLevel="full" executed="true" id="_34" name="DuplicateCode" presentationName="Duplicate Code"></analyzer>
+		<analyzer description="Calculates duplicate code metrics" licensed="true" executionLevel="full" executed="true" id="_35" name="DuplicateCodeMetrics" presentationName="Duplicate Code Metrics"></analyzer>
+		<analyzer description="Calculates summary metrics about entangled code" licensed="true" executionLevel="advanced" executed="true" id="_2e" name="Entanglement" presentationName="Entanglement"></analyzer>
+		<analyzer description="Calculates incoming dependency metrics on module level" licensed="true" executionLevel="advanced" executed="true" id="_2f" name="IncomingDependencyMetricsModule" presentationName="Incoming Dependency Metrics (Module)"></analyzer>
+		<analyzer description="Calculates incoming dependency metrics on system level" licensed="true" executionLevel="advanced" executed="true" id="_30" name="IncomingDependencyMetricsSystem" presentationName="Incoming Dependency Metrics (System)"></analyzer>
+		<analyzer description="Calculates issue density per 1000 source elements" licensed="true" executionLevel="full" executed="true" id="_36" name="IssueDensity" presentationName="Issue Density"></analyzer>
+		<analyzer description="Computes urgency and importance of issues and ranks them globally" licensed="true" executionLevel="full" executed="true" id="_37" name="IssueRanking" presentationName="Issue Ranking"></analyzer>
+		<analyzer description="Computes Java visibility metrics" licensed="true" executionLevel="basic" executed="true" id="_1b" name="JavaVisibilityMetrics" presentationName="Java Visibility Metrics"></analyzer>
+		<analyzer description="Calculates maintainability level metrics" licensed="true" executionLevel="advanced" executed="true" id="_31" name="MaintainabilityLevel" presentationName="Maintainability Level"></analyzer>
+		<analyzer description="Checks for metric threshold violations" licensed="true" executionLevel="minimal" executed="true" id="_8" name="MetricThresholds" presentationName="Metric Thresholds"></analyzer>
+		<analyzer description="Analyzes module cycles on system level" licensed="true" executionLevel="basic" executed="true" id="_1c" name="ModuleCyclesSystem" presentationName="Module Cycles"></analyzer>
+		<analyzer description="Analyzes namespace cycles on module level" licensed="true" executionLevel="basic" executed="false" id="_1d" name="NamespaceCyclesModule" presentationName="C# Namespace Cycles (Module)"></analyzer>
+		<analyzer description="Computes namespace cycle metrics on module level" licensed="true" executionLevel="basic" executed="false" id="_1e" name="NamespaceCyclesModuleMetrics" presentationName="C# Namespace Cycle Metrics (Module)"></analyzer>
+		<analyzer description="Analyzes namespace cycles on system level" licensed="true" executionLevel="basic" executed="false" id="_1f" name="NamespaceCyclesSystem" presentationName="C# Namespace Cycles (System)"></analyzer>
+		<analyzer description="Computes namespace cycle metrics on system level" licensed="true" executionLevel="basic" executed="false" id="_20" name="NamespaceCyclesSystemMetrics" presentationName="C# Namespace Cycle Metrics (System)"></analyzer>
+		<analyzer description="Calculates outgoing dependency metrics on module level" licensed="true" executionLevel="advanced" executed="true" id="_32" name="OutgoingDependencyMetricsModule" presentationName="Ougoing Dependency Metrics (Module)"></analyzer>
+		<analyzer description="Calculates outgoing dependency metrics on system level" licensed="true" executionLevel="advanced" executed="true" id="_33" name="OutgoingDependencyMetricsSystem" presentationName="Ougoing Dependency Metrics (System)"></analyzer>
+		<analyzer description="Analyzes package cycles on module level" licensed="true" executionLevel="basic" executed="true" id="_21" name="PackageCyclesModule" presentationName="Package Cycles (Module)"></analyzer>
+		<analyzer description="Computes package cycle metrcis on module level" licensed="true" executionLevel="basic" executed="true" id="_22" name="PackageCyclesModuleMetrics" presentationName="Package Cycle Metrics (Module)"></analyzer>
+		<analyzer description="Analyzes package cycles on system level" licensed="true" executionLevel="basic" executed="true" id="_23" name="PackageCyclesSystem" presentationName="Package Cycles (System)"></analyzer>
+		<analyzer description="Computes package cycle metrcis on system level" licensed="true" executionLevel="basic" executed="true" id="_24" name="PackageCyclesSystemMetrics" presentationName="Package Cycle Metrics (System)"></analyzer>
+		<analyzer description="Analyzes package cycles on module level" licensed="true" executionLevel="basic" executed="false" id="_25" name="PythonPackageCyclesModule" presentationName="Python Package Cycles (Module)"></analyzer>
+		<analyzer description="Computes package cycle metrcis on module level" licensed="true" executionLevel="basic" executed="false" id="_26" name="PythonPackageCyclesModuleMetrics" presentationName="Python Package Cycle Metrics (Module)"></analyzer>
+		<analyzer description="Analyzes package cycles on system level" licensed="true" executionLevel="basic" executed="false" id="_27" name="PythonPackageCyclesSystem" presentationName="Python Package Cycles (System)"></analyzer>
+		<analyzer description="Computes package cycle metrcis on system level" licensed="true" executionLevel="basic" executed="false" id="_28" name="PythonPackageCyclesSystemMetrics" presentationName="Python Package Cycle Metrics (System)"></analyzer>
+		<analyzer description="Checks compliance against defined quality gates" licensed="true" executionLevel="full" executed="true" id="_38" name="QualityGates" presentationName="Quality Gate"></analyzer>
+		<analyzer description="Calculates source code management based metrics" licensed="true" executionLevel="full" executed="true" id="_39" name="ScmMetrics" presentationName="SCM Metrics"></analyzer>
+		<analyzer description="Runs scripts configured for automated execution" licensed="true" executionLevel="full" executed="true" id="_3a" name="ScriptRunner" presentationName="Script Runner"></analyzer>
+		<analyzer description="Calculates size metrics" licensed="true" executionLevel="minimal" executed="true" id="_9" name="SizeMetrics" presentationName="Size Metrics"></analyzer>
+		<analyzer description="Calculates summary metrics about entangled code" licensed="true" executionLevel="basic" executed="true" id="_29" name="StructureMetrics" presentationName="Structure Metrics (Namespace/Directory)"></analyzer>
+		<analyzer description="Computes the system diff against a baseline" licensed="true" executionLevel="full" executed="true" id="_3b" name="SystemDiff" presentationName="System Diff"></analyzer>
+	</analyzers>
+	<plugins>
+		<plugin description="Creates issues read from a file with csv content." version="n/a" vendor="hello2morrow GmbH" licensed="true" enabled="false" id="_1" name="com.hello2morrow.sonargraph.plugin.issues.csv" presentationName="Sonargraph Issue Importer Plugin">
+			<supportedExecutionPhase>analyzer</supportedExecutionPhase>
+		</plugin>
+		<plugin description="Uses PMD to detect issues." version="n/a" vendor="hello2morrow GmbH" licensed="true" enabled="false" id="_2" name="com.hello2morrow.sonargraph.plugin.pmd" presentationName="Sonargraph PMD Plugin">
+			<supportedExecutionPhase>analyzer</supportedExecutionPhase>
+		</plugin>
+		<plugin description="Uses Spotbugs to detect issues." version="n/a" vendor="hello2morrow GmbH" licensed="true" enabled="false" id="_3" name="com.hello2morrow.sonargraph.plugin.spotbugs" presentationName="Sonargraph Spotbugs Plugin">
+			<supportedExecutionPhase>analyzer</supportedExecutionPhase>
+		</plugin>
+		<plugin description="Exposes web resources of SpringBoot applications and dependencies between them." version="n/a" vendor="hello2morrow GmbH" licensed="true" enabled="false" id="_4" name="com.hello2morrow.sonargraph.plugin.spring.microservices" presentationName="Sonargraph Spring Microservices Plugin">
+			<supportedExecutionPhase>model</supportedExecutionPhase>
+		</plugin>
+		<plugin description="Detects calls generated by Swagger for the OkHttpClient framework." version="n/a" vendor="hello2morrow GmbH" licensed="true" enabled="false" id="_5" name="com.hello2morrow.sonargraph.plugin.swagger" presentationName="Sonargraph Swagger Plugin">
+			<supportedExecutionPhase>model</supportedExecutionPhase>
+		</plugin>
+	</plugins>
+	<duplicateCodeConfiguration>
+		<entry>MinimalLineLength:3</entry>
+		<entry>MinimalBlockLength:25</entry>
+		<entry>MaximalNumberOfCopies:100</entry>
+		<entry>MaximalTolerancePerEdit:3</entry>
+		<entry>MaximalRelativeTolerancePercentage:35</entry>
+	</duplicateCodeConfiguration>
+	<architectureCheckConfiguration>
+		<entry>./layers.arc</entry>
+	</architectureCheckConfiguration>
+	<cycleGroupAnalyzerConfiguration analyzer="_2c" name="ComponentCyclesSystem">
+		<intEntry name="CriticalComponentCycleSize" value="6"></intEntry>
+	</cycleGroupAnalyzerConfiguration>
+	<cycleGroupAnalyzerConfiguration analyzer="_2a" name="ComponentCyclesModule">
+		<intEntry name="CriticalComponentCycleSize" value="6"></intEntry>
+	</cycleGroupAnalyzerConfiguration>
+	<cycleGroupAnalyzerConfiguration analyzer="_1c" name="ModuleCyclesSystem">
+		<intEntry name="CriticalModuleCycleSize" value="2"></intEntry>
+	</cycleGroupAnalyzerConfiguration>
+	<cycleGroupAnalyzerConfiguration analyzer="_21" name="PackageCyclesModule">
+		<intEntry name="CriticalNamespaceCycleSize" value="6"></intEntry>
+	</cycleGroupAnalyzerConfiguration>
+	<cycleGroupAnalyzerConfiguration analyzer="_23" name="PackageCyclesSystem">
+		<intEntry name="CriticalNamespaceCycleSize" value="6"></intEntry>
+	</cycleGroupAnalyzerConfiguration>
+	<qualityGateConfiguration></qualityGateConfiguration>
+	<systemFile path="./layers.arc" type="Architecture" lastModified="2023-05-16T07:53:36.602-05:00" hash="0c27afad07171c065010b62c181f057a"></systemFile>
+	<pluginConfiguration plugin="_1" id="_3c" name="./com.hello2morrow.sonargraph.plugin.issues.csv.xml" presentationName="./com.hello2morrow.sonargraph.plugin.issues.csv.xml">
+		<stringEntry name="files" value=""></stringEntry>
+		<stringEntry name="errorRanges" value=""></stringEntry>
+		<stringEntry name="warningRanges" value=""></stringEntry>
+		<stringEntry name="infoRanges" value=""></stringEntry>
+		<booleanEntry name="enabled" value="false"></booleanEntry>
+	</pluginConfiguration>
+	<pluginConfiguration plugin="_2" id="_3d" name="./com.hello2morrow.sonargraph.plugin.pmd.xml" presentationName="./com.hello2morrow.sonargraph.plugin.pmd.xml">
+		<stringEntry name="ruleSets" value=""></stringEntry>
+		<stringEntry name="high" value="error"></stringEntry>
+		<stringEntry name="mediumHigh" value="error"></stringEntry>
+		<stringEntry name="medium" value="error"></stringEntry>
+		<stringEntry name="mediumLow" value="error"></stringEntry>
+		<stringEntry name="low" value="error"></stringEntry>
+		<intEntry name="minimumPriority" value="5"></intEntry>
+		<booleanEntry name="enabled" value="false"></booleanEntry>
+		<booleanEntry name="cache" value="true"></booleanEntry>
+	</pluginConfiguration>
+	<pluginConfiguration plugin="_3" id="_3e" name="./com.hello2morrow.sonargraph.plugin.spotbugs.xml" presentationName="./com.hello2morrow.sonargraph.plugin.spotbugs.xml">
+		<stringEntry name="analysisEffort" value="default"></stringEntry>
+		<stringEntry name="scariest" value="warning"></stringEntry>
+		<stringEntry name="scary" value="warning"></stringEntry>
+		<stringEntry name="troubling" value="warning"></stringEntry>
+		<stringEntry name="ofConcern" value="warning"></stringEntry>
+		<intEntry name="minimumRank" value="14"></intEntry>
+		<intEntry name="minimumConfidence" value="2"></intEntry>
+		<booleanEntry name="enabled" value="false"></booleanEntry>
+		<booleanEntry name="badPractice" value="true"></booleanEntry>
+		<booleanEntry name="maliciousCodeVulnerability" value="true"></booleanEntry>
+		<booleanEntry name="correctness" value="true"></booleanEntry>
+		<booleanEntry name="performance" value="true"></booleanEntry>
+		<booleanEntry name="security" value="true"></booleanEntry>
+		<booleanEntry name="dodgyCode" value="true"></booleanEntry>
+		<booleanEntry name="multithreadedCorrectness" value="true"></booleanEntry>
+		<booleanEntry name="internationalization" value="true"></booleanEntry>
+		<booleanEntry name="experimental" value="false"></booleanEntry>
+	</pluginConfiguration>
+	<pluginConfiguration plugin="_4" id="_3f" name="./com.hello2morrow.sonargraph.plugin.spring.microservices.xml" presentationName="./com.hello2morrow.sonargraph.plugin.spring.microservices.xml">
+		<booleanEntry name="enabled" value="false"></booleanEntry>
+	</pluginConfiguration>
+	<pluginConfiguration plugin="_5" id="_40" name="./com.hello2morrow.sonargraph.plugin.swagger.xml" presentationName="./com.hello2morrow.sonargraph.plugin.swagger.xml">
+		<booleanEntry name="enabled" value="false"></booleanEntry>
+	</pluginConfiguration>
+	<elementKinds>
+		<elementKind id="_e8" standardKind="JavaExternal" presentationKind="Java External" imageResourceName="External"></elementKind>
+		<elementKind id="_e6" standardKind="JavaClassRootDirectoryPath" presentationKind="Java Class Root Directory/Archive" imageResourceName="RootDirectoryPath"></elementKind>
+		<elementKind id="_f3" standardKind="SoftwareSystem" presentationKind="System"></elementKind>
+		<elementKind id="_ea" standardKind="JavaInternalCompilationUnit" presentationKind="Java Internal Component" imageResourceName="JavaCompilationUnit"></elementKind>
+		<elementKind id="_e4" standardKind="JavaSourceRootDirectoryPath" presentationKind="Java Source Root Directory/Archive"></elementKind>
+		<elementKind id="_e2" standardKind="JavaModule" presentationKind="Java Module" imageResourceName="Module"></elementKind>
+	</elementKinds>
+	<workspace>
+		<workspaceFilter description="Exclude files (matches against the 'Identifying Path' property)" information="Excluded 0 files(s)" numberOfExcludedElements="0"></workspaceFilter>
+		<productionCodeFilter description="Exclude internal components containing test code (matches against the 'Workspace Filter Name' property)" information="Excluded 0 internal component(s) (processed 46)" numberOfExcludedElements="0" numberOfIncludedElements="46"></productionCodeFilter>
+		<issueFilter description="Ignore analysis issues of internal components containing legacy/generated code (matches against the 'Workspace Filter Name' property)" information="Ignoring analysis issues of 0 internal component(s) (processed 46)" numberOfExcludedElements="0" numberOfIncludedElements="46"></issueFilter>
+		<module moduleId="3df867f706b5028664b9e486b150c815" language="Java" description="The Jenkins Plugins Parent POM Project" kind="_e2" fqName="Workspace:sonargraph-integration" id="_e1" name="sonargraph-integration" presentationName="sonargraph-integration">
+			<rootDirectory kind="_e4" fqName="Workspace:sonargraph-integration:./src/main/java" id="_e3" name="./src/main/java" presentationName="./src/main/java">
+				<sourceElement locationOnly="true" kind="_ea" fqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:foundation:LatestFolder.java" id="_e9" name="LatestFolder.java" presentationName="./com/hello2morrow/sonargraph/integration/jenkins/foundation/LatestFolder.java"></sourceElement>
+				<sourceElement originalLocation="_e9" kind="_ea" fqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:controller:LatestFolder.java" originalFqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:foundation:LatestFolder.java" id="_eb" name="LatestFolder.java" presentationName="./com/hello2morrow/sonargraph/integration/jenkins/controller/LatestFolder.java"></sourceElement>
+				<sourceElement locationOnly="true" kind="_ea" fqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:persistence:MetricId.java" id="_ec" name="MetricId.java" presentationName="./com/hello2morrow/sonargraph/integration/jenkins/persistence/MetricId.java"></sourceElement>
+				<sourceElement originalLocation="_ec" kind="_ea" fqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:model:MetricId.java" originalFqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:persistence:MetricId.java" id="_ed" name="MetricId.java" presentationName="./com/hello2morrow/sonargraph/integration/jenkins/model/MetricId.java"></sourceElement>
+				<sourceElement locationOnly="true" kind="_ea" fqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:persistence:MetricIds.java" id="_ee" name="MetricIds.java" presentationName="./com/hello2morrow/sonargraph/integration/jenkins/persistence/MetricIds.java"></sourceElement>
+				<sourceElement originalLocation="_ee" kind="_ea" fqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:model:MetricIds.java" originalFqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:persistence:MetricIds.java" id="_ef" name="MetricIds.java" presentationName="./com/hello2morrow/sonargraph/integration/jenkins/model/MetricIds.java"></sourceElement>
+				<sourceElement kind="_ea" fqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:tool:SonargraphBuild.java" id="_f0" name="SonargraphBuild.java" presentationName="./com/hello2morrow/sonargraph/integration/jenkins/tool/SonargraphBuild.java"></sourceElement>
+				<sourceElement kind="_ea" fqName="Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:tool:SonargraphBuildInstaller.java" id="_f1" name="SonargraphBuildInstaller.java" presentationName="./com/hello2morrow/sonargraph/integration/jenkins/tool/SonargraphBuildInstaller.java"></sourceElement>
+			</rootDirectory>
+			<rootDirectory kind="_e6" fqName="Workspace:sonargraph-integration:Class|./target/classes" id="_e5" name="Class|./target/classes" presentationName="./target/classes"></rootDirectory>
+		</module>
+		<external language="Java" description="Contains external Java elements" kind="_e8" fqName="Workspace:External [Java]" id="_e7" name="External [Java]" presentationName="External [Java]"></external>
+	</workspace>
+	<systemElements ref="_0">
+		<element kind="_f3" fqName="sonargraph-integration-plugin" id="_f2" name="sonargraph-integration-plugin" presentationName="sonargraph-integration-plugin"></element>
+	</systemElements>
+	<moduleElements ref="_e1"></moduleElements>
+	<systemMetricValues elementRef="_0">
+		<levelValues levelRef="_58">
+			<metric ref="_d8">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_9e">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_a7">
+				<int ref="_f2">46</int>
+			</metric>
+			<metric ref="_ca">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_91">
+				<float ref="_f2">6.46</float>
+			</metric>
+			<metric ref="_dc">
+				<float ref="_f2">2.17</float>
+			</metric>
+			<metric ref="_67">
+				<int ref="_f2">11612</int>
+			</metric>
+			<metric ref="_70">
+				<float ref="_f2">1.99</float>
+			</metric>
+			<metric ref="_73">
+				<float ref="_f2">54.89</float>
+			</metric>
+			<metric ref="_5b">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_bd">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_ba">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_8c">
+				<int ref="_f2">44</int>
+			</metric>
+			<metric ref="_71">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_5d">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_a1">
+				<float ref="_f2">1.38</float>
+			</metric>
+			<metric ref="_8a">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_9c">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_d9">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_55">
+				<float ref="_f2">6.46</float>
+			</metric>
+			<metric ref="_b7">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_bc">
+				<int ref="_f2">46</int>
+			</metric>
+			<metric ref="_5e">
+				<float ref="_f2">1.7</float>
+			</metric>
+			<metric ref="_af">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_83">
+				<int ref="_f2">4</int>
+			</metric>
+			<metric ref="_6f">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_66">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_7f">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_6d">
+				<int ref="_f2">118</int>
+			</metric>
+			<metric ref="_64">
+				<int ref="_f2">2</int>
+			</metric>
+			<metric ref="_c4">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_cc">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_ab">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_86">
+				<int ref="_f2">184</int>
+			</metric>
+			<metric ref="_78">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_98">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_d7">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_c7">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_81">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_7b">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_c5">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_76">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_9d">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_b3">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_df">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_b6">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_93">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_92">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_a2">
+				<int ref="_f2">5</int>
+			</metric>
+			<metric ref="_74">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_8e">
+				<int ref="_f2">44</int>
+			</metric>
+			<metric ref="_94">
+				<int ref="_f2">4194</int>
+			</metric>
+			<metric ref="_8f">
+				<int ref="_f2">162</int>
+			</metric>
+			<metric ref="_b1">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_80">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_d0">
+				<int ref="_f2">1</int>
+			</metric>
+			<metric ref="_b5">
+				<int ref="_f2">2</int>
+			</metric>
+			<metric ref="_d2">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_84">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_8d">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_c1">
+				<int ref="_f2">174</int>
+			</metric>
+			<metric ref="_cf">
+				<int ref="_f2">1</int>
+			</metric>
+			<metric ref="_c3">
+				<float ref="_f2">10.48</float>
+			</metric>
+			<metric ref="_82">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_d4">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_99">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_95">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_ad">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_75">
+				<int ref="_f2">132</int>
+			</metric>
+			<metric ref="_bf">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_e0">
+				<int ref="_f2">5916</int>
+			</metric>
+			<metric ref="_77">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_85">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_87">
+				<float ref="_f2">4.39</float>
+			</metric>
+			<metric ref="_a4">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_7d">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_be">
+				<int ref="_f2">46</int>
+			</metric>
+			<metric ref="_cb">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_a8">
+				<int ref="_f2">46</int>
+			</metric>
+			<metric ref="_a6">
+				<int ref="_f2">1</int>
+			</metric>
+			<metric ref="_b2">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_c6">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_6e">
+				<int ref="_f2">3247</int>
+			</metric>
+			<metric ref="_a0">
+				<int ref="_f2">184</int>
+			</metric>
+			<metric ref="_60">
+				<float ref="_f2">6.08</float>
+			</metric>
+			<metric ref="_da">
+				<float ref="_f2">4.35</float>
+			</metric>
+			<metric ref="_89">
+				<float ref="_f2">4.39</float>
+			</metric>
+			<metric ref="_a3">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_69">
+				<int ref="_f2">297</int>
+			</metric>
+			<metric ref="_ce">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_8b">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_d5">
+				<float ref="_f2">14.04</float>
+			</metric>
+			<metric ref="_c9">
+				<int ref="_f2">54</int>
+			</metric>
+			<metric ref="_ae">
+				<int ref="_f2">2</int>
+			</metric>
+			<metric ref="_b0">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_ac">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_db">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_c0">
+				<int ref="_f2">1663</int>
+			</metric>
+			<metric ref="_88">
+				<int ref="_f2">184</int>
+			</metric>
+			<metric ref="_de">
+				<int ref="_f2">12</int>
+			</metric>
+			<metric ref="_b8">
+				<int ref="_f2">5</int>
+			</metric>
+			<metric ref="_72">
+				<float ref="_f2">1.99</float>
+			</metric>
+			<metric ref="_b9">
+				<int ref="_f2">5</int>
+			</metric>
+			<metric ref="_d3">
+				<int ref="_f2">2</int>
+			</metric>
+			<metric ref="_9b">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_79">
+				<int ref="_f2">684</int>
+			</metric>
+			<metric ref="_9f">
+				<float ref="_f2">83.73</float>
+			</metric>
+			<metric ref="_c8">
+				<int ref="_f2">1661</int>
+			</metric>
+			<metric ref="_b4">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_aa">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_cd">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_6a">
+				<int ref="_f2">118</int>
+			</metric>
+			<metric ref="_96">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_6c">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_7a">
+				<int ref="_f2">1</int>
+			</metric>
+			<metric ref="_7e">
+				<float ref="_f2">0.0</float>
+			</metric>
+			<metric ref="_97">
+				<int ref="_f2">4194</int>
+			</metric>
+			<metric ref="_bb">
+				<int ref="_f2">1</int>
+			</metric>
+			<metric ref="_a9">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_dd">
+				<int ref="_f2">2285</int>
+			</metric>
+			<metric ref="_a5">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_9a">
+				<int ref="_f2">0</int>
+			</metric>
+			<metric ref="_d1">
+				<int ref="_f2">4</int>
+			</metric>
+			<metric ref="_90">
+				<int ref="_f2">0</int>
+			</metric>
+		</levelValues>
+	</systemMetricValues>
+	<moduleMetricValues elementRef="_e1">
+		<levelValues levelRef="_59">
+			<metric ref="_85">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_92">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_ab">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_b7">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_ca">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_cb">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_cc">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_cd">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_6a">
+				<int ref="_e1">118</int>
+			</metric>
+			<metric ref="_6c">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_6d">
+				<int ref="_e1">118</int>
+			</metric>
+			<metric ref="_6e">
+				<int ref="_e1">3247</int>
+			</metric>
+			<metric ref="_6f">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_70">
+				<float ref="_e1">1.99</float>
+			</metric>
+			<metric ref="_71">
+				<float ref="_e1">0.0</float>
+			</metric>
+			<metric ref="_72">
+				<float ref="_e1">1.99</float>
+			</metric>
+			<metric ref="_73">
+				<float ref="_e1">54.89</float>
+			</metric>
+			<metric ref="_74">
+				<float ref="_e1">0.0</float>
+			</metric>
+			<metric ref="_8c">
+				<int ref="_e1">44</int>
+			</metric>
+			<metric ref="_8d">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_8e">
+				<int ref="_e1">44</int>
+			</metric>
+			<metric ref="_8f">
+				<int ref="_e1">162</int>
+			</metric>
+			<metric ref="_90">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_cf">
+				<int ref="_e1">1</int>
+			</metric>
+			<metric ref="_a3">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_d0">
+				<int ref="_e1">1</int>
+			</metric>
+			<metric ref="_d1">
+				<int ref="_e1">4</int>
+			</metric>
+			<metric ref="_d2">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_5e">
+				<float ref="_e1">1.7</float>
+			</metric>
+			<metric ref="_62">
+				<float ref="_e1">98.26</float>
+			</metric>
+			<metric ref="_7a">
+				<int ref="_e1">1</int>
+			</metric>
+			<metric ref="_7b">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_93">
+				<float ref="_e1">0.0</float>
+			</metric>
+			<metric ref="_d3">
+				<int ref="_e1">2</int>
+			</metric>
+			<metric ref="_d4">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_de">
+				<int ref="_e1">12</int>
+			</metric>
+			<metric ref="_df">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_55">
+				<float ref="_e1">6.46</float>
+			</metric>
+			<metric ref="_69">
+				<int ref="_e1">297</int>
+			</metric>
+			<metric ref="_9f">
+				<float ref="_e1">83.73</float>
+			</metric>
+			<metric ref="_a1">
+				<float ref="_e1">1.38</float>
+			</metric>
+			<metric ref="_d5">
+				<float ref="_e1">14.04</float>
+			</metric>
+			<metric ref="_64">
+				<int ref="_e1">2</int>
+			</metric>
+			<metric ref="_66">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_83">
+				<int ref="_e1">4</int>
+			</metric>
+			<metric ref="_84">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_ce">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_a6">
+				<int ref="_e1">1</int>
+			</metric>
+			<metric ref="_ac">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_ad">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_ae">
+				<int ref="_e1">2</int>
+			</metric>
+			<metric ref="_af">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_b5">
+				<int ref="_e1">2</int>
+			</metric>
+			<metric ref="_b6">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_da">
+				<float ref="_e1">4.35</float>
+			</metric>
+			<metric ref="_db">
+				<float ref="_e1">0.0</float>
+			</metric>
+			<metric ref="_75">
+				<int ref="_e1">132</int>
+			</metric>
+			<metric ref="_79">
+				<int ref="_e1">684</int>
+			</metric>
+			<metric ref="_94">
+				<int ref="_e1">4194</int>
+			</metric>
+			<metric ref="_97">
+				<int ref="_e1">4194</int>
+			</metric>
+			<metric ref="_a7">
+				<int ref="_e1">46</int>
+			</metric>
+			<metric ref="_a8">
+				<int ref="_e1">46</int>
+			</metric>
+			<metric ref="_a9">
+				<int ref="_e1">0</int>
+			</metric>
+			<metric ref="_b8">
+				<int ref="_e1">5</int>
+			</metric>
+			<metric ref="_b9">
+				<int ref="_e1">5</int>
+			</metric>
+			<metric ref="_c0">
+				<int ref="_e1">1663</int>
+			</metric>
+			<metric ref="_c9">
+				<int ref="_e1">54</int>
+			</metric>
+			<metric ref="_dd">
+				<int ref="_e1">2285</int>
+			</metric>
+			<metric ref="_e0">
+				<int ref="_e1">5916</int>
+			</metric>
+			<metric ref="_60">
+				<float ref="_e1">6.08</float>
+			</metric>
+		</levelValues>
+	</moduleMetricValues>
+	<issues modelName="./Modifiable.vm" numberOfIssues="4" numberOfUnresolvedIssues="0">
+		<elementIssues>
+			<issue affectedElement="_ed" id="_f4" type="_54" provider="_52" description="Move to 'sonargraph-integration:./src/main/java/com.hello2morrow.sonargraph.integration.jenkins.model'"></issue>
+			<issue affectedElement="_ef" id="_f5" type="_54" provider="_52" description="Move to 'sonargraph-integration:./src/main/java/com.hello2morrow.sonargraph.integration.jenkins.model'"></issue>
+			<issue affectedElement="_eb" id="_f6" type="_54" provider="_52" description="Move to 'sonargraph-integration:./src/main/java/com.hello2morrow.sonargraph.integration.jenkins.controller'"></issue>
+			<cycleGroups analyzerRef="_2a">
+				<cycleGroup numberOfCyclicElements="2" name="Component cycle group 1.1" fqName="Files:BaseDirectory:SystemDirectory:Analyzers:ComponentCyclesModule:Result:0accb43a05fa213884564880bdca68bc" structuralDebtIndex="12" componentDependenciesToRemove="1" parserDependenciesToRemove="2" scope="_e1" id="_f7" type="_53" provider="_52" description="2 cyclic components" severity="Warning">
+					<element ref="_f0"></element>
+					<element ref="_f1"></element>
+				</cycleGroup>
+			</cycleGroups>
+		</elementIssues>
+	</issues>
+	<resolutions numberOfResolutions="4">
+		<resolution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:xsdIgnore" type="Ignore" prio="None" fqName="Files:BaseDirectory:SystemDirectory:Models:Parser:Modifiable.vm:1829298183" issueIds="_f7" description="Given by base classes" information="Component Cycle Group" assignee="" date="2020-07-07T12:10:13.394-05:00" applicable="true" matchingElementsCount="1" task="false" refactoring="false" descriptor="">
+			<elementPattern type="FullyQualifiedName">Files:BaseDirectory:SystemDirectory:Analyzers:ComponentCyclesModule:Result:0accb43a05fa213884564880bdca68bc|b0a1ba065a07c29d5999cf33b8b8b83b</elementPattern>
+			<matching info="Java Module 'sonargraph-integration' contains 2 cyclic components">
+				<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:tool:SonargraphBuild.java</elementPattern>
+				<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:tool:SonargraphBuildInstaller.java</elementPattern>
+			</matching>
+		</resolution>
+		<resolution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:xsdMoveRefactoring" targetRootDirectoryFqName="Workspace:sonargraph-integration:./src/main/java" moveToParentName="com.hello2morrow.sonargraph.integration.jenkins.controller" elementKind="Component" status="Applicable" numberOfPotentiallyDoneElements="0" type="Refactoring" prio="Medium" fqName="Files:BaseDirectory:SystemDirectory:Models:Parser:Modifiable.vm:898828219" issueIds="_f6" description="" information="" assignee="" date="2020-07-07T12:13:58.744-05:00" applicable="true" matchingElementsCount="1" task="true" refactoring="true" descriptor="10d58b26d90ba3874aaf25c26fa72fdc">
+			<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:foundation:LatestFolder.java</elementPattern>
+		</resolution>
+		<resolution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:xsdMoveRefactoring" targetRootDirectoryFqName="Workspace:sonargraph-integration:./src/main/java" moveToParentName="com.hello2morrow.sonargraph.integration.jenkins.model" elementKind="Component" status="Applicable" numberOfPotentiallyDoneElements="0" type="Refactoring" prio="Medium" fqName="Files:BaseDirectory:SystemDirectory:Models:Parser:Modifiable.vm:70691349" issueIds="_f4" description="" information="" assignee="" date="2020-07-07T12:21:57.308-05:00" applicable="true" matchingElementsCount="1" task="true" refactoring="true" descriptor="ecd8ba4a81e28c6bbb492120e0073f9e">
+			<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:persistence:MetricId.java</elementPattern>
+		</resolution>
+		<resolution xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:xsdMoveRefactoring" targetRootDirectoryFqName="Workspace:sonargraph-integration:./src/main/java" moveToParentName="com.hello2morrow.sonargraph.integration.jenkins.model" elementKind="Component" status="Applicable" numberOfPotentiallyDoneElements="0" type="Refactoring" prio="Medium" fqName="Files:BaseDirectory:SystemDirectory:Models:Parser:Modifiable.vm:1452747175" issueIds="_f5" description="" information="" assignee="" date="2020-07-07T12:22:50.054-05:00" applicable="true" matchingElementsCount="1" task="true" refactoring="true" descriptor="ff39bdfc9d8a7b86e4c5ab0cc6f8da23">
+			<elementPattern type="FullyQualifiedName">Workspace:sonargraph-integration:./src/main/java:com:hello2morrow:sonargraph:integration:jenkins:persistence:MetricIds.java</elementPattern>
+		</resolution>
+	</resolutions>
+</ns3:report>

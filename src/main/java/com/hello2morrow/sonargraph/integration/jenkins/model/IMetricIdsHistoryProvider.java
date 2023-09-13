@@ -20,7 +20,6 @@ package com.hello2morrow.sonargraph.integration.jenkins.model;
 import java.io.PrintStream;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
-import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 
 public interface IMetricIdsHistoryProvider
 {

@@ -15,22 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hello2morrow.sonargraph.integration.jenkins.foundation;
+package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import java.io.File;
 
-import com.hello2morrow.sonargraph.integration.jenkins.controller.ConfigParameters;
-
 import hudson.model.Job;
 
-public final class LatestFolder
+final class LatestFolder
 {
     private LatestFolder()
     {
-
+        super();
     }
 
-    public static File getFolder(Job<?, ?> job)
+    static File getFolder(Job<?, ?> job)
     {
         final File jobRootFolder = job.getRootDir();
         final File reportHistoryFolder = new File(jobRootFolder, ConfigParameters.REPORT_HISTORY_FOLDER.getValue());
@@ -38,32 +36,31 @@ public final class LatestFolder
         return latestFolder;
     }
 
-    public static File getReport(Job<?, ?> job)
+    static File getReport(Job<?, ?> job)
     {
         final File latestFolder = getFolder(job);
         final String reportFileName = ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue() + ".html";
         final File reportFile = new File(latestFolder, reportFileName);
         return reportFile;
     }
-    
-    public static boolean hasReport(Job<?, ?> job)
+
+    static boolean hasReport(Job<?, ?> job)
     {
         final File reportFile = getReport(job);
         return reportFile.exists() && reportFile.isFile() && reportFile.canRead();
     }
-    
-    public static File getDiffReport(Job<?, ?> job)
+
+    static File getDiffReport(Job<?, ?> job)
     {
         final File latestFolder = getFolder(job);
         final String reportFileName = ConfigParameters.SONARGRAPH_DIFF_FILE_NAME.getValue() + ".html";
         final File reportFile = new File(latestFolder, reportFileName);
         return reportFile;
     }
-    
-    public static boolean hasDiffReport(Job<?, ?> job)
+
+    static boolean hasDiffReport(Job<?, ?> job)
     {
         final File reportFile = getDiffReport(job);
         return reportFile.exists() && reportFile.isFile() && reportFile.canRead();
     }
-
 }

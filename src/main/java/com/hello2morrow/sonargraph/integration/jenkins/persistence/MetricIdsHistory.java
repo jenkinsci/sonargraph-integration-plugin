@@ -29,6 +29,7 @@ import com.hello2morrow.sonargraph.integration.access.foundation.ResultCause;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricIdsHistoryProvider;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 
 public class MetricIdsHistory implements IMetricIdsHistoryProvider
 {

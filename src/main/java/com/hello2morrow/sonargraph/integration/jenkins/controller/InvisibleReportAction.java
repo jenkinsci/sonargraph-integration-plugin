@@ -25,8 +25,6 @@ import javax.servlet.ServletException;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import com.hello2morrow.sonargraph.integration.jenkins.foundation.LatestFolder;
-
 import hudson.FilePath;
 import hudson.model.Job;
 

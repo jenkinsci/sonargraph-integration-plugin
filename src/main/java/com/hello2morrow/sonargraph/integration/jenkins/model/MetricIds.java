@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hello2morrow.sonargraph.integration.jenkins.persistence;
+package com.hello2morrow.sonargraph.integration.jenkins.model;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -38,7 +38,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.util.JSONStringer;
 
-public class MetricIds implements Serializable
+public final class MetricIds implements Serializable
 {
     private static final long serialVersionUID = -5993873338543821075L;
     private final Map<String, MetricId> metricIds = new HashMap<>();
@@ -52,15 +52,15 @@ public class MetricIds implements Serializable
     {
         return Collections.unmodifiableMap(metricIds);
     }
-    
+
     public Map<String, MetricId> getMetricIds(String language)
     {
         final Map<String, MetricId> result = new HashMap<>();
-        for(String next : metricIds.keySet())
+        for (String next : metricIds.keySet())
         {
             final MetricId nextMetric = metricIds.get(next);
             final String nextProviderId = nextMetric.getProviderId();
-            if(nextProviderId.equals(language) || nextProviderId.equals("Core") || nextProviderId.startsWith("./"))
+            if (nextProviderId.equals(language) || nextProviderId.equals("Core") || nextProviderId.startsWith("./"))
             {
                 result.put(next, nextMetric);
             }
@@ -128,8 +128,8 @@ public class MetricIds implements Serializable
             for (final Object next : jsonCollection)
             {
                 final DynaBean dynaBean = (DynaBean) next;
-                final MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("providerId"), (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"),
-                        (List<String>) dynaBean.get("categories"));
+                final MetricId metricId = new MetricId((String) dynaBean.get("id"), (String) dynaBean.get("providerId"),
+                        (String) dynaBean.get("name"), (Boolean) dynaBean.get("isFloat"), (List<String>) dynaBean.get("categories"));
                 result.addMetricId(metricId);
             }
         }
@@ -198,5 +198,4 @@ public class MetricIds implements Serializable
         }
         return this;
     }
-
 }

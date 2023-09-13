@@ -21,9 +21,14 @@ import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SonargraphLogger
+public final class SonargraphLogger
 {
     public static final Logger INSTANCE = Logger.getLogger("com.hello2morrow.sonargraph.integration.jenkins");
+
+    private SonargraphLogger()
+    {
+        super();
+    }
 
     public static void logToConsoleOutput(final PrintStream logger, final Level level, final String message, final Exception ex)
     {
@@ -35,10 +40,5 @@ public class SonargraphLogger
         }
         logger.println();
         INSTANCE.log(level, message);
-    }
-
-    private SonargraphLogger()
-    {
-
     }
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<analyzerConfiguration version="13.0.2.815" analyzer="SystemDiff">
+	<stringEntry value="./Baselines/baseline.xml" name="baselinePath"></stringEntry>
+	<booleanEntry value="true" name="enabled"></booleanEntry>
+</analyzerConfiguration>

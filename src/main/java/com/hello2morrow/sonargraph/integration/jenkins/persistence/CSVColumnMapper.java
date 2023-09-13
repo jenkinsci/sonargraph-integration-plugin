@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
+import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 
 /**
  * Maps column names to index of column.
