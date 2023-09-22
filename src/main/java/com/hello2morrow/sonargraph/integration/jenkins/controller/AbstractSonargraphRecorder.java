@@ -51,59 +51,59 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     private String emptyWorkspaceAction = DEFAULT_ACTION;
     private String qualityGateAction = DEFAULT_ACTION;
 
-    public String getArchitectureViolationsAction()
+    public final String getArchitectureViolationsAction()
     {
         return architectureViolationsAction;
     }
 
-    public String getUnassignedTypesAction()
+    public final String getUnassignedTypesAction()
     {
         return unassignedTypesAction;
     }
 
-    public String getCyclicElementsAction()
+    public final String getCyclicElementsAction()
     {
         return cyclicElementsAction;
     }
 
-    public String getThresholdViolationsAction()
+    public final String getThresholdViolationsAction()
     {
         return thresholdViolationsAction;
     }
 
-    public String getArchitectureWarningsAction()
+    public final String getArchitectureWarningsAction()
     {
         return architectureWarningsAction;
     }
 
-    public String getWorkspaceWarningsAction()
+    public final String getWorkspaceWarningsAction()
     {
         return workspaceWarningsAction;
     }
 
-    public String getWorkItemsAction()
+    public final String getWorkItemsAction()
     {
         return workItemsAction;
     }
 
-    public String getEmptyWorkspaceAction()
+    public final String getEmptyWorkspaceAction()
     {
         return emptyWorkspaceAction;
     }
 
-    public String getQualityGateAction()
+    public final String getQualityGateAction()
     {
         return qualityGateAction;
     }
 
     @DataBoundSetter
-    public void setArchitectureViolationsAction(final String architectureViolationsAction)
+    public final void setArchitectureViolationsAction(final String architectureViolationsAction)
     {
         this.architectureViolationsAction = architectureViolationsAction;
     }
 
     @DataBoundSetter
-    public void setUnassignedTypesAction(final String unassignedTypesAction)
+    public final void setUnassignedTypesAction(final String unassignedTypesAction)
     {
         this.unassignedTypesAction = unassignedTypesAction;
     }
@@ -115,43 +115,43 @@ public abstract class AbstractSonargraphRecorder extends Recorder
     }
 
     @DataBoundSetter
-    public void setThresholdViolationsAction(final String thresholdViolationsAction)
+    public final void setThresholdViolationsAction(final String thresholdViolationsAction)
     {
         this.thresholdViolationsAction = thresholdViolationsAction;
     }
 
     @DataBoundSetter
-    public void setArchitectureWarningsAction(final String architectureWarningsAction)
+    public final void setArchitectureWarningsAction(final String architectureWarningsAction)
     {
         this.architectureWarningsAction = architectureWarningsAction;
     }
 
     @DataBoundSetter
-    public void setWorkspaceWarningsAction(final String workspaceWarningsAction)
+    public final void setWorkspaceWarningsAction(final String workspaceWarningsAction)
     {
         this.workspaceWarningsAction = workspaceWarningsAction;
     }
 
     @DataBoundSetter
-    public void setWorkItemsAction(final String workItemsAction)
+    public final void setWorkItemsAction(final String workItemsAction)
     {
         this.workItemsAction = workItemsAction;
     }
 
     @DataBoundSetter
-    public void setEmptyWorkspaceAction(final String emptyWorkspaceAction)
+    public final void setEmptyWorkspaceAction(final String emptyWorkspaceAction)
     {
         this.emptyWorkspaceAction = emptyWorkspaceAction;
     }
 
     @DataBoundSetter
-    public void setQualityGateAction(final String qualityGateAction)
+    public final void setQualityGateAction(final String qualityGateAction)
     {
         this.qualityGateAction = qualityGateAction;
     }
 
     @Override
-    public BuildStepMonitor getRequiredMonitorService()
+    public final BuildStepMonitor getRequiredMonitorService()
     {
         return BuildStepMonitor.NONE;
     }
@@ -219,7 +219,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
         return true;
     }
 
-    protected void logExecutionStart(final AbstractBuild<?, ?> build, final TaskListener listener,
+    protected final void logExecutionStart(final AbstractBuild<?, ?> build, final TaskListener listener,
             final Class<? extends AbstractSonargraphRecorder> recorderClazz)
     {
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,
@@ -229,7 +229,7 @@ public abstract class AbstractSonargraphRecorder extends Recorder
                 null);
     }
 
-    protected void logExecutionStart(final Run<?, ?> run, final TaskListener listener,
+    protected final void logExecutionStart(final Run<?, ?> run, final TaskListener listener,
             final Class<? extends AbstractSonargraphRecorder> recorderClazz)
     {
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO,

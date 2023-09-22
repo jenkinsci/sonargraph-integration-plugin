@@ -37,7 +37,6 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
-import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphUtil;
 import com.hello2morrow.sonargraph.integration.jenkins.model.MetricId;
 import com.hello2morrow.sonargraph.integration.jenkins.model.MetricIds;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ConfigurationFileWriter;
@@ -73,17 +72,26 @@ import net.sf.json.JSONObject;
 public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
         implements IReportPathProvider, SimpleBuildStep, SimpleBuildStep.LastBuildAction, RunAction2, Serializable
 {
-    private static final long serialVersionUID = -4080719672719164118L;
-
-    private static final String ORG_ECLIPSE_OSGI_JAR = "org.eclipse.osgi_*.jar";
-    private static final String SONARGRAPH_BUILD_CLIENT_JAR = "com.hello2morrow.sonargraph.build.client_*.jar";
-    private static final String SONARGRAPH_BUILD_MAIN_CLASS = "com.hello2morrow.sonargraph.build.client.SonargraphBuildRunner";
-
     public static final int MAX_PORT_NUMBER = 65535;
     public static final String DO_NOT_SPLIT = "-1";
 
-    private transient Run<?, ?> run;
+    public static VersionNumber getVersionFromJarName(String jarName)
+    {
+        int first = jarName.indexOf("_");
+        int second = jarName.indexOf("_", first + 1);
+        if (first != -1 && second != -1)
+        {
+            final String version = jarName.substring(first + 1, second);
+            return new VersionNumber(version);
+        }
+        return new VersionNumber("0.0");
+    }
 
+    private static final long serialVersionUID = -4080719672719164118L;
+    private static final String ORG_ECLIPSE_OSGI_JAR = "org.eclipse.osgi_*.jar";
+    private static final String SONARGRAPH_BUILD_CLIENT_JAR = "com.hello2morrow.sonargraph.build.client_*.jar";
+    private static final String SONARGRAPH_BUILD_MAIN_CLASS = "com.hello2morrow.sonargraph.build.client.SonargraphBuildRunner";
+    private transient Run<?, ?> run;
     private String systemDirectory = "";
     private String qualityModelFile = "";
     private String virtualModel = DescriptorImpl.DEFAULT_VIRTUAL_MODEL;
@@ -93,12 +101,10 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
     private String chartConfiguration = DescriptorImpl.DEFAULT_CHART_CONFIGURATION;
     private List<Metric> metrics;
     private String metaDataFile = "";
-
     private boolean languageJava;
     private boolean languageCSharp;
     private boolean languageCPlusPlus;
     private boolean languagePython;
-
     private String sonargraphBuildJDK = "";
     private String sonargraphBuildVersion = "";
     private String activationCode = "";
@@ -108,7 +114,6 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
     private String snapshotFileName = "";
     private String logLevel = DescriptorImpl.DEFAULT_LOG_LEVEL;
     private String logFile = DescriptorImpl.DEFAULT_LOG_FILE;
-
     private boolean skip;
     private boolean useHttpProxy = true;
 
@@ -354,6 +359,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
     private boolean callSonargraphBuild(final Run<?, ?> build, final FilePath workspace, final Launcher launcher, final TaskListener listener)
             throws IOException, InterruptedException
     {
+        assert listener != null : "Parameter 'listener' of method 'callSonargraphBuild' must not be null";
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Calling Sonargraph Build.", null);
 
         final Jenkins jenkins = Jenkins.getInstanceOrNull();
@@ -456,7 +462,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
             return false;
         }
 
-        final VersionNumber clientVersion = SonargraphUtil.getVersionFromJarName(clientJar.getName());
+        final VersionNumber clientVersion = getVersionFromJarName(clientJar.getName());
         SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "SonargraphBuild client jar version is " + clientVersion, null);
 
         // local configuration file, always on master
@@ -544,6 +550,9 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
         final String sonargraphBuildCommand = handleBlanksForConsoleCommand(javaExe.getRemote()) + " -ea -cp "
                 + handleBlanksForConsoleCommand(clientJar.getRemote()) + classpathSeparator + handleBlanksForConsoleCommand(osgiJar.getRemote()) + " "
                 + SONARGRAPH_BUILD_MAIN_CLASS + " " + configurationFileSlave.getRemote();
+
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Call SonargraphBuild with command:\n" + sonargraphBuildCommand, null);
+        SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.INFO, "Call SonargraphBuild with parameters:\n" + parameters, null);
 
         ProcStarter procStarter = launcher.new ProcStarter();
         procStarter.cmdAsSingleString(sonargraphBuildCommand);
