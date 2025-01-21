@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
-		<groupId>org.jenkins-ci.plugins</groupId>
-		<artifactId>plugin</artifactId>
-		<version>3.50</version>
+    	<groupId>org.jenkins-ci.plugins</groupId>
+    	<artifactId>plugin</artifactId>
+    	<version>4.85</version>
+    	<relativePath/>
 	</parent>
 
 	<artifactId>sonargraph-integration</artifactId>
@@ -13,11 +13,7 @@
 	<packaging>hpi</packaging>
 
 	<properties>
-		<!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-		<jenkins.baseline>2.222</jenkins.baseline>
-		<jenkins.version>${jenkins.baseline}.4</jenkins.version>
-		<slf4j.version>1.7.28</slf4j.version>
-		<java.level>8</java.level>
+    	<jenkins.version>2.440.3</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<animal.sniffer.skip>true</animal.sniffer.skip>
 		<spotbugs.skip>true</spotbugs.skip>
@@ -47,17 +43,15 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-
 	<dependencyManagement>
 		<dependencies>
-			<!-- 'bill of materials' to get correct versions -->
-			<dependency>
-				<groupId>io.jenkins.tools.bom</groupId>
-				<artifactId>bom-${jenkins.baseline}.x</artifactId>
-				<version>11</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
+     		<dependency>
+        		<groupId>io.jenkins.tools.bom</groupId>
+        		<artifactId>bom-2.440.x</artifactId>
+        		<version>3193.v330d8248d39e</version>
+        		<type>pom</type>
+        		<scope>import</scope>
+      		</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -65,7 +59,7 @@
 		<dependency>
 			<groupId>com.hello2morrow</groupId>
 			<artifactId>sonargraph-integration-access</artifactId>
-			<version>5.0.0</version>
+			<version>6.1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
@@ -86,23 +80,32 @@
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
+			<!-- 
 			<version>1.0.19</version>
+			-->
 		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci</groupId>
 			<artifactId>symbol-annotation</artifactId>
+			<!-- 
+			<version>1.17</version>
+			-->
 		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci</groupId>
 			<artifactId>annotation-indexer</artifactId>
+					<!-- 
 			<version>1.12</version>
+			-->
 		</dependency>
 
 		<!-- for testing -->
 		<dependency>
 			<groupId>org.jenkins-ci.main</groupId>
 			<artifactId>maven-plugin</artifactId>
+			<!--
 			<version>3.6</version>
+			-->
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -116,7 +119,7 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		
 		<!-- to have pipeline jobs when running jenkins with hpi:run -->
 		<dependency>
 			<groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -153,29 +156,7 @@
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>git</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- to make enforcer rule RequireUpperBoundDeps happy -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 
 	<build>
@@ -198,7 +179,7 @@
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>3.0</version>
+				<version>4.6</version>
 				<configuration>
 					<header>license-header.txt</header>
 					<mapping>
@@ -220,8 +201,6 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
 					<debuglevel>lines,vars,source</debuglevel>
 				</configuration>
 			</plugin>
@@ -229,7 +208,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
-					<source>8</source>
 				</configuration>
 			</plugin>
 		</plugins>
