@@ -4,7 +4,7 @@
     	<groupId>org.jenkins-ci.plugins</groupId>
     	<artifactId>plugin</artifactId>
     	<version>4.85</version>
-    	<relativePath/>
+    	<relativePath />
 	</parent>
 
 	<artifactId>sonargraph-integration</artifactId>
@@ -13,7 +13,9 @@
 	<packaging>hpi</packaging>
 
 	<properties>
-    	<jenkins.version>2.440.3</jenkins.version>
+    	<!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+    	<jenkins.baseline>2.440</jenkins.baseline>
+    	<jenkins.version>${jenkins.baseline}.3</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<animal.sniffer.skip>true</animal.sniffer.skip>
 		<spotbugs.skip>true</spotbugs.skip>
@@ -47,8 +49,8 @@
 		<dependencies>
      		<dependency>
         		<groupId>io.jenkins.tools.bom</groupId>
-        		<artifactId>bom-2.440.x</artifactId>
-        		<version>3193.v330d8248d39e</version>
+        		<artifactId>bom-${jenkins.baseline}.x</artifactId>
+        		<version>3435.v238d66a_043fb_</version>
         		<type>pom</type>
         		<scope>import</scope>
       		</dependency>
