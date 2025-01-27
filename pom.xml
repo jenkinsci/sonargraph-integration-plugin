@@ -3,7 +3,7 @@
 	<parent>
     	<groupId>org.jenkins-ci.plugins</groupId>
     	<artifactId>plugin</artifactId>
-    	<version>4.85</version>
+    	<version>4.88</version>
     	<relativePath />
 	</parent>
 
@@ -14,7 +14,7 @@
 
 	<properties>
     	<!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-    	<jenkins.baseline>2.440</jenkins.baseline>
+    	<jenkins.baseline>2.462</jenkins.baseline>
     	<jenkins.version>${jenkins.baseline}.3</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<animal.sniffer.skip>true</animal.sniffer.skip>
@@ -50,7 +50,7 @@
      		<dependency>
         		<groupId>io.jenkins.tools.bom</groupId>
         		<artifactId>bom-${jenkins.baseline}.x</artifactId>
-        		<version>3435.v238d66a_043fb_</version>
+        		<version>4023.va_eeb_b_4e45f07</version>
         		<type>pom</type>
         		<scope>import</scope>
       		</dependency>
