@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIds;
 
@@ -67,7 +67,7 @@ public class SonargraphIntegrationAction implements ProminentProjectAction
      * Method that generates the chart and adds it to the response object to allow jenkins to display it. It is called in
      * SonargraphChartAction/index.jelly in the src attribute of an img tag.
      */
-    public void doGetPlot(final StaplerRequest req, final StaplerResponse rsp)
+    public void doGetPlot(final StaplerRequest2 req, final StaplerResponse2 rsp)
     {
         Plotter.doGetPlot(job, metaData, req, rsp);
     }
