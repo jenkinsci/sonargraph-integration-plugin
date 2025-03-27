@@ -50,7 +50,7 @@
      		<dependency>
         		<groupId>io.jenkins.tools.bom</groupId>
         		<artifactId>bom-${jenkins.baseline}.x</artifactId>
-        		<version>4023.va_eeb_b_4e45f07</version>
+        		<version>4228.v0a_71308d905b_</version>
         		<type>pom</type>
         		<scope>import</scope>
       		</dependency>
@@ -233,11 +233,4 @@
 			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
 		</license>
 	</licenses>
-
-	<developers>
-		<developer>
-			<id>dietmarmenges</id>
-			<name>Dietmar Menges</name>
-		</developer>
-	</developers>
 </project>
