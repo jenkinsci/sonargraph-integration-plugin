@@ -20,10 +20,10 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 import java.io.File;
 import java.io.IOException;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.LatestFolder;
 
@@ -52,7 +52,7 @@ public class InvisibleReportAction extends InvisibleFromSidebarAction
     }
 
     @Override
-    public void doDynamic(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException
+    public void doDynamic(final StaplerRequest2 req, final StaplerResponse2 rsp) throws IOException, ServletException
     {
         final File latestFolder =  LatestFolder.getFolder(getJob());
         enableDirectoryBrowserSupport(req, rsp, new FilePath(latestFolder));

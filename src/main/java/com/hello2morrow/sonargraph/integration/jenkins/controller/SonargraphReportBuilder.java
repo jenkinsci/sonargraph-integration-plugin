@@ -33,7 +33,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
@@ -862,7 +862,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
         }
 
         @Override
-        public boolean configure(final StaplerRequest req, JSONObject json) throws FormException
+        public boolean configure(final StaplerRequest2 req, JSONObject json) throws FormException
         {
             json = json.getJSONObject("sonargraph");
             setLicenseServerHost(json.getString("licenseServerHost"));
