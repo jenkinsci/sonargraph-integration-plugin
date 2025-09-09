@@ -17,7 +17,7 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.foundation;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,17 +26,17 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class RecorderLoggerTest
+class RecorderLoggerTest
 {
     private static final String dummyLogFileName = "src/test/resources/dummy.log";
     private final File dummyLogFile = new File(dummyLogFileName);
 
-    @Before
-    public void before() throws IOException
+    @BeforeEach
+    void before() throws IOException
     {
         removeFiles();
         if (!dummyLogFile.exists())
@@ -46,8 +46,8 @@ public class RecorderLoggerTest
         }
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         removeFiles();
     }
@@ -61,7 +61,7 @@ public class RecorderLoggerTest
     }
 
     @Test
-    public void testLogToConsoleOutput() throws IOException
+    void testLogToConsoleOutput() throws IOException
     {
         final PrintStream logger = new PrintStream(dummyLogFileName);
         final String testText = "test Text";
