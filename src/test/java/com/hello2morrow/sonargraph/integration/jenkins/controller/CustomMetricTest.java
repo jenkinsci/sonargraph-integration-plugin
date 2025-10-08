@@ -17,17 +17,16 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-import org.junit.Test;
-
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHistory;
 
 import hudson.maven.MavenModuleSetBuild;
+import org.junit.jupiter.api.Test;
 
-public class CustomMetricTest extends JenkinsJobBasedTest
+class CustomMetricTest extends JenkinsJobBasedTest
 {
 
     @Test
-    public void testSameReportDoesNotAddMetricId() throws Exception
+    void testSameReportDoesNotAddMetricId() throws Exception
     {
         mavenProject.renameTo("testSameReportDoesNotAddMetricId");
         // 1st build

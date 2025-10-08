@@ -17,24 +17,23 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.hello2morrow.sonargraph.integration.jenkins.controller.ConfigParameters;
 
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 
-public class ReportHistoryFileManagerTest
+class ReportHistoryFileManagerTest
 {
     private static final String archReportHistoryPath = "src/test/resources/temp";
     private static final String buildReportDirectoryPath = "src/test/resources/report";
@@ -42,8 +41,8 @@ public class ReportHistoryFileManagerTest
     private final File dummyLogFile = new File(dummyLogFileName);
     private PrintStream m_logger;
 
-    @Before
-    public void before() throws IOException
+    @BeforeEach
+    void before() throws Exception
     {
         removeFiles();
         if (!dummyLogFile.exists())
@@ -53,8 +52,8 @@ public class ReportHistoryFileManagerTest
         m_logger = new PrintStream(dummyLogFileName);
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         if (m_logger != null)
         {
@@ -94,7 +93,7 @@ public class ReportHistoryFileManagerTest
     }
 
     @Test
-    public void testStoreGeneratedReportDirectory() throws IOException, InterruptedException
+    void testStoreGeneratedReportDirectory() throws IOException, InterruptedException
     {
         final ReportHistoryFileManager rhfm = new ReportHistoryFileManager(new FilePath((VirtualChannel) null, archReportHistoryPath),
                 "sonargraphReportHistory", ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue(), m_logger);
@@ -110,9 +109,9 @@ public class ReportHistoryFileManagerTest
         }
         buildAndCheckLatest(rhfm, buildReportDirectory, 1);
     }
-    
+
     @Test
-    public void testLatestAfterStoreGeneratedReportDirectory() throws IOException, InterruptedException
+    void testLatestAfterStoreGeneratedReportDirectory() throws IOException, InterruptedException
     {
         final ReportHistoryFileManager rhfm = new ReportHistoryFileManager(new FilePath((VirtualChannel) null, archReportHistoryPath),
                 "sonargraphReportHistory", ConfigParameters.SONARGRAPH_REPORT_FILE_NAME.getValue(), m_logger);

@@ -15,10 +15,11 @@
 	<properties>
     	<!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     	<jenkins.baseline>2.479</jenkins.baseline>
-    	<jenkins.version>${jenkins.baseline}.1</jenkins.version>
+    	<jenkins.version>${jenkins.baseline}.3</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<animal.sniffer.skip>true</animal.sniffer.skip>
 		<spotbugs.skip>true</spotbugs.skip>
+        <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
 	</properties>
 
 	<distributionManagement>
@@ -73,6 +74,12 @@
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
 			<version>5.12.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>

@@ -43,7 +43,10 @@ import com.hello2morrow.sonargraph.integration.jenkins.model.IDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.IMetricHistoryProvider;
 import com.hello2morrow.sonargraph.integration.jenkins.model.InvalidDataPoint;
 import com.hello2morrow.sonargraph.integration.jenkins.model.NotExistingDataPoint;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 
 /**
  * Handles operations on a CSV file.
@@ -135,13 +138,18 @@ public final class CSVFileHandler implements IMetricHistoryProvider
 
     private String[] getHeaderLine()
     {
-        try (@SuppressWarnings("deprecation")
-        final CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR);)
+        try (
+        final CSVReader csvReader = new CSVReaderBuilder(new FileReader(m_file))
+                .withCSVParser(
+                        new CSVParserBuilder()
+                                .withSeparator(CSV_SEPARATOR)
+                                .build())
+                .build())
         {
             final String[] nextLine = csvReader.readNext();
             return nextLine;
         }
-        catch (final IOException ex)
+        catch (final CsvValidationException | IOException ex)
         {
             SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to get header line from CSV file '" + m_file.getAbsolutePath(), ex);
             return new String[0];
@@ -171,8 +179,13 @@ public final class CSVFileHandler implements IMetricHistoryProvider
             return sonargraphDataset;
         }
 
-        try (@SuppressWarnings("deprecation")
-        CSVReader csvReader = new CSVReader(new FileReader(m_file), CSV_SEPARATOR))
+        try (
+        CSVReader csvReader = new CSVReaderBuilder(new FileReader(m_file))
+                .withCSVParser(
+                        new CSVParserBuilder()
+                        .withSeparator(CSV_SEPARATOR)
+                        .build())
+                .build())
         {
             String[] nextLine;
             final int column = m_columnMapper.getIndex(metric.getId());
@@ -188,7 +201,7 @@ public final class CSVFileHandler implements IMetricHistoryProvider
                 processLine(nextLine, column, sonargraphDataset, metric, NumberFormat.getInstance(Locale.US));
             }
         }
-        catch (final IOException ioe)
+        catch (final CsvValidationException | IOException ioe)
         {
             SonargraphLogger.INSTANCE.log(Level.WARNING, "Exception occurred while reading from file '" + m_file.getAbsolutePath(), ioe);
 
