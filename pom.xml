@@ -211,9 +211,6 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-                    <source>17</source>
-                    <target>17</target>
-                    <release>17</release>
 					<debuglevel>lines,vars,source</debuglevel>
 				</configuration>
 			</plugin>
@@ -250,5 +247,9 @@
 			<id>dietmarmenges</id>
 			<name>Dietmar Menges</name>
 		</developer>
+        <developer>
+            <id>a-zitzewitz</id>
+            <name>Alexander von Zitzewitz</name>
+        </developer>
 	</developers>
 </project>
