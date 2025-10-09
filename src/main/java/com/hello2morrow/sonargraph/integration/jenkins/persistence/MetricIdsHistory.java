@@ -43,13 +43,14 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
     {
         this.file = historyFile;
 
-        if (!this.file.exists())
+        if (!this.file.isFile())
         {
             try
             {
                 SonargraphLogger.INSTANCE.log(Level.FINE, "Create new empty MetricIds JSON file {0}", this.file.getAbsolutePath());
                 this.file.createNewFile();
                 storeMetricIds(new MetricIds());
+                System.out.println("Created new empty MetricIds JSON file " + this.file.getAbsolutePath());
             }
             catch (final IOException ex)
             {

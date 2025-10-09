@@ -21,6 +21,9 @@
 		<spotbugs.skip>true</spotbugs.skip>
         <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
         <sonargraph.activationcode.test>36E2-0F3E-643F-B4F2</sonargraph.activationcode.test>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 	</properties>
 
 	<distributionManagement>
@@ -212,6 +215,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<debuglevel>lines,vars,source</debuglevel>
+                    <encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
