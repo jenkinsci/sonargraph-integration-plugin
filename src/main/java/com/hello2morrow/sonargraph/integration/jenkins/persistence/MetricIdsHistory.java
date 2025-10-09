@@ -42,8 +42,7 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
 
     public MetricIdsHistory(final File historyFile)
     {
-        this.file = historyFile;
-
+        file = historyFile;
         if (!this.file.isFile())
         {
             SonargraphLogger.INSTANCE.log(Level.FINE, "Create new empty MetricIds JSON file {0}", this.file.getAbsolutePath());
