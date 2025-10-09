@@ -63,7 +63,7 @@ public final class SonargraphBuildInstaller extends DownloadFromUrlInstaller
     public static final class DescriptorImpl extends ToolInstallerDescriptor<SonargraphBuildInstaller>
     {
         private static final long THIRTY_MINUTES = 30 * 60 * 1000L;
-        private static final String SONARGRAPH_BUILD_JSON = "http://eclipse.hello2morrow.com/jenkins/sonargraphBuild/sonargraphBuild.json";
+        private static final String SONARGRAPH_BUILD_JSON = "https://eclipse.hello2morrow.com/jenkins/sonargraphBuild/sonargraphBuild.json";
         List<Installable> installables = null;
         long lastMillis = 0;
 

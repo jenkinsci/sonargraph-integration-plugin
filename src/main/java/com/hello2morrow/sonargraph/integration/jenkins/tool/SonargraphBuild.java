@@ -79,7 +79,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
         @Override
         public List<? extends ToolInstaller> getDefaultInstallers()
         {
-            return Collections.singletonList(new SonargraphBuildInstaller(null));
+            return Collections.singletonList(new SonargraphBuildInstaller("newest"));
         }
 
         @Override
