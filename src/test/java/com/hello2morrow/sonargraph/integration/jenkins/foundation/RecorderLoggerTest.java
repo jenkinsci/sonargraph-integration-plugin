@@ -39,11 +39,6 @@ class RecorderLoggerTest
     void before() throws IOException
     {
         removeFiles();
-        if (!dummyLogFile.exists())
-        {
-            dummyLogFile.createNewFile();
-
-        }
     }
 
     @AfterEach
@@ -54,7 +49,7 @@ class RecorderLoggerTest
 
     private void removeFiles()
     {
-        if ((dummyLogFile != null) & dummyLogFile.exists())
+        if (dummyLogFile.canRead())
         {
             dummyLogFile.delete();
         }
