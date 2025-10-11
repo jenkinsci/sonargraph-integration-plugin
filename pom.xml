@@ -18,7 +18,7 @@
         <gitHubRepo>jenkinsci/sonargraph-integration-plugin</gitHubRepo>
     	<!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     	<jenkins.baseline>2.528</jenkins.baseline>
-    	<jenkins.version>2.532-rc37601.413dc047d3a_4</jenkins.version>
+    	<jenkins.version>2.532-rc37602.c3335c4a_75c7</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<animal.sniffer.skip>true</animal.sniffer.skip>
 		<spotbugs.skip>true</spotbugs.skip>
