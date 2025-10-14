@@ -70,17 +70,17 @@ class RecorderLoggerTest
 
         String line;
         line = buffReader.readLine();
-        assertTrue(line.contains("[INFO]"));
-        assertTrue(line.contains("<SONARGRAPH>"));
-        assertTrue(line.contains(testText));
+        assertTrue(line.contains("[INFO]"), line);
+        assertTrue(line.contains("<SONARGRAPH>"), line);
+        assertTrue(line.contains(testText), line);
         line = buffReader.readLine();
-        assertTrue(line.contains("[WARNING]"));
-        assertTrue(line.contains("<SONARGRAPH>"));
-        assertTrue(line.contains(testText));
+        assertTrue(line.contains("[WARNING]"), line);
+        assertTrue(line.contains("<SONARGRAPH>"), line);
+        assertTrue(line.contains(testText), line);
         line = buffReader.readLine();
-        assertTrue(line.contains("[SEVERE]"));
-        assertTrue(line.contains("<SONARGRAPH>"));
-        assertTrue(line.contains(testText));
+        assertTrue(line.contains("[SEVERE]"), line);
+        assertTrue(line.contains("<SONARGRAPH>"), line);
+        assertTrue(line.contains(testText), line);
 
         buffReader.close();
     }
