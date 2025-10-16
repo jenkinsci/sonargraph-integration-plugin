@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 class DefaultJDKTest extends JenkinsJobBasedTest
 {
-
     @Test
     void testUsingDefaultJDK() throws Exception
     {
