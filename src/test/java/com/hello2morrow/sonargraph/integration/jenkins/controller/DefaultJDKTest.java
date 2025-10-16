@@ -56,5 +56,4 @@ class DefaultJDKTest extends JenkinsJobBasedTest
         final MavenModuleSetBuild mmsb = jenkins.buildAndAssertSuccess(mavenProject);
         jenkins.assertLogContains("There are multiple JDKs, please configure one of them.", mmsb);
     }
-
 }
