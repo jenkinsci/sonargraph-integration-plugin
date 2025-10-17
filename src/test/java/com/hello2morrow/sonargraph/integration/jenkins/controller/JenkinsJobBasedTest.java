@@ -19,6 +19,7 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import java.net.URL;
 
+import hudson.tools.DownloadFromUrlInstaller;
 import org.junit.jupiter.api.BeforeEach;
 import org.jvnet.hudson.test.ExtractResourceSCM;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -45,10 +46,12 @@ abstract class JenkinsJobBasedTest
     {
         jenkins = rule;
         ToolInstallations.configureMaven35();
+
         jenkins.getInstance().getDescriptorList(ToolInstaller.class).add(new SonargraphBuildInstaller.DescriptorImpl());
         jenkins.getInstance().getDescriptorList(ToolInstallation.class).add(new SonargraphBuild.DescriptorImpl());
         jenkins.getInstance().getDescriptorList(Publisher.class).add(new SonargraphReportBuilder.DescriptorImpl());
-        SonargraphBuildInstallations.configureSonargraphBuildNewest();
+
+        SonargraphBuildInstallations.getSonargraphBuildNewest();
 
         mavenProject = jenkins.createProject(MavenModuleSet.class);
         mavenProject.setGoals("compile");

@@ -19,10 +19,13 @@ package com.hello2morrow.sonargraph.integration.jenkins.tool;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.tools.*;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
@@ -33,19 +36,16 @@ import hudson.model.EnvironmentSpecific;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.slaves.NodeSpecific;
-import hudson.tools.ToolDescriptor;
-import hudson.tools.ToolInstallation;
-import hudson.tools.ToolInstaller;
-import hudson.tools.ToolProperty;
 import hudson.util.FormValidation;
 
 public class SonargraphBuild extends ToolInstallation implements NodeSpecific<SonargraphBuild>, EnvironmentSpecific<SonargraphBuild>
 {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public SonargraphBuild(final String name, final String home)
     {
-        super(name, home, Collections.<ToolProperty<?>> emptyList());
+        super(name, home, Collections.emptyList());
     }
 
     @DataBoundConstructor
@@ -55,7 +55,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
     }
 
     @Override
-    public SonargraphBuild forNode(final Node node, final TaskListener log) throws IOException, InterruptedException
+    public SonargraphBuild forNode(final @NonNull Node node, final TaskListener log) throws IOException, InterruptedException
     {
         return new SonargraphBuild(getName(), translateFor(node, log));
     }
@@ -78,7 +78,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
         @Override
         public List<? extends ToolInstaller> getDefaultInstallers()
         {
-            return Collections.singletonList(new SonargraphBuildInstaller("newest"));
+            return Collections.emptyList();
         }
 
         @Override
@@ -90,7 +90,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
 
         public SonargraphBuild getSonargraphBuild(final String name)
         {
-            assert name != null && name.length() > 0 : "Parameter 'name' of method 'getSonargraphBuild' must not be empty";
+            assert name != null && !name.isEmpty() : "Parameter 'name' of method 'getSonargraphBuild' must not be empty";
             for (final SonargraphBuild sonargraphBuild : getInstallations())
             {
                 if (name.equals(sonargraphBuild.getName()))
@@ -113,7 +113,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
         }
 
         @Override
-        public String getDisplayName()
+        public @NonNull String getDisplayName()
         {
             return "Sonargraph Build";
         }

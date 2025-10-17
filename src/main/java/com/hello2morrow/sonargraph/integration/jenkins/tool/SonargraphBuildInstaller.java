@@ -17,56 +17,36 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.tool;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Level;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
-
 import hudson.Extension;
-import hudson.ProxyConfiguration;
 import hudson.tools.DownloadFromUrlInstaller;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstallerDescriptor;
-import net.sf.json.JSONObject;
 
 public final class SonargraphBuildInstaller extends DownloadFromUrlInstaller
 {
+    private final Installable installable;
+
     @DataBoundConstructor
-    public SonargraphBuildInstaller(final String id)
+    public SonargraphBuildInstaller(@NonNull final Installable installable)
     {
-        super(id);
+        super(installable.id);
+        this.installable = installable;
     }
 
     @Override
-    public Installable getInstallable() throws IOException
+    public Installable getInstallable()
     {
-        for (final Installable i : ((DescriptorImpl) getDescriptor()).getInstallables())
-        {
-            if (id.equals(i.id))
-            {
-                return i;
-            }
-        }
-        return null;
+        return this.installable;
     }
 
     @Extension
     public static final class DescriptorImpl extends ToolInstallerDescriptor<SonargraphBuildInstaller>
     {
-        private static final long THIRTY_MINUTES = 30 * 60 * 1000L;
-        private static final String SONARGRAPH_BUILD_JSON = "https://eclipse.hello2morrow.com/jenkins/sonargraphBuild/sonargraphBuild.json";
-        List<Installable> installables = null;
-        long lastMillis = 0;
-
         public DescriptorImpl()
         {
         }
@@ -78,51 +58,9 @@ public final class SonargraphBuildInstaller extends DownloadFromUrlInstaller
         }
 
         @Override
-        public String getDisplayName()
+        public @NonNull String getDisplayName()
         {
             return "Install from hello2morrow";
-        }
-
-        public List<Installable> getInstallables()
-        {
-            if (installables == null || checkAgain())
-            {
-                SonargraphLogger.INSTANCE.log(Level.INFO, "Trying to get list of installables from {0} ...", SONARGRAPH_BUILD_JSON);
-                try (InputStream in = ProxyConfiguration.getInputStream(new URL(SONARGRAPH_BUILD_JSON));
-                        BufferedReader streamReader = new BufferedReader(new InputStreamReader(in, "UTF-8")))
-                {
-
-                    final StringBuilder responseStrBuilder = new StringBuilder();
-
-                    String inputStr;
-                    while ((inputStr = streamReader.readLine()) != null)
-                    {
-                        responseStrBuilder.append(inputStr);
-                    }
-                    final JSONObject d = JSONObject.fromObject(responseStrBuilder.toString());
-                    installables = Arrays.asList(((InstallableList) JSONObject.toBean(d, InstallableList.class)).list);
-                    SonargraphLogger.INSTANCE.log(Level.INFO, "Got list of {0} installables.", installables.size());
-
-                }
-                catch (final Exception e)
-                {
-                    SonargraphLogger.INSTANCE.log(Level.SEVERE, "{0} while getting installables: {1}",
-                            new Object[] { e.getClass().getName(), e.getMessage() });
-                    installables = Collections.emptyList();
-                }
-                finally
-                {
-                    lastMillis = System.currentTimeMillis();
-                }
-
-            }
-            return installables;
-        }
-
-        private boolean checkAgain()
-        {
-            final boolean result = System.currentTimeMillis() - lastMillis > THIRTY_MINUTES;
-            return result;
         }
     }
 }
