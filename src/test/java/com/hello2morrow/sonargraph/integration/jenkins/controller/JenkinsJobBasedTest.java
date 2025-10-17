@@ -67,7 +67,7 @@ abstract class JenkinsJobBasedTest
     {
         final String systemDirectory = "AlarmClock.sonargraph";
         final String virtualModel = "Modifiable.vm";
-        final String sonargraphBuildVersion = "newest";
+        final String sonargraphBuildVersion = SonargraphBuildInstallations.getSonargraphBuildNewest().id;
         final String activationCode = System.getProperty("sonargraph.activationcode.test", "");
 
         final SonargraphReportBuilder result = new SonargraphReportBuilder();
