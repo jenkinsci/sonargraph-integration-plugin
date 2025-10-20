@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 class CustomMetricTest extends JenkinsJobBasedTest
 {
-
     @Test
     void testSameReportDoesNotAddMetricId() throws Exception
     {
