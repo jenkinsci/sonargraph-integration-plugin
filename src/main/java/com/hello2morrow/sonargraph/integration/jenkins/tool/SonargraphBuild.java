@@ -55,7 +55,7 @@ public class SonargraphBuild extends ToolInstallation implements NodeSpecific<So
     }
 
     @Override
-    public SonargraphBuild forNode(final @NonNull Node node, final TaskListener log) throws IOException, InterruptedException
+    public @NonNull SonargraphBuild forNode(final @NonNull Node node, final TaskListener log) throws IOException, InterruptedException
     {
         return new SonargraphBuild(getName(), translateFor(node, log));
     }
