@@ -437,15 +437,8 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
 
         assert node != null : "Workspace " + workspace + " is not connected to any node.";
 
-        try
-        {
-            sonargraphBuild = sonargraphBuild.forNode(node, listener);
-        }
-        catch (final IOException e)
-        {
-            listener.getLogger().println("ERROR: Failed to resolve node " + node + ". Exception: " + e.getMessage());
-            throw e;
-        }
+        sonargraphBuild = sonargraphBuild.forNode(node, listener);
+
         final FilePath installationDirectory = new FilePath(launcher.getChannel(), sonargraphBuild.getHome());
         final FilePath pluginsDirectory = new FilePath(installationDirectory, "plugins");
         final FilePath clientDirectory = new FilePath(installationDirectory, "client");
