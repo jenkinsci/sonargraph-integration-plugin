@@ -8,11 +8,22 @@ permissions:
   pull-requests: write
 
 jobs:
+
   validate:
     runs-on: ubuntu-latest
     outputs:
       should_release: ${{ steps.verify.outputs.should_release }}
     steps:
+      - name: Debug - Check repository structure
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          if [ -f "pom.xml" ]; then
+            echo "✅ Found pom.xml"
+          else
+            echo "❌ No pom.xml found"
+          fi
       - name: Verify prerequisites
         uses: jenkins-infra/jenkins-maven-cd-action@v1.2.0
         id: verify
