@@ -18,16 +18,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Debug - Check repository structure
+      - name: Verify username matches permissions
         run: |
-          echo "Current directory: $(pwd)"
-          echo "Files in current directory:"
-          ls -la
-          if [ -f "pom.xml" ]; then
-            echo "✅ Found pom.xml"
+          echo "GitHub Secret Username: ${{ secrets.MAVEN_USERNAME }}"
+          echo "Expected from permissions file: a_zitzewitz"
+          if [ "${{ secrets.MAVEN_USERNAME }}" = "a_zitzewitz" ]; then
+            echo "✅ Username matches permissions file"
           else
-            echo "❌ No pom.xml found"
+            echo "❌ Username mismatch - this could cause 401 error"
           fi
+
+      - name: Test authentication
+        run: |
+          # Test basic auth to Artifactory
+          curl -f -u "${{ secrets.MAVEN_USERNAME }}:${{ secrets.MAVEN_TOKEN }}" \
+            https://repo.jenkins-ci.org/webapp/api/v1/system/ping || echo "Auth test failed"
+      
+
       - name: Verify prerequisites
         uses: jenkins-infra/jenkins-maven-cd-action@v1.2.0
         id: verify
