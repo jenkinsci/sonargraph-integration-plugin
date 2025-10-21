@@ -14,6 +14,10 @@ jobs:
     outputs:
       should_release: ${{ steps.verify.outputs.should_release }}
     steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Debug - Check repository structure
         run: |
           echo "Current directory: $(pwd)"
