@@ -9,45 +9,8 @@ permissions:
 
 jobs:
 
-  validate:
-    runs-on: ubuntu-latest
-    outputs:
-      should_release: ${{ steps.verify.outputs.should_release }}
-    steps:
-      - name: Check out
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Verify username matches permissions
-        run: |
-          echo "GitHub Secret Username: ${{ secrets.MAVEN_USERNAME }}"
-          echo "Expected from permissions file: a_zitzewitz"
-          if [ "${{ secrets.MAVEN_USERNAME }}" = "a_zitzewitz" ]; then
-            echo "✅ Username matches permissions file"
-          else
-            echo "❌ Username mismatch - this could cause 401 error"
-          fi
-
-      - name: Test authentication
-        run: |
-          # Test basic auth to Artifactory
-          curl -f -u "${{ secrets.MAVEN_USERNAME }}:${{ secrets.MAVEN_TOKEN }}" \
-            https://repo.jenkins-ci.org/webapp/api/v1/system/ping || echo "Auth test failed"
-      
-
-      - name: Verify prerequisites
-        uses: jenkins-infra/jenkins-maven-cd-action@v1.2.0
-        id: verify
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-
-
   release:
     runs-on: ubuntu-latest
-    needs: [validate]
-    if: needs.validate.outputs.should_release == 'true'
     steps:
       - name: Check out
         uses: actions/checkout@v4
