@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,14 +17,14 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MetricIdsTest
+class MetricIdsTest
 {
     @Test
-    public void testMetricIdsToJson()
+    void testMetricIdsToJson()
     {
         final MetricIds metricIds = new MetricIds();
         final MetricId first = new MetricId("first", "core", "First Metric Id", false);

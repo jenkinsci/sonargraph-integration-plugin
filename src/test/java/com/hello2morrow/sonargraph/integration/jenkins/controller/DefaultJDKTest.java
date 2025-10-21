@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,16 +20,14 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
 import hudson.maven.MavenModuleSetBuild;
 import hudson.model.JDK;
+import org.junit.jupiter.api.Test;
 
-public class DefaultJDKTest extends JenkinsJobBasedTest
+class DefaultJDKTest extends JenkinsJobBasedTest
 {
-
     @Test
-    public void testUsingDefaultJDK() throws Exception
+    void testUsingDefaultJDK() throws Exception
     {
         mavenProject.renameTo("testUsingDefaultJDK");
         final MavenModuleSetBuild mmsb = jenkins.buildAndAssertSuccess(mavenProject);
@@ -37,9 +35,9 @@ public class DefaultJDKTest extends JenkinsJobBasedTest
     }
 
     @Test
-    public void testNoJDK() throws Exception
+    void testNoJDK() throws Exception
     {
-        jenkins.getInstance().setJDKs(new ArrayList<JDK>());
+        jenkins.getInstance().setJDKs(new ArrayList<>());
 
         mavenProject.renameTo("testNoJDK");
         final MavenModuleSetBuild mmsb = jenkins.buildAndAssertSuccess(mavenProject);
@@ -47,10 +45,9 @@ public class DefaultJDKTest extends JenkinsJobBasedTest
     }
 
     @Test
-    public void testMultipleJDK() throws Exception
+    void testMultipleJDK() throws Exception
     {
-        final List<JDK> jdks = new ArrayList<>();
-        jdks.addAll(jenkins.getInstance().getJDKs());
+        final List<JDK> jdks = new ArrayList<>(jenkins.getInstance().getJDKs());
         jdks.add(new JDK("dummy1", ""));
         jdks.add(new JDK("dummy2", ""));
         jenkins.getInstance().setJDKs(jdks);
@@ -59,5 +56,4 @@ public class DefaultJDKTest extends JenkinsJobBasedTest
         final MavenModuleSetBuild mmsb = jenkins.buildAndAssertSuccess(mavenProject);
         jenkins.assertLogContains("There are multiple JDKs, please configure one of them.", mmsb);
     }
-
 }

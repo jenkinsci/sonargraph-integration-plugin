@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.foundation;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,42 +26,37 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class RecorderLoggerTest
+class RecorderLoggerTest
 {
     private static final String dummyLogFileName = "src/test/resources/dummy.log";
     private final File dummyLogFile = new File(dummyLogFileName);
 
-    @Before
-    public void before() throws IOException
+    @BeforeEach
+    void before() throws IOException
     {
         removeFiles();
-        if (!dummyLogFile.exists())
-        {
-            dummyLogFile.createNewFile();
-
-        }
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         removeFiles();
     }
 
     private void removeFiles()
     {
-        if ((dummyLogFile != null) & dummyLogFile.exists())
+        if (dummyLogFile.canRead())
         {
             dummyLogFile.delete();
         }
     }
 
     @Test
-    public void testLogToConsoleOutput() throws IOException
+    void testLogToConsoleOutput() throws IOException
     {
         final PrintStream logger = new PrintStream(dummyLogFileName);
         final String testText = "test Text";
@@ -75,17 +70,17 @@ public class RecorderLoggerTest
 
         String line;
         line = buffReader.readLine();
-        assertTrue(line.contains("[INFO]"));
-        assertTrue(line.contains("<SONARGRAPH>"));
-        assertTrue(line.contains(testText));
+        assertTrue(line.contains("[INFO]"), line);
+        assertTrue(line.contains("<SONARGRAPH>"), line);
+        assertTrue(line.contains(testText), line);
         line = buffReader.readLine();
-        assertTrue(line.contains("[WARNING]"));
-        assertTrue(line.contains("<SONARGRAPH>"));
-        assertTrue(line.contains(testText));
+        assertTrue(line.contains("[WARNING]"), line);
+        assertTrue(line.contains("<SONARGRAPH>"), line);
+        assertTrue(line.contains(testText), line);
         line = buffReader.readLine();
-        assertTrue(line.contains("[SEVERE]"));
-        assertTrue(line.contains("<SONARGRAPH>"));
-        assertTrue(line.contains(testText));
+        assertTrue(line.contains("[SEVERE]"), line);
+        assertTrue(line.contains("<SONARGRAPH>"), line);
+        assertTrue(line.contains(testText), line);
 
         buffReader.close();
     }

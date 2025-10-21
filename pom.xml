@@ -1,24 +1,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<parent>
-		<groupId>org.jenkins-ci.plugins</groupId>
-		<artifactId>plugin</artifactId>
-		<version>3.50</version>
+    	<groupId>org.jenkins-ci.plugins</groupId>
+    	<artifactId>plugin</artifactId>
+    	<version>5.26</version>
+    	<relativePath />
 	</parent>
 
 	<artifactId>sonargraph-integration</artifactId>
-	<version>5.0.2</version>
+	<version>${revision}${changelist}</version>
 	<name>Sonargraph Integration Jenkins Plugin</name>
 	<packaging>hpi</packaging>
 
 	<properties>
-		<jenkins.version>2.222.4</jenkins.version>
-		<slf4j.version>1.7.28</slf4j.version>
-		<java.level>8</java.level>
+        <revision>5.0.3</revision>
+        <changelist></changelist>
+        <gitHubRepo>jenkinsci/sonargraph-integration-plugin</gitHubRepo>
+    	<!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
+    	<jenkins.baseline>2.528</jenkins.baseline>
+    	<jenkins.version>2.532-rc37605.6b_b_2172b_1592</jenkins.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<animal.sniffer.skip>true</animal.sniffer.skip>
 		<spotbugs.skip>true</spotbugs.skip>
+        <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
+        <sonargraph.activationcode.test>36E2-0F3E-643F-B4F2</sonargraph.activationcode.test>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 	</properties>
 
 	<distributionManagement>
@@ -45,17 +53,15 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-
 	<dependencyManagement>
 		<dependencies>
-			<!-- 'bill of materials' to get correct versions -->
-			<dependency>
-				<groupId>io.jenkins.tools.bom</groupId>
-				<artifactId>bom-2.222.x</artifactId>
-				<version>11</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
+     		<dependency>
+        		<groupId>io.jenkins.tools.bom</groupId>
+        		<artifactId>bom-${jenkins.baseline}.x</artifactId>
+        		<version>5506.va_222b_131ec34</version>
+        		<type>pom</type>
+        		<scope>import</scope>
+      		</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -63,44 +69,59 @@
 		<dependency>
 			<groupId>com.hello2morrow</groupId>
 			<artifactId>sonargraph-integration-access</artifactId>
-			<version>5.0.0</version>
+			<version>6.1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
-			<version>2.3.1</version>
+			<version>4.0.6</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
-			<version>4.2</version>
+			<version>5.12.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jcommon</artifactId>
-			<version>1.0.23</version>
+			<version>1.0.24</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jfree</groupId>
 			<artifactId>jfreechart</artifactId>
+			<!-- 
 			<version>1.0.19</version>
+			-->
 		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci</groupId>
 			<artifactId>symbol-annotation</artifactId>
+			<!-- 
+			<version>1.17</version>
+			-->
 		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci</groupId>
 			<artifactId>annotation-indexer</artifactId>
+					<!-- 
 			<version>1.12</version>
+			-->
 		</dependency>
 
 		<!-- for testing -->
 		<dependency>
 			<groupId>org.jenkins-ci.main</groupId>
 			<artifactId>maven-plugin</artifactId>
+			<!--
 			<version>3.6</version>
+			-->
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -114,7 +135,7 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		
 		<!-- to have pipeline jobs when running jenkins with hpi:run -->
 		<dependency>
 			<groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -139,7 +160,7 @@
 		<dependency>
 			<groupId>org.jenkins-ci.plugins.workflow</groupId>
 			<artifactId>workflow-aggregator</artifactId>
-			<version>2.6</version>
+			<version>608.v67378e9d3db_1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -151,29 +172,7 @@
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>git</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- to make enforcer rule RequireUpperBoundDeps happy -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 
 	<build>
@@ -196,7 +195,7 @@
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>3.0</version>
+				<version>5.0.0</version>
 				<configuration>
 					<header>license-header.txt</header>
 					<mapping>
@@ -218,16 +217,14 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
 					<debuglevel>lines,vars,source</debuglevel>
+                    <encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
-					<source>8</source>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -239,16 +236,16 @@
 		<url>https://www.hello2morrow.com</url>
 	</organization>
 	<scm>
-		<connection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</connection>
-		<developerConnection>scm:git:https://github.com/jenkinsci/sonargraph-integration-plugin.git</developerConnection>
-		<url>https://github.com/jenkinsci/sonargraph-integration-plugin</url>
-		<tag>HEAD</tag>
+		<connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+		<developerConnection>scm:git:https://github.com/${gitHubRepo}.git</developerConnection>
+		<url>https://github.com/${gitHubRepo}</url>
+		<tag>${scmTag}</tag>
 	</scm>
 
 	<licenses>
 		<license>
 			<name>Apache License 2</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
 		</license>
 	</licenses>
 
@@ -257,5 +254,9 @@
 			<id>dietmarmenges</id>
 			<name>Dietmar Menges</name>
 		</developer>
+        <developer>
+            <id>a-zitzewitz</id>
+            <name>Alexander von Zitzewitz</name>
+        </developer>
 	</developers>
 </project>

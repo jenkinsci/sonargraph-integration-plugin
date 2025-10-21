@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.ChartConfigurationFileHandler;
@@ -93,7 +93,7 @@ public class PipelineChartAction implements Action
         return chartConfiguration.python;
     }
 
-    public void doSubmit(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException
+    public void doSubmit(final StaplerRequest2 req, final StaplerResponse2 rsp) throws IOException, ServletException
     {
         JSONObject json = req.getSubmittedForm();
         chartConfiguration.core = json.getBoolean("core");
@@ -131,7 +131,7 @@ public class PipelineChartAction implements Action
      * Method that generates the chart and adds it to the response object to allow jenkins to display it. It is called in
      * SonargraphChartAction/index.jelly in the src attribute of an img tag.
      */
-    public void doGetPlot(final StaplerRequest req, final StaplerResponse rsp)
+    public void doGetPlot(final StaplerRequest2 req, final StaplerResponse2 rsp)
     {
         Plotter.doGetPlot(job, metaData, req, rsp);
     }

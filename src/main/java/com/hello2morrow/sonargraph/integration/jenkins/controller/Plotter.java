@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +23,9 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.jfree.chart.JFreeChart;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.model.AbstractPlot;
@@ -65,7 +66,7 @@ public class Plotter
      * SonargraphChartAction/index.jelly in the src attribute of an img tag.
      * @param metaData 
      */
-    public static void doGetPlot(final Job<?, ?> job, final MetricIds metaData, final StaplerRequest req, final StaplerResponse rsp)
+    public static void doGetPlot(final Job<?, ?> job, final MetricIds metaData, final StaplerRequest2 req, final StaplerResponse2 rsp)
     {
         final Map<String, String[]> parameterMap = req.getParameterMap();
         final String metricName = getSimpleValue(METRIC_PARAMETER, parameterMap);

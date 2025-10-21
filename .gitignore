@@ -1,6 +1,9 @@
+/.idea/*
 /build.eclipse/
 /target/
 /work/
 /sonargraph_access*.log
 /work1/
 **/.DS_Store
+/settings.xml
+/settings.b64

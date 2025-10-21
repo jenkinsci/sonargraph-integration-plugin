@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,11 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileReader;
@@ -30,11 +30,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReaderBuilder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
@@ -63,11 +64,11 @@ public class CSVFileHandlerTest
     private MetricId m_metric4;
     private MetricId m_metric5;
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public File folder;
 
-    @BeforeClass
-    public static void setUpClass() throws IOException
+    @BeforeAll
+    static void setUpClass() throws IOException
     {
         final File exportMetaDataFile = new File(META_DATA_XML);
         final ResultWithOutcome<IExportMetaData> result = ControllerFactory.createMetaDataController().loadExportMetaData(exportMetaDataFile);
@@ -81,8 +82,8 @@ public class CSVFileHandlerTest
         }
     }
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         int buildNumber = 31;
         final double value = 3.0;
@@ -105,22 +106,26 @@ public class CSVFileHandlerTest
     }
 
     @Test
-    public void testCSVFileCreation() throws IOException
+    void testCSVFileCreation() throws Exception
     {
-        final File newFile = new File(folder.getRoot(), NON_EXISTING_CSV_FILE_NAME);
+        final File newFile = new File(folder, NON_EXISTING_CSV_FILE_NAME);
         final CSVFileHandler handler = new CSVFileHandler(newFile, s_metaData);
         final String shoudBeTheFirstLine = handler.createHeaderLine();
 
-        @SuppressWarnings("deprecation")
-        final CSVReader csvReader = new CSVReader(new FileReader(newFile), CSVFileHandler.CSV_SEPARATOR);
+        final CSVReader csvReader = new CSVReaderBuilder(new FileReader(newFile))
+                .withCSVParser(
+                        new CSVParserBuilder()
+                                .withSeparator(CSVFileHandler.CSV_SEPARATOR)
+                                .build())
+                .build();
         assertArrayEquals(shoudBeTheFirstLine.split(String.valueOf(CSVFileHandler.CSV_SEPARATOR)), csvReader.readNext());
         csvReader.close();
     }
 
     @Test
-    public void testReadSonargraphCSVFile() throws IOException
+    void testReadSonargraphCSVFile() throws IOException
     {
-        final File newFile = new File(folder.getRoot(), NON_EXISTING_CSV_FILE_NAME);
+        final File newFile = new File(folder, NON_EXISTING_CSV_FILE_NAME);
         IMetricHistoryProvider csvFileHandler = new CSVFileHandler(newFile, s_metaData);
         List<IDataPoint> testDataset = csvFileHandler.readMetricValues(m_metric1);
         assertEquals(0, testDataset.size());
@@ -140,9 +145,9 @@ public class CSVFileHandlerTest
     }
 
     @Test
-    public void testReadMetrics() throws IOException
+    void testReadMetrics() throws IOException
     {
-        final File newFile = new File(folder.getRoot(), NON_EXISTING_CSV_FILE_NAME);
+        final File newFile = new File(folder, NON_EXISTING_CSV_FILE_NAME);
         IMetricHistoryProvider csvFileHandler = new CSVFileHandler(newFile, s_metaData);
 
         List<IDataPoint> dataset = csvFileHandler.readMetricValues(m_metric1);
@@ -154,7 +159,7 @@ public class CSVFileHandlerTest
         assertEquals(5, dataset.size());
         for (final IDataPoint point : dataset)
         {
-            assertTrue(point instanceof InvalidDataPoint);
+            assertInstanceOf(InvalidDataPoint.class, point);
         }
 
         dataset = csvFileHandler.readMetricValues(m_metric1);
@@ -163,36 +168,25 @@ public class CSVFileHandlerTest
     }
 
     @Test
-    public void testNoExceptionsExpectedReadingMetrics() throws IOException
+    void testNoExceptionsExpectedReadingMetrics()
     {
-        List<IDataPoint> testDataset = null;
         final File corrupFile = new File(CORRUPT_CSV_FILE_PATH);
         final IMetricHistoryProvider csvFileHandler = new CSVFileHandler(corrupFile, s_metaData);
-        try
-        {
-            testDataset = csvFileHandler.readMetricValues(m_metric3);
-        }
-        catch (final Exception ex)
-        {
-            fail("No exception ParseException should be thrown");
-        }
-        assertTrue(testDataset.get(1) instanceof InvalidDataPoint);
+        assertDoesNotThrow(() -> {
+            List<IDataPoint> testDataset = csvFileHandler.readMetricValues(m_metric3);
+            assertInstanceOf(InvalidDataPoint.class, testDataset.get(1));
+        }, "No exception ParseException should be thrown");
 
-        try
-        {
-            testDataset = csvFileHandler.readMetricValues(m_metric4);
-        }
-        catch (final ArrayIndexOutOfBoundsException ex)
-        {
-            fail("No exception ArrayIndexOutOfBoundsException should be thrown");
-        }
-        assertTrue(testDataset.get(0) instanceof NotExistingDataPoint);
+        assertDoesNotThrow(() -> {
+            List<IDataPoint> testDataset = csvFileHandler.readMetricValues(m_metric4);
+            assertInstanceOf(NotExistingDataPoint.class, testDataset.get(0));
+        }, "No exception ArrayIndexOutOfBoundsException should be thrown");
     }
 
     @Test
-    public void testWriteMetricsToFile() throws IOException
+    void testWriteMetricsToFile() throws Exception
     {
-        final File newFile = new File(folder.getRoot(), NON_EXISTING_CSV_FILE_NAME);
+        final File newFile = new File(folder, NON_EXISTING_CSV_FILE_NAME);
         final IMetricHistoryProvider csvFileHandler = new CSVFileHandler(newFile, s_metaData);
 
         final HashMap<MetricId, String> buildMetrics = new HashMap<>();
@@ -202,13 +196,17 @@ public class CSVFileHandlerTest
         buildMetrics.put(m_metric5, "200.456");
         final long timestamp = System.currentTimeMillis();
         csvFileHandler.writeMetricValues(1, timestamp, buildMetrics);
-        @SuppressWarnings("deprecation")
-        final CSVReader csvReader = new CSVReader(new FileReader(newFile), CSVFileHandler.CSV_SEPARATOR);
+        final CSVReader csvReader = new CSVReaderBuilder(new FileReader(newFile))
+                .withCSVParser(
+                        new CSVParserBuilder()
+                                .withSeparator(CSVFileHandler.CSV_SEPARATOR)
+                                .build())
+                .build();
         csvReader.readNext(); //Do nothing with the first line
         final String[] line = csvReader.readNext();
         csvReader.close();
         //1, -, -, 200, -, -, 7, -, 3, -, -, -, -, 2.6
-        final String[] expectedLine = { "1", new Long(timestamp).toString(), "2.6", "7", "3", "-", "200.456" };
+        final String[] expectedLine = { "1", Long.toString(timestamp), "2.6", "7", "3", "-", "200.456" };
         assertArrayEquals(expectedLine, line);
     }
 }

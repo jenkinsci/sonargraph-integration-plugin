@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultCause;
@@ -41,20 +42,12 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
 
     public MetricIdsHistory(final File historyFile)
     {
-        this.file = historyFile;
-
-        if (!this.file.exists())
+        file = historyFile;
+        if (!this.file.isFile())
         {
-            try
-            {
-                SonargraphLogger.INSTANCE.log(Level.FINE, "Create new empty MetricIds JSON file {0}", this.file.getAbsolutePath());
-                this.file.createNewFile();
-                storeMetricIds(new MetricIds());
-            }
-            catch (final IOException ex)
-            {
-                SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to create new MetricIds JSON file " + this.file.getAbsolutePath(), ex);
-            }
+            SonargraphLogger.INSTANCE.log(Level.FINE, "Create new empty MetricIds JSON file {0}", this.file.getAbsolutePath());
+
+            storeMetricIds(new MetricIds());
         }
     }
 
@@ -119,15 +112,13 @@ public class MetricIdsHistory implements IMetricIdsHistoryProvider
         SonargraphLogger.INSTANCE.log(Level.INFO, "Store {0} metricIds to file {1}",
                 new Object[] { metricIds.getMetricIds().size(), this.file.getAbsolutePath() });
         final String jsonString = MetricIds.toJSON(metricIds);
-        try (PrintWriter out = new PrintWriter(file, "UTF-8"))
+        try (PrintWriter out = new PrintWriter(file, StandardCharsets.UTF_8))
         {
             out.println(jsonString);
         }
-        catch (final FileNotFoundException fnfe)
+        catch (final IOException ex)
         {
-        }
-        catch (final UnsupportedEncodingException e)
-        {
+            SonargraphLogger.INSTANCE.log(Level.SEVERE, "Failed to create new MetricIds JSON file " + this.file.getAbsolutePath(), ex);
         }
     }
 

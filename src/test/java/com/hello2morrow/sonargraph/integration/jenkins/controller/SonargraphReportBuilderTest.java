@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,47 +17,39 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SonargraphReportBuilderTest
+class SonargraphReportBuilderTest
 {
     @Test
-    public void testGetLanguages()
+    void testGetLanguages()
     {
-        assertEquals("No language means all languages", "Java,CPlusPlus,CSharp,Python",
-                SonargraphReportBuilder.getLanguages(false, false, false, false));
-        assertEquals("All languages", "Java,CPlusPlus,CSharp,Python", SonargraphReportBuilder.getLanguages(true, true, true, true));
-        assertEquals("Java and CSharp", "Java,CSharp", SonargraphReportBuilder.getLanguages(true, false, true, false));
-        assertEquals("Java and CPlusPlus", "Java,CPlusPlus", SonargraphReportBuilder.getLanguages(true, true, false, false));
-        assertEquals("Java and Python", "Java,Python", SonargraphReportBuilder.getLanguages(true, false, false, true));
-        assertEquals("CPlusPlus and CSharp", "CPlusPlus,CSharp", SonargraphReportBuilder.getLanguages(false, true, true, false));
-        assertEquals("CPlusPlus and Python", "CPlusPlus,Python", SonargraphReportBuilder.getLanguages(false, true, false, true));
-        assertEquals("CSharp and Python", "CSharp,Python", SonargraphReportBuilder.getLanguages(false, false, true, true));
-        assertEquals("Java only", "Java", SonargraphReportBuilder.getLanguages(true, false, false, false));
-        assertEquals("CSharp only", "CSharp", SonargraphReportBuilder.getLanguages(false, false, true, false));
-        assertEquals("CPlusPlus only", "CPlusPlus", SonargraphReportBuilder.getLanguages(false, true, false, false));
-        assertEquals("Python only", "Python", SonargraphReportBuilder.getLanguages(false, false, false, true));
+        assertEquals("Java,CPlusPlus,CSharp,Python",
+                SonargraphReportBuilder.getLanguages(false, false, false, false),
+                "No language means all languages");
+        assertEquals("Java,CPlusPlus,CSharp,Python", SonargraphReportBuilder.getLanguages(true, true, true, true), "All languages");
+        assertEquals("Java,CSharp", SonargraphReportBuilder.getLanguages(true, false, true, false), "Java and CSharp");
+        assertEquals("Java,CPlusPlus", SonargraphReportBuilder.getLanguages(true, true, false, false), "Java and CPlusPlus");
+        assertEquals("Java,Python", SonargraphReportBuilder.getLanguages(true, false, false, true), "Java and Python");
+        assertEquals("CPlusPlus,CSharp", SonargraphReportBuilder.getLanguages(false, true, true, false), "CPlusPlus and CSharp");
+        assertEquals("CPlusPlus,Python", SonargraphReportBuilder.getLanguages(false, true, false, true), "CPlusPlus and Python");
+        assertEquals("CSharp,Python", SonargraphReportBuilder.getLanguages(false, false, true, true), "CSharp and Python");
+        assertEquals("Java", SonargraphReportBuilder.getLanguages(true, false, false, false), "Java only");
+        assertEquals("CSharp", SonargraphReportBuilder.getLanguages(false, false, true, false), "CSharp only");
+        assertEquals("CPlusPlus", SonargraphReportBuilder.getLanguages(false, true, false, false), "CPlusPlus only");
+        assertEquals("Python", SonargraphReportBuilder.getLanguages(false, false, false, true), "Python only");
     }
 
     @Test
-    public void testUrlEncoding()
+    void testUrlEncoding()
     {
         String url = "http://www.hello2morrow.com";
-        try
-        {
-            String encoded = URLEncoder.encode(url, StandardCharsets.UTF_8.toString());
-            System.out.println(encoded);
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        String encoded = URLEncoder.encode(url, StandardCharsets.UTF_8);
+        System.out.println(encoded);
     }
 }

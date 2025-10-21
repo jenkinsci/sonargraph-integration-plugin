@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +17,15 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
@@ -33,13 +33,13 @@ import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutco
 import com.hello2morrow.sonargraph.integration.access.model.IExportMetaData;
 import com.hello2morrow.sonargraph.integration.access.model.ISingleExportMetaData;
 
-public class CSVColumnMapperTest
+class CSVColumnMapperTest
 {
     private static final String META_DATA_XML = "src/test/resources/CSVColumnMapperTestMetaData.xml";
     private static IExportMetaData s_metaData;
 
-    @BeforeClass
-    public static void setUp() throws IOException
+    @BeforeAll
+    static void setUp() throws IOException
     {
         final IMetaDataController metaDataController = ControllerFactory.createMetaDataController();
         final File metaDataFile = new File(META_DATA_XML);
@@ -55,7 +55,7 @@ public class CSVColumnMapperTest
     }
 
     @Test
-    public void testEmptyColumnMapping()
+    void testEmptyColumnMapping()
     {
         final ISingleExportMetaData metaData = ISingleExportMetaData.EMPTY;
         final CSVColumnMapper mapper = new CSVColumnMapper(metaData);
@@ -66,7 +66,7 @@ public class CSVColumnMapperTest
     }
 
     @Test
-    public void testColumnMappingFromMetricMetaData()
+    void testColumnMappingFromMetricMetaData()
     {
         final CSVColumnMapper mapper = new CSVColumnMapper(s_metaData);
         assertEquals(5, mapper.getColumnNames(false).length);
@@ -82,7 +82,7 @@ public class CSVColumnMapperTest
     }
 
     @Test
-    public void testColumnMappingFromMetricMetaDataAndExisting()
+    void testColumnMappingFromMetricMetaDataAndExisting()
     {
         final CSVColumnMapper mapper = new CSVColumnMapper(s_metaData, "green", "blue", "red");
         assertEquals(8, mapper.getColumnNames(false).length);
@@ -102,7 +102,7 @@ public class CSVColumnMapperTest
     }
 
     @Test
-    public void testColumnMappingFromMetricMetaDataAndExistingMixed()
+    void testColumnMappingFromMetricMetaDataAndExistingMixed()
     {
 
         final CSVColumnMapper mapper = new CSVColumnMapper(s_metaData, "green", "third", "blue", "first", "red");

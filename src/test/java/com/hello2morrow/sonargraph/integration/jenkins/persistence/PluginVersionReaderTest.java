@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,15 +17,15 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.persistence;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PluginVersionReaderTest
+class PluginVersionReaderTest
 {
     @Test
-    public void testGetVersion()
+    void testGetVersion()
     {
-        assertFalse("unknown".equals(PluginVersionReader.INSTANCE.getVersion()));
+        assertNotEquals("unknown", PluginVersionReader.INSTANCE.getVersion());
     }
 }

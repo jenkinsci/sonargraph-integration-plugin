@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,10 +20,10 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.TextFileReader;
@@ -38,7 +38,7 @@ public abstract class AbstractHTMLAction implements Action
      * Enables directory browsing for directoryToServe.
      * Needed when showing the report, to be able to also serve referenced image and css files.
      */
-    protected void enableDirectoryBrowserSupport(final StaplerRequest req, final StaplerResponse rsp, final FilePath directoryToServe)
+    protected void enableDirectoryBrowserSupport(final StaplerRequest2 req, final StaplerResponse2 rsp, final FilePath directoryToServe)
             throws IOException, ServletException
     {
         final DirectoryBrowserSupport directoryBrowser = new DirectoryBrowserSupport(this, directoryToServe, this.getDisplayName() + "html2", "graph.gif",
@@ -62,7 +62,7 @@ public abstract class AbstractHTMLAction implements Action
         }
     }
 
-    public abstract void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException;
+    public abstract void doDynamic(StaplerRequest2 req, StaplerResponse2 rsp) throws IOException, ServletException;
 
     public abstract String getHTMLReport() throws IOException, InterruptedException;
 }

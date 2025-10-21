@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,12 +28,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import hudson.model.*;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 import com.hello2morrow.sonargraph.integration.access.foundation.ResultWithOutcome;
 import com.hello2morrow.sonargraph.integration.jenkins.foundation.SonargraphLogger;
@@ -51,11 +52,6 @@ import hudson.Launcher.ProcStarter;
 import hudson.Proc;
 import hudson.ProxyConfiguration;
 import hudson.RelativePath;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.JDK;
-import hudson.model.Run;
-import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -432,7 +428,16 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
             SonargraphLogger.logToConsoleOutput(listener.getLogger(), Level.SEVERE, "Unknown Sonargraph Build configured.", null);
             return false;
         }
-        sonargraphBuild = sonargraphBuild.forNode(workspace.toComputer().getNode(), listener);
+
+        Computer computer = workspace.toComputer();
+
+        assert computer != null : "Workspace " + workspace + " is not connected to any computer.";
+
+        Node node = computer.getNode();
+
+        assert node != null : "Workspace " + workspace + " is not connected to any node.";
+
+        sonargraphBuild = sonargraphBuild.forNode(node, listener);
 
         final FilePath installationDirectory = new FilePath(launcher.getChannel(), sonargraphBuild.getHome());
         final FilePath pluginsDirectory = new FilePath(installationDirectory, "plugins");
@@ -862,7 +867,7 @@ public final class SonargraphReportBuilder extends AbstractSonargraphRecorder
         }
 
         @Override
-        public boolean configure(final StaplerRequest req, JSONObject json) throws FormException
+        public boolean configure(final StaplerRequest2 req, JSONObject json) throws FormException
         {
             json = json.getJSONObject("sonargraph");
             setLicenseServerHost(json.getString("licenseServerHost"));

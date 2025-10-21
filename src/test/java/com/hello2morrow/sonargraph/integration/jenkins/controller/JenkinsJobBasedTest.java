@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +19,8 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import java.net.URL;
 
-import org.junit.Before;
-import org.junit.Rule;
+import hudson.tools.DownloadFromUrlInstaller;
+import org.junit.jupiter.api.BeforeEach;
 import org.jvnet.hudson.test.ExtractResourceSCM;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.ToolInstallations;
@@ -32,22 +32,26 @@ import hudson.maven.MavenModuleSet;
 import hudson.tasks.Publisher;
 import hudson.tools.ToolInstallation;
 import hudson.tools.ToolInstaller;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public abstract class JenkinsJobBasedTest
+@WithJenkins
+abstract class JenkinsJobBasedTest
 {
-    @Rule
-    public JenkinsRule jenkins = new JenkinsRule();
+    protected JenkinsRule jenkins;
 
-    public MavenModuleSet mavenProject;
+    protected MavenModuleSet mavenProject;
 
-    @Before
-    public void before() throws Exception
+    @BeforeEach
+    void before(JenkinsRule rule) throws Exception
     {
+        jenkins = rule;
         ToolInstallations.configureMaven35();
+
         jenkins.getInstance().getDescriptorList(ToolInstaller.class).add(new SonargraphBuildInstaller.DescriptorImpl());
         jenkins.getInstance().getDescriptorList(ToolInstallation.class).add(new SonargraphBuild.DescriptorImpl());
         jenkins.getInstance().getDescriptorList(Publisher.class).add(new SonargraphReportBuilder.DescriptorImpl());
-        SonargraphBuildInstallations.configureSonargraphBuildNewest();
+
+        SonargraphBuildInstallations.getSonargraphBuildNewest();
 
         mavenProject = jenkins.createProject(MavenModuleSet.class);
         mavenProject.setGoals("compile");
@@ -63,7 +67,7 @@ public abstract class JenkinsJobBasedTest
     {
         final String systemDirectory = "AlarmClock.sonargraph";
         final String virtualModel = "Modifiable.vm";
-        final String sonargraphBuildVersion = "newest";
+        final String sonargraphBuildVersion = SonargraphBuildInstallations.getSonargraphBuildNewest().id;
         final String activationCode = System.getProperty("sonargraph.activationcode.test", "");
 
         final SonargraphReportBuilder result = new SonargraphReportBuilder();

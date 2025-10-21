@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,19 +17,18 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.foundation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import hudson.util.VersionNumber;
+import org.junit.jupiter.api.Test;
 
-public class SonargraphUtilTest
+class SonargraphUtilTest
 {
 
     @Test
-    public void testGetVersionFromJar()
+    void testGetVersionFromJar()
     {
         final String jarName = "com.hello2morrow.sonargraph.build_9.12.0.100_2019-08-29-18-01.jar";
         final VersionNumber version = SonargraphUtil.getVersionFromJarName(jarName);
@@ -40,7 +39,7 @@ public class SonargraphUtilTest
     }
 
     @Test
-    public void testVersionNumberIsNewerThan()
+    void testVersionNumberIsNewerThan()
     {
         final VersionNumber number1 = new VersionNumber("9.12");
         final VersionNumber number2 = new VersionNumber("9.12.0");

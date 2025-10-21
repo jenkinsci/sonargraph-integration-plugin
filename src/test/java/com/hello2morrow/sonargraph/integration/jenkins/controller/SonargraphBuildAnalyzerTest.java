@@ -1,6 +1,6 @@
 /*
  * Jenkins Sonargraph Integration Plugin
- * Copyright (C) 2015-2023 hello2morrow GmbH
+ * Copyright (C) 2015-2025 hello2morrow GmbH
  * mailto: support AT hello2morrow DOT com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,17 +17,15 @@
  */
 package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.hello2morrow.sonargraph.integration.access.controller.ControllerFactory;
 import com.hello2morrow.sonargraph.integration.access.controller.IMetaDataController;
@@ -39,7 +37,7 @@ import hudson.FilePath;
 import hudson.model.Result;
 import hudson.remoting.VirtualChannel;
 
-public class SonargraphBuildAnalyzerTest
+class SonargraphBuildAnalyzerTest
 {
     private static final String ARCHITECTURE_VIOLATIONS = StandardName.CORE_VIOLATIONS_PARSER_DEPENDENCIES.getStandardName();
     private static final String REPORT_FILE_NAME = "./src/test/resources/AlarmClock.xml";
@@ -48,12 +46,12 @@ public class SonargraphBuildAnalyzerTest
     private File m_dummyLogFile;
     private PrintStream m_logger;
 
-    @Before
-    public void setUp() throws IOException
+    @BeforeEach
+    void setUp() throws Exception
     {
         final IMetaDataController metaDataController = ControllerFactory.createMetaDataController();
         final ResultWithOutcome<IExportMetaData> result = metaDataController.loadExportMetaData(new File(METRIC_META_DATA_FILE_NAME));
-        assertTrue(result.toString(), result.isSuccess());
+        assertTrue(result.isSuccess(), result.toString());
 
         m_dummyLogFile = new File(DUMMY_LOG_FILE_NAME);
         if (!m_dummyLogFile.exists())
@@ -63,8 +61,8 @@ public class SonargraphBuildAnalyzerTest
         m_logger = new PrintStream(DUMMY_LOG_FILE_NAME);
     }
 
-    @After
-    public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         m_logger.close();
         if ((m_dummyLogFile != null) & m_dummyLogFile.exists())
@@ -74,7 +72,7 @@ public class SonargraphBuildAnalyzerTest
     }
 
     @Test
-    public void testChangeBuildResultIfViolationTresholdsExceeded() throws IOException, InterruptedException
+    void testChangeBuildResultIfViolationThresholdsExceeded() throws Exception
     {
         Result result = null;
         final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME),
@@ -83,23 +81,23 @@ public class SonargraphBuildAnalyzerTest
         //Actual number of unresolved architecture violations is 2
 
         result = analyzer.changeBuildResultIfViolationThresholdsExceeded(8, 10);
-        assertNull("No change expected if thresholds are not violated", result);
+        assertNull(result, "No change expected if thresholds are not violated");
 
         result = analyzer.changeBuildResultIfViolationThresholdsExceeded(7, 10);
-        assertEquals("Change expected if unstable threshold reached", Result.UNSTABLE, result);
+        assertEquals(Result.UNSTABLE, result, "Change expected if unstable threshold reached");
 
         result = analyzer.changeBuildResultIfViolationThresholdsExceeded(3, 8);
-        assertEquals("Change expected if unstable threshold violated", Result.UNSTABLE, result);
+        assertEquals(Result.UNSTABLE, result, "Change expected if unstable threshold violated");
 
         result = analyzer.changeBuildResultIfViolationThresholdsExceeded(0, 7);
-        assertEquals("Change expected if failure threshold reached", Result.FAILURE, result);
+        assertEquals(Result.FAILURE, result, "Change expected if failure threshold reached");
 
         result = analyzer.changeBuildResultIfViolationThresholdsExceeded(0, 6);
-        assertEquals("Change expected if failure threshold violated", Result.FAILURE, result);
+        assertEquals(Result.FAILURE, result, "Change expected if failure threshold violated");
     }
 
     @Test
-    public void testChangeBuildResultIfMetricValueNotZero() throws IOException, InterruptedException
+    void testChangeBuildResultIfMetricValueNotZero() throws Exception
     {
         final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME),
                 m_logger);
@@ -117,7 +115,7 @@ public class SonargraphBuildAnalyzerTest
     }
 
     @Test
-    public void testChangeBuildResultIfMetricValueIsZero() throws IOException, InterruptedException
+    void testChangeBuildResultIfMetricValueIsZero() throws Exception
     {
         final SonargraphBuildAnalyzer analyzer = new SonargraphBuildAnalyzer(new FilePath((VirtualChannel) null, REPORT_FILE_NAME),
                 m_logger);
