@@ -19,8 +19,16 @@ package com.hello2morrow.sonargraph.integration.jenkins.controller;
 
 import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHistory;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.maven.MavenModuleSetBuild;
+import hudson.model.TaskListener;
+import hudson.model.listeners.RunListener;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.TestExtension;
 
 class CustomMetricTest extends JenkinsJobBasedTest
 {
@@ -33,5 +41,17 @@ class CustomMetricTest extends JenkinsJobBasedTest
         // 2nd build
         mmsb = jenkins.buildAndAssertSuccess(mavenProject);
         jenkins.assertLogContains(MetricIdsHistory.ADD_METRIC_IDS_HAD_NO_EFFECT_ON_FILE, mmsb);
+    }
+
+    @TestExtension
+    public static class RunListenerImpl extends RunListener<MavenModuleSetBuild> {
+        @Override
+        public void onCompleted(MavenModuleSetBuild run, @NonNull TaskListener listener) {
+            try {
+                Arrays.stream(run.getWorkspace().list("**", "")).forEach(fp -> Logger.getLogger(CustomMetricTest.class.getName()).log(Level.INFO, fp.getRemote()));
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
