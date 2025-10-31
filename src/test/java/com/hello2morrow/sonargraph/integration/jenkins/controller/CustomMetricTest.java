@@ -21,7 +21,6 @@ import com.hello2morrow.sonargraph.integration.jenkins.persistence.MetricIdsHist
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.maven.MavenModuleSetBuild;
-import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
 import java.io.IOException;
