@@ -171,8 +171,8 @@
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>git</artifactId>
 			<scope>test</scope>
-		</dependency>		
-	</dependencies>
+		</dependency>
+    </dependencies>
 
 	<build>
 		<resources>
